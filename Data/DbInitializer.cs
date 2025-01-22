@@ -9,6 +9,15 @@ public static class DbInitializer
             return;
         }
 
+        var users = new User[]
+        {
+            new User { Username = "calebgl" },
+            new User { Username = "jijijaja" },
+        };
+
+        context.Users.AddRange(users);
+        context.SaveChanges();
+
         var books = new Book[]
         {
             new Book { Title = "1984", Author = "Goerge Orwell" },
@@ -17,6 +26,41 @@ public static class DbInitializer
         };
 
         context.Books.AddRange(books);
+        context.SaveChanges();
+
+        var reviews = new Review[]
+        {
+            new Review
+            {
+                UserId = users[0].Id,
+                BookId = books[0].Id,
+                User = users[0],
+                Comment = "Excelente libro",
+                Book = books[0],
+                Rate = 4.5f,
+            },
+            new Review
+            {
+                UserId = users[1].Id,
+                BookId = books[0].Id,
+                User = users[1],
+                Book = books[0],
+                Comment =
+                    "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum ",
+                Rate = 4.8f,
+            },
+            new Review
+            {
+                UserId = users[0].Id,
+                BookId = books[0].Id,
+                User = users[0],
+                Book = books[0],
+                Comment = "                  ",
+                Rate = 5f,
+            },
+        };
+
+        context.Reviews.AddRange(reviews);
         context.SaveChanges();
     }
 }
