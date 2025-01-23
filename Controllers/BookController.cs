@@ -1,11 +1,11 @@
-// using Bibliotek.Models;
+using Bibliotek.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bibliotek.Controllers;
 
 [ApiController]
-[Route("books")]
+[Route("api/books")]
 public class BookController(BibliotekContext context) : ControllerBase
 {
     [HttpGet]
@@ -18,6 +18,7 @@ public class BookController(BibliotekContext context) : ControllerBase
                 {
                     b.Id,
                     b.Title,
+                    b.Author,
                     Reviews = b
                         .Reviews.OrderByDescending(r => r.CreatedAt)
                         .Take(5)
@@ -50,4 +51,26 @@ public class BookController(BibliotekContext context) : ControllerBase
 
         return comment.Substring(0, 20).TrimEnd() + "...";
     }
+
+    [HttpPost]
+    public IActionResult Create(CreateBookDto book)
+    {
+        var newBook = new Book { Title = book.Title, Author = book.Author };
+
+        context.Books.Add(newBook);
+        context.SaveChanges();
+
+        return Ok(
+            new
+            {
+                newBook.Id,
+                newBook.Title,
+                newBook.Author,
+                newBook.PublishedAt,
+                newBook.Reviews,
+            }
+        );
+    }
 }
+
+public record CreateBookDto(string Title, string Author);
