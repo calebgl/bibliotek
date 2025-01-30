@@ -15,6 +15,11 @@ public class UserController(BibliotekContext context) : ControllerBase
 
         return Ok(new { newUser.Id, newUser.Username });
     }
+
+    public IActionResult ListUsers()
+    {
+        return Ok(context.Users.Select(u => new { u.Id, u.Username }).ToList());
+    }
 }
 
 public record RegisterUserDto(string Username);
