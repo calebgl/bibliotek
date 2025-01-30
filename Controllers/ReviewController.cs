@@ -59,52 +59,66 @@ public class ReviewController(BibliotekContext context) : ControllerBase
             return StatusCode(500);
         }
 
-        var book = context
-            .Books.Include(b => b.BookStats)
-            .Where(b => b.Id == createReviewDto.BookId)
-            .Single();
-
-        var newReview = new Review
+        using (var transaction = context.Database.BeginTransaction())
         {
-            Comment = createReviewDto.Comment,
-            Rate = createReviewDto.Rate,
-            UserId = userId,
-            BookId = createReviewDto.BookId,
-            User = user,
-            Book = book,
-        };
-
-        var bookStats = book.BookStats;
-        bookStats.AverageRating =
-            ((bookStats.AverageRating * bookStats.TotalReviewCount) + newReview.Rate)
-            / (bookStats.TotalReviewCount + 1);
-        bookStats.TotalReviewCount += 1;
-
-        uint _ = newReview.Rate switch
-        {
-            0 => bookStats.OneStarReviewCount++,
-            (>= 1) and (< 2) => bookStats.OneStarReviewCount++,
-            (>= 2) and (< 3) => bookStats.TwoStarReviewCount++,
-            (>= 3) and (< 4) => bookStats.ThreeStarReviewCount++,
-            (>= 4) and (< 5) => bookStats.FourStarReviewCount++,
-            5 => bookStats.FiveStarReviewCount++,
-            _ => 0,
-        };
-
-        context.Reviews.Add(newReview);
-        context.BookStats.Update(bookStats);
-        context.SaveChanges();
-
-        return Ok(
-            new
+            try
             {
-                newReview.Id,
-                newReview.Comment,
-                newReview.Rate,
-                newReview.UserId,
-                newReview.BookId,
+                var book = context
+                    .Books.Include(b => b.BookStats)
+                    .Where(b => b.Id == createReviewDto.BookId)
+                    .Single();
+
+                var newReview = new Review
+                {
+                    Comment = createReviewDto.Comment,
+                    Rate = createReviewDto.Rate,
+                    UserId = userId,
+                    BookId = createReviewDto.BookId,
+                    User = user,
+                    Book = book,
+                };
+
+                var bookStats = book.BookStats;
+                bookStats.AverageRating =
+                    ((bookStats.AverageRating * bookStats.TotalReviewCount) + newReview.Rate)
+                    / (bookStats.TotalReviewCount + 1);
+                bookStats.TotalReviewCount += 1;
+
+                uint _ = newReview.Rate switch
+                {
+                    0 => bookStats.OneStarReviewCount++,
+                    (>= 1) and (< 2) => bookStats.OneStarReviewCount++,
+                    (>= 2) and (< 3) => bookStats.TwoStarReviewCount++,
+                    (>= 3) and (< 4) => bookStats.ThreeStarReviewCount++,
+                    (>= 4) and (< 5) => bookStats.FourStarReviewCount++,
+                    5 => bookStats.FiveStarReviewCount++,
+                    _ => 0,
+                };
+
+                context.Reviews.Add(newReview);
+                context.BookStats.Update(bookStats);
+
+                context.SaveChanges();
+                transaction.Commit();
+
+                return Ok(
+                    new
+                    {
+                        newReview.Id,
+                        newReview.Comment,
+                        newReview.Rate,
+                        newReview.UserId,
+                        newReview.BookId,
+                    }
+                );
             }
-        );
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                throw new ApplicationException("", ex);
+            }
+        }
+        ;
     }
 
     private string? ProcessComment(string? comment)
