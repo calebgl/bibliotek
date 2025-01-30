@@ -9,7 +9,7 @@ public class Review
     }
 
     public uint Id { get; set; }
-    public float Rate { get; set; }
+    public decimal Rate { get; set; }
     public string? Comment { get; set; }
     public uint UserId { get; set; }
     public uint BookId { get; set; }

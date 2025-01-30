@@ -82,12 +82,12 @@ public class ReviewController(BibliotekContext context) : ControllerBase
 
         uint _ = newReview.Rate switch
         {
-            0f => bookStats.OneStarReviewCount++,
-            (>= 1f) and (< 2f) => bookStats.OneStarReviewCount++,
-            (>= 2f) and (< 3f) => bookStats.TwoStarReviewCount++,
-            (>= 3f) and (< 4f) => bookStats.ThreeStarReviewCount++,
-            (>= 4f) and (< 5f) => bookStats.FourStarReviewCount++,
-            5f => bookStats.FiveStarReviewCount++,
+            0 => bookStats.OneStarReviewCount++,
+            (>= 1) and (< 2) => bookStats.OneStarReviewCount++,
+            (>= 2) and (< 3) => bookStats.TwoStarReviewCount++,
+            (>= 3) and (< 4) => bookStats.ThreeStarReviewCount++,
+            (>= 4) and (< 5) => bookStats.FourStarReviewCount++,
+            5 => bookStats.FiveStarReviewCount++,
             _ => 0,
         };
 
@@ -123,4 +123,4 @@ public class ReviewController(BibliotekContext context) : ControllerBase
     }
 }
 
-public record CreateReviewDto(uint BookId, [Range(1, 5)] float Rate, string? Comment);
+public record CreateReviewDto(uint BookId, [Range(1, 5)] decimal Rate, string? Comment);

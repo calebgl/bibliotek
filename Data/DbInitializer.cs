@@ -37,7 +37,7 @@ public static class DbInitializer
                 User = users[0],
                 Comment = "Excelente libro",
                 Book = books[0],
-                Rate = 4.5f,
+                Rate = 4.5M,
             },
             new Review
             {
@@ -47,7 +47,7 @@ public static class DbInitializer
                 Book = books[0],
                 Comment =
                     "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum ",
-                Rate = 4.8f,
+                Rate = 4.8M,
             },
             new Review
             {
@@ -56,7 +56,7 @@ public static class DbInitializer
                 User = users[0],
                 Book = books[0],
                 Comment = "                  ",
-                Rate = 5f,
+                Rate = 5,
             },
         };
 
@@ -86,12 +86,12 @@ public static class DbInitializer
                 };
                 uint _ = review.Rate switch
                 {
-                    0f => stats.OneStarReviewCount++,
-                    (>= 1f) and (< 2f) => stats.OneStarReviewCount++,
-                    (>= 2f) and (< 3f) => stats.TwoStarReviewCount++,
-                    (>= 3f) and (< 4f) => stats.ThreeStarReviewCount++,
-                    (>= 4f) and (< 5f) => stats.FourStarReviewCount++,
-                    5f => stats.FiveStarReviewCount++,
+                    0 => stats.OneStarReviewCount++,
+                    (>= 1) and (< 2) => stats.OneStarReviewCount++,
+                    (>= 2) and (< 3) => stats.TwoStarReviewCount++,
+                    (>= 3) and (< 4) => stats.ThreeStarReviewCount++,
+                    (>= 4) and (< 5) => stats.FourStarReviewCount++,
+                    5 => stats.FiveStarReviewCount++,
                     _ => 0,
                 };
                 booksStats[key] = stats;
