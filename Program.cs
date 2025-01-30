@@ -3,7 +3,8 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 builder.Services.AddControllers();
 
@@ -13,8 +14,10 @@ builder.Services.AddOpenApi();
 if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddDbContext<BibliotekContext>(options =>
-        options.UseInMemoryDatabase("bibliotek")
-    );
+    {
+        options.UseInMemoryDatabase("bibliotek");
+        options.EnableSensitiveDataLogging();
+    });
 }
 else
 {
@@ -28,7 +31,6 @@ else
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
