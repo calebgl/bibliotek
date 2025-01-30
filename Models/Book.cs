@@ -5,6 +5,7 @@ public class Book
     public Book()
     {
         Reviews = new List<Review>();
+        BookStats = new BookStats { Book = this };
     }
 
     public uint Id { get; set; }
@@ -13,4 +14,5 @@ public class Book
     public DateOnly? PublishedAt { get; set; }
 
     public List<Review> Reviews { get; set; }
+    public BookStats BookStats { get; set; }
 }

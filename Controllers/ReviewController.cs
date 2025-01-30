@@ -1,6 +1,9 @@
 namespace Bibliotek.Controllers;
 
+using System.ComponentModel.DataAnnotations;
+using Bibliotek.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 [ApiController]
 [Route("api/reviews")]
@@ -43,14 +46,65 @@ public class ReviewController(BibliotekContext context) : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult LeaveReview([FromHeader] uint userId)
+    public IActionResult PostReview([FromHeader] uint userId, CreateReviewDto createReviewDto)
     {
         if (userId is 0)
         {
             return BadRequest();
         }
 
-        return Ok(userId);
+        var user = context.Users.Find(userId);
+        if (user is null)
+        {
+            return StatusCode(500);
+        }
+
+        var book = context
+            .Books.Include(b => b.BookStats)
+            .Where(b => b.Id == createReviewDto.BookId)
+            .Single();
+
+        var newReview = new Review
+        {
+            Comment = createReviewDto.Comment,
+            Rate = createReviewDto.Rate,
+            UserId = userId,
+            BookId = createReviewDto.BookId,
+            User = user,
+            Book = book,
+        };
+
+        var bookStats = book.BookStats;
+        bookStats.AverageRating =
+            ((bookStats.AverageRating * bookStats.TotalReviewCount) + newReview.Rate)
+            / (bookStats.TotalReviewCount + 1);
+        bookStats.TotalReviewCount += 1;
+
+        uint _ = newReview.Rate switch
+        {
+            0f => bookStats.OneStarReviewCount++,
+            (>= 1f) and (< 2f) => bookStats.OneStarReviewCount++,
+            (>= 2f) and (< 3f) => bookStats.TwoStarReviewCount++,
+            (>= 3f) and (< 4f) => bookStats.ThreeStarReviewCount++,
+            (>= 4f) and (< 5f) => bookStats.FourStarReviewCount++,
+            5f => bookStats.FiveStarReviewCount++,
+            _ => 0,
+        };
+
+        context.Reviews.Add(newReview);
+        context.BookStats.Update(bookStats);
+        context.SaveChanges();
+
+        return Ok(
+            new
+            {
+                newReview.Id,
+                newReview.Comment,
+                newReview.Rate,
+                newReview.UserId,
+                newReview.BookId,
+            }
+        );
     }
 
     private string? ProcessComment(string? comment)
@@ -69,4 +123,4 @@ public class ReviewController(BibliotekContext context) : ControllerBase
     }
 }
 
-public record PostReview(uint BookId, float Rate, string Comment);
+public record CreateReviewDto(uint BookId, [Range(1, 5)] float Rate, string? Comment);

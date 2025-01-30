@@ -62,5 +62,43 @@ public static class DbInitializer
 
         context.Reviews.AddRange(reviews);
         context.SaveChanges();
+
+        var booksStats = new Dictionary<Tuple<uint, uint>, BookStats> { };
+        foreach (Review review in reviews)
+        {
+            var key = new Tuple<uint, uint>(review.UserId, review.BookId);
+            if (booksStats.ContainsKey(key))
+            {
+                var stats = booksStats[key];
+                stats.AverageRating =
+                    ((stats.AverageRating * stats.TotalReviewCount) + review.Rate)
+                    / (stats.TotalReviewCount + 1);
+                stats.TotalReviewCount++;
+            }
+            else
+            {
+                var stats = new BookStats
+                {
+                    BookId = review.BookId,
+                    Book = review.Book,
+                    TotalReviewCount = 1,
+                    AverageRating = review.Rate,
+                };
+                uint _ = review.Rate switch
+                {
+                    0f => stats.OneStarReviewCount++,
+                    (>= 1f) and (< 2f) => stats.OneStarReviewCount++,
+                    (>= 2f) and (< 3f) => stats.TwoStarReviewCount++,
+                    (>= 3f) and (< 4f) => stats.ThreeStarReviewCount++,
+                    (>= 4f) and (< 5f) => stats.FourStarReviewCount++,
+                    5f => stats.FiveStarReviewCount++,
+                    _ => 0,
+                };
+                booksStats[key] = stats;
+            }
+        }
+
+        context.BookStats.AddRange(booksStats.Values);
+        context.SaveChanges();
     }
 }

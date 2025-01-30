@@ -13,12 +13,22 @@ public class BookController(BibliotekContext context) : ControllerBase
     {
         return Ok(
             context
-                .Books.Include(b => b.Reviews)
+                .Books.Include(b => b.BookStats)
                 .Select(b => new
                 {
                     b.Id,
                     b.Title,
                     b.Author,
+                    Reviews = new
+                    {
+                        Ones = b.BookStats.OneStarReviewCount,
+                        Two = b.BookStats.TwoStarReviewCount,
+                        Three = b.BookStats.ThreeStarReviewCount,
+                        Four = b.BookStats.FourStarReviewCount,
+                        Five = b.BookStats.FiveStarReviewCount,
+                        Count = b.BookStats.TotalReviewCount,
+                        Rating = b.BookStats.AverageRating,
+                    },
                 })
                 .ToList()
         );
