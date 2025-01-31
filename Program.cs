@@ -3,9 +3,6 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-
 builder.Services.AddControllers();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -13,6 +10,9 @@ builder.Services.AddOpenApi();
 
 if (builder.Environment.IsDevelopment())
 {
+    builder.Logging.ClearProviders();
+    builder.Logging.AddConsole();
+
     builder.Services.AddDbContext<BibliotekContext>(options =>
     {
         options.UseInMemoryDatabase("bibliotek");
@@ -53,9 +53,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
