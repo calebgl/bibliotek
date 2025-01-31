@@ -13,6 +13,7 @@ public class Review
     public string? Comment { get; set; }
     public uint UserId { get; set; }
     public uint BookId { get; set; }
+
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 

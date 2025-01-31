@@ -14,9 +14,9 @@ public class OrderDetail
     public uint Quantity { get; set; }
     public decimal Price { get; set; }
 
-    public required Book Book { get; set; }
-    public required Order Order { get; set; }
-
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+
+    public required Book Book { get; set; }
+    public required Order Order { get; set; }
 }
