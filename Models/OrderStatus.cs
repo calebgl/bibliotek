@@ -12,6 +12,13 @@ namespace Bibliotek.Models;
 // Completed,
 public class OrderStatus
 {
+    public OrderStatus()
+    {
+        Orders = new List<Order>();
+    }
+
     public uint Id { get; set; }
     public required string StatusName { get; set; }
+
+    public List<Order> Orders { get; set; }
 }
