@@ -1,9 +1,9 @@
-namespace Bibliotek.Controllers;
-
 using System.ComponentModel.DataAnnotations;
 using Bibliotek.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
+namespace Bibliotek.Controllers;
 
 [ApiController]
 [Route("api/reviews")]
