@@ -16,6 +16,7 @@ public class PaymentMethod
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
+    public required User User { get; set; }
     public PaymentCash? PaymentCash { get; set; }
     public PaymentCard? PaymentCard { get; set; }
     public PaymentPayPal? PaymentPayPal { get; set; }
