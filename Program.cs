@@ -15,7 +15,7 @@ if (builder.Environment.IsDevelopment())
 
     builder.Services.AddDbContext<BibliotekContext>(options =>
     {
-        options.UseInMemoryDatabase("bibliotek");
+        options.UseSqlite(builder.Configuration.GetConnectionString("SQLite"));
         options.EnableSensitiveDataLogging();
     });
 }
@@ -47,6 +47,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<BibliotekContext>();
+    context.Database.OpenConnection();
     context.Database.EnsureCreated();
 
     DbInitializer.Initialize(context);
