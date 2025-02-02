@@ -20,9 +20,27 @@ public static class DbInitializer
 
         var books = new Book[]
         {
-            new Book { Title = "1984", Author = "Goerge Orwell" },
-            new Book { Title = "Words of Radiance", Author = "Brandon Sanderson" },
-            new Book { Title = "La Sombra del Viento", Author = "Carlos Zafon" },
+            new Book
+            {
+                Title = "1984",
+                Author = "Goerge Orwell",
+                StockQuantity = 10,
+                Price = 10.99M,
+            },
+            new Book
+            {
+                Title = "Words of Radiance",
+                Author = "Brandon Sanderson",
+                StockQuantity = 1000,
+                Price = 8.99M,
+            },
+            new Book
+            {
+                Title = "La Sombra del Viento",
+                Author = "Carlos Zafon",
+                StockQuantity = 20,
+                Price = 5.99M,
+            },
         };
 
         context.Books.AddRange(books);
