@@ -1,4 +1,4 @@
-using Bibliotek.Models;
+namespace Bibliotek.Models;
 
 public class Order
 {
