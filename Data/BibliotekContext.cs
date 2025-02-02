@@ -71,6 +71,7 @@ public class BibliotekContext : DbContext
         {
             entity.ToTable("order_details");
             entity.Property(od => od.Id).ValueGeneratedOnAdd();
+            entity.Property(od => od.Price).HasColumnType("decimal(5, 2)");
             entity
                 .HasOne(od => od.Order)
                 .WithMany(o => o.OrderDetails)
