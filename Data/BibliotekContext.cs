@@ -10,6 +10,13 @@ public class BibliotekContext : DbContext
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Review> Reviews { get; set; } = null!;
     public DbSet<BookStats> BookStats { get; set; } = null!;
+    public DbSet<Order> Orders { get; set; } = null!;
+    public DbSet<OrderDetail> OrderDetails { get; set; } = null!;
+    public DbSet<OrderStatus> OrderStatuses { get; set; } = null!;
+    public DbSet<PaymentMethod> PaymentMethods { get; set; } = null!;
+    public DbSet<PaymentCard> PaymentCards { get; set; } = null!;
+    public DbSet<PaymentPayPal> PaymentPayPals { get; set; } = null!;
+    public DbSet<PaymentCash> PaymentCashes { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -47,6 +54,76 @@ public class BibliotekContext : DbContext
             entity.Property(bs => bs.Id).ValueGeneratedOnAdd();
             entity.Property(bs => bs.AverageRating).HasColumnType("decimal(2, 1)");
             ;
+        });
+
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.ToTable("orders");
+            entity.Property(o => o.Id).ValueGeneratedOnAdd();
+            entity.HasOne(o => o.User).WithMany(u => u.Orders).HasForeignKey(o => o.UserId);
+            entity
+                .HasOne(o => o.OrderStatus)
+                .WithMany(os => os.Orders)
+                .HasForeignKey(o => o.OrderStatusId);
+        });
+
+        modelBuilder.Entity<OrderDetail>(entity =>
+        {
+            entity.ToTable("order_details");
+            entity.Property(od => od.Id).ValueGeneratedOnAdd();
+            entity
+                .HasOne(od => od.Order)
+                .WithMany(o => o.OrderDetails)
+                .HasForeignKey(od => od.OrderId);
+        });
+
+        modelBuilder.Entity<OrderStatus>(entity =>
+        {
+            entity.ToTable("order_statuses");
+            entity.Property(os => os.Id).ValueGeneratedOnAdd();
+        });
+
+        modelBuilder.Entity<PaymentMethod>(entity =>
+        {
+            entity.ToTable("payment_methods");
+            entity.Property(pm => pm.Id).ValueGeneratedOnAdd();
+            entity
+                .HasOne(pm => pm.User)
+                .WithMany(u => u.PaymentMethods)
+                .HasForeignKey(pm => pm.UserId);
+
+            entity
+                .HasOne(pm => pm.PaymentCard)
+                .WithOne(pc => pc.PaymentMethod)
+                .HasForeignKey<PaymentCard>(pc => pc.PaymentMethodId);
+
+            entity
+                .HasOne(pm => pm.PaymentCash)
+                .WithOne(pc => pc.PaymentMethod)
+                .HasForeignKey<PaymentCash>(pc => pc.PaymentMethodId);
+
+            entity
+                .HasOne(pm => pm.PaymentPayPal)
+                .WithOne(pp => pp.PaymentMethod)
+                .HasForeignKey<PaymentPayPal>(pp => pp.PaymentMethodId);
+        });
+
+        modelBuilder.Entity<PaymentCash>(entity =>
+        {
+            entity.ToTable("payments_cash");
+            entity.Property(pc => pc.Id).ValueGeneratedOnAdd();
+        });
+
+        modelBuilder.Entity<PaymentPayPal>(entity =>
+        {
+            entity.ToTable("payments_paypal");
+            entity.Property(pp => pp.Id).ValueGeneratedOnAdd();
+        });
+
+        modelBuilder.Entity<PaymentCard>(entity =>
+        {
+            entity.ToTable("payments_card");
+            entity.Property(pc => pc.Id).ValueGeneratedOnAdd();
         });
 
         base.OnModelCreating(modelBuilder);
