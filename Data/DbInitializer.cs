@@ -118,5 +118,8 @@ public static class DbInitializer
 
         context.BookStats.AddRange(booksStats.Values);
         context.SaveChanges();
+
+        context.OrderStatuses.Add(new OrderStatus { StatusName = "PENDING" });
+        context.SaveChanges();
     }
 }
