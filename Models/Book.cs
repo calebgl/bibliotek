@@ -12,6 +12,9 @@ public class Book
     public uint Id { get; set; }
     public required string Title { get; set; }
     public required string Author { get; set; }
+    public string? Subtitle { get; set; }
+    public string? Description { get; set; }
+    public string? CoverUrl { get; set; }
     public DateOnly? ReleasedAt { get; set; }
 
     public uint StockQuantity { get; set; }

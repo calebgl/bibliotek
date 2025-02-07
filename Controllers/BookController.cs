@@ -19,16 +19,9 @@ public class BookController(BibliotekContext context) : ControllerBase
                     b.Id,
                     b.Title,
                     b.Author,
-                    Reviews = new
-                    {
-                        Ones = b.BookStats.OneStarReviewCount,
-                        Two = b.BookStats.TwoStarReviewCount,
-                        Three = b.BookStats.ThreeStarReviewCount,
-                        Four = b.BookStats.FourStarReviewCount,
-                        Five = b.BookStats.FiveStarReviewCount,
-                        Count = b.BookStats.TotalReviewCount,
-                        Rating = b.BookStats.AverageRating,
-                    },
+                    b.CoverUrl,
+                    TotalReviews = b.BookStats.TotalReviewCount,
+                    AverageRating = b.BookStats.AverageRating,
                 })
                 .ToList()
         );
