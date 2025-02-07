@@ -24,7 +24,7 @@ public class BibliotekContext : DbContext
         {
             entity.ToTable("books");
             entity.Property(b => b.Id).ValueGeneratedOnAdd();
-            entity.Property(b => b.PublishedAt).HasColumnType("date");
+            entity.Property(b => b.ReleasedAt).HasColumnType("date");
             entity
                 .HasOne(b => b.BookStats)
                 .WithOne(b => b.Book)

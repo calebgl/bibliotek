@@ -12,7 +12,7 @@ public class Book
     public uint Id { get; set; }
     public required string Title { get; set; }
     public required string Author { get; set; }
-    public DateOnly? PublishedAt { get; set; }
+    public DateOnly? ReleasedAt { get; set; }
 
     public uint StockQuantity { get; set; }
     public decimal Price { get; set; }

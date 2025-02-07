@@ -48,7 +48,7 @@ public class BookController(BibliotekContext context) : ControllerBase
                 newBook.Id,
                 newBook.Title,
                 newBook.Author,
-                newBook.PublishedAt,
+                newBook.ReleasedAt,
                 newBook.Reviews,
             }
         );
