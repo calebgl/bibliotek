@@ -118,6 +118,102 @@ Skyward
                 StockQuantity = 20,
                 Price = 5.99M,
             },
+            new Book
+            {
+                Title =
+                    "The Subtle Art of Not Giving a F*ck",
+                Author = "Mark Manson",
+                Description = "",
+                CoverUrl = "http://localhost:5173/sangf.jpg",
+                StockQuantity = 10,
+                Price = 14.99M,
+            },
+            new Book
+            {
+                Title = "The Eye of the World: Book One of the Wheel of Time",
+                Author = "Robert Jordan",
+                Description =
+                    @"The Wheel of Time is now an original series on Prime Video, starring Rosamund Pike as Moiraine!
+
+A special hardcover edition of The Eye of the World, the first novel in Robert Jordan's #1 New York Times bestselling epic fantasy series, celebrating the 30th anniversary of The Wheel of Time(R)!
+
+The perfect gift for avid fans and new readers alike, this edition features redesigned jacket art, a new introduction from Brandon Sanderson, four-color world map endpapers, a hardcover stamp of the iconic snake-wheel, and a ribbon bookmark.
+
+The Wheel of Time turns and Ages come and pass, leaving memories that become legend. Legend fades to myth, and even myth is long forgotten when the Age that gave it birth returns again. What was, what will be, and what is, may yet fall under the Shadow.
+
+When a vicious band of half-men, half beasts invade the Two Rivers seeking their master's enemy, Moiraine persuades Rand al'Thor and his friends to leave their home and enter a larger unimaginable world filled with dangers waiting in the shadows and in the light.
+
+Since its debut in 1990, The Wheel of Time(R) has captivated millions of readers around the globe with its scope, originality, and compelling characters. The last six books in series were all instant #1 New York Times bestsellers, and The Eye of the World was named one of America's best-loved novels by PBS's The Great American Read.
+
+The Wheel of Time(R)
+New Spring: The Novel
+#1 The Eye of the World
+#2 The Great Hunt
+#3 The Dragon Reborn
+#4 The Shadow Rising
+#5 The Fires of Heaven
+#6 Lord of Chaos
+#7 A Crown of Swords
+#8 The Path of Daggers
+#9 Winter's Heart
+#10 Crossroads of Twilight
+#11 Knife of Dreams
+
+By Robert Jordan and Brandon Sanderson
+#12 The Gathering Storm
+#13 Towers of Midnight
+#14 A Memory of Light
+
+By Robert Jordan and Teresa Patterson
+The World of Robert Jordan's The Wheel of Time
+
+By Robert Jordan, Harriet McDougal, Alan Romanczuk, and Maria Simons
+The Wheel of Time Companion
+
+By Robert Jordan and Amy Romanczuk
+Patterns of the Wheel: Coloring Art Based on Robert Jordan's The Wheel of Time",
+                CoverUrl = "http://localhost:5173/wot.jpg",
+                StockQuantity = 85,
+                Price = 39.99M,
+            },
+            new Book
+            {
+                Title = "The Wild Robot",
+                Author = "Peter Brown",
+                Description =
+                    @"Now a DreamWorks movie available on Prime Video!
+
+This #1 New York Times bestselling illustrated middle grade novel from a Caldecott Honor winner tells an extraordinary story full of action and thought-provoking questions as a robot learns to survive--and live--in the wilderness.
+
+Can a robot survive in the wilderness?
+
+When robot Roz opens her eyes for the first time, she discovers that she is all alone on a remote, wild island. She has no idea how she got there or what her purpose is--but she knows she needs to survive. After battling a violent storm and escaping a vicious bear attack, she realizes that her only hope for survival is to adapt to her surroundings and learn from the island's unwelcoming animal inhabitants.
+
+As Roz slowly befriends the animals, the island starts to feel like home--until, one day, the robot's mysterious past comes back to haunt her.
+
+From bestselling and award-winning author and illustrator Peter Brown comes a heartwarming and action-packed novel about what happens when nature and technology collide.",
+                CoverUrl = "http://localhost:5173/twr.jpg",
+                StockQuantity = 20,
+                Price = 12.99M,
+            },
+            new Book
+            {
+                Title = "Atomic Habits",
+                Author = "James Clear",
+                Description = "",
+                CoverUrl = "http://localhost:5173/ah.jpg",
+                StockQuantity = 20,
+                Price = 5.99M,
+            },
+            new Book
+            {
+                Title = "The Martian",
+                Author = "Andy Weir",
+                Description = "",
+                CoverUrl = "http://localhost:5173/tm.jpg",
+                StockQuantity = 20,
+                Price = 8.99M,
+            },
         };
 
         context.Books.AddRange(books);
