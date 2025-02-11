@@ -53,7 +53,7 @@ public class BookController(BibliotekContext context) : ControllerBase
                         Five = b.BookStats.FiveStarReviewCount,
                     },
                 })
-                .Where(b => b.Id == 1)
+                .Where(b => b.Id == bookId)
                 .Single()
         );
     }
