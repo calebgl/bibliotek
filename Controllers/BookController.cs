@@ -9,7 +9,7 @@ namespace Bibliotek.Controllers;
 public class BookController(BibliotekContext context) : ControllerBase
 {
     [HttpGet]
-    public IActionResult Get()
+    public IActionResult ListBooks()
     {
         return Ok(
             context
@@ -20,10 +20,41 @@ public class BookController(BibliotekContext context) : ControllerBase
                     b.Title,
                     b.Author,
                     b.CoverUrl,
+                    b.Price,
                     TotalReviews = b.BookStats.TotalReviewCount,
                     AverageRating = b.BookStats.AverageRating,
                 })
                 .ToList()
+        );
+    }
+
+    [HttpGet("{bookId}")]
+    public IActionResult ViewBook(uint bookId)
+    {
+        return Ok(
+            context
+                .Books.Include(b => b.BookStats)
+                .Select(b => new
+                {
+                    b.Id,
+                    b.Title,
+                    b.Author,
+                    b.CoverUrl,
+                    b.Description,
+                    b.Price,
+                    TotalReviews = b.BookStats.TotalReviewCount,
+                    AverageRating = b.BookStats.AverageRating,
+                    Stars = new
+                    {
+                        One = b.BookStats.OneStarReviewCount,
+                        Two = b.BookStats.TwoStarReviewCount,
+                        Three = b.BookStats.ThreeStarReviewCount,
+                        Four = b.BookStats.FourStarReviewCount,
+                        Five = b.BookStats.FiveStarReviewCount,
+                    },
+                })
+                .Where(b => b.Id == 1)
+                .Single()
         );
     }
 
