@@ -12,7 +12,7 @@ public static class DbInitializer
         var users = new User[]
         {
             new User { Username = "calebgl" },
-            new User { Username = "jijijaja" },
+            new User { Username = "tjdev" },
         };
 
         context.Users.AddRange(users);
@@ -120,8 +120,7 @@ Skyward
             },
             new Book
             {
-                Title =
-                    "The Subtle Art of Not Giving a F*ck",
+                Title = "The Subtle Art of Not Giving a F*ck",
                 Author = "Mark Manson",
                 Description = "",
                 CoverUrl = "http://localhost:5173/sangf.jpg",
@@ -246,7 +245,7 @@ From bestselling and award-winning author and illustrator Peter Brown comes a he
                 BookId = books[0].Id,
                 User = users[0],
                 Book = books[0],
-                Comment = "                  ",
+                Comment = "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum",
                 Rate = 5,
             },
         };
