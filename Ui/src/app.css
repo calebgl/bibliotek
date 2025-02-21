@@ -1,0 +1,15 @@
+@import 'tailwindcss';
+
+@supports (view-transition-name: none) {
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-timing-function: ease-in-out;
+    animation-duration: 0.5s;
+  }
+
+  ::view-transition-group(image-translate) {
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-duration: 0.75s;
+    z-index: 1;
+  }
+}
