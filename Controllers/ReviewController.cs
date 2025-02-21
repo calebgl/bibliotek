@@ -33,7 +33,7 @@ public class ReviewController(BibliotekContext context) : ControllerBase
                 r.Rate,
                 r.UserId,
                 Username = r.User.Username,
-                Comment = ProcessComment(r.Comment),
+                r.Comment,
                 r.CreatedAt,
                 r.UpdatedAt,
             })
@@ -121,7 +121,7 @@ public class ReviewController(BibliotekContext context) : ControllerBase
         ;
     }
 
-    private string? ProcessComment(string? comment)
+    private static string? ProcessComment(string? comment)
     {
         if (string.IsNullOrWhiteSpace(comment))
         {
