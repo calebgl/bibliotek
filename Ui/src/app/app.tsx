@@ -1,8 +1,14 @@
 import { Outlet } from 'react-router'
 import './app.css'
 
-import { ThemeProvider } from './theme-context'
 import { useEffect, useState } from 'react'
+import { ThemeProvider } from './theme-context'
+
+const f = new Intl.NumberFormat('es-mx', {
+  currency: 'MXN',
+  notation: 'standard',
+  style: 'currency',
+}).format
 
 export default function App() {
   const [books, setBooks] = useState([])
@@ -24,8 +30,11 @@ export default function App() {
           <img className="mx-auto h-full object-cover" src={book.coverUrl} />
         </div>
         <div>
-          <p className="font-bold">{book.title}</p>
+          <p className="line-clamp-2 font-bold" title={book.title}>
+            {book.title}
+          </p>
           <p className="text-sm">{book.author}</p>
+          <p className="text-sm">{f(book.price)}</p>
         </div>
       </div>
     )
