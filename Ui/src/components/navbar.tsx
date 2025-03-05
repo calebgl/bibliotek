@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { NavLink } from 'react-router'
 
 export function Navbar() {
 	const [toggleCart, setToggleCart] = useState<boolean>(false)
@@ -35,7 +36,9 @@ export function Navbar() {
 			)}
 			<div className="sticky top-0 left-0">
 				<div className="grid grid-cols-3 justify-between p-4">
-					<div>logo</div>
+					<div>
+						<NavLink to="/">logo</NavLink>
+					</div>
 					<div className="justify-self-center">searchbar</div>
 					<div className="flex gap-2 justify-self-end">
 						<button onClick={() => setToggleCart((prev) => !prev)}>
@@ -47,11 +50,11 @@ export function Navbar() {
 				</div>
 				<div className="p-4 pt-0">
 					<nav className="flex justify-stretch gap-2">
-						<span>1</span>
-						<span>2</span>
-						<span>3</span>
-						<span>4</span>
-						<span>5</span>
+						{[1, 2, 3, 4, 5].map((index) => (
+							<NavLink key={index} to={'/books/' + index}>
+								{index}
+							</NavLink>
+						))}
 					</nav>
 				</div>
 			</div>
