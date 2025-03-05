@@ -12,7 +12,9 @@ public static class DbInitializer
         var users = new User[]
         {
             new User { Username = "calebgl" },
+            new User { Username = "theprimeagen" },
             new User { Username = "tjdev" },
+            new User { Username = "lazymatt" },
         };
 
         context.Users.AddRange(users);
@@ -241,7 +243,7 @@ From bestselling and award-winning author and illustrator Peter Brown comes a he
             },
             new()
             {
-                UserId = users[0].Id,
+                UserId = users[2].Id,
                 BookId = books[0].Id,
                 User = users[0],
                 Book = books[0],
@@ -253,41 +255,46 @@ From bestselling and award-winning author and illustrator Peter Brown comes a he
         context.Reviews.AddRange(reviews);
         context.SaveChanges();
 
-        var booksStats = new Dictionary<Tuple<uint, uint>, BookStats> { };
-        foreach (Review review in reviews)
+        var booksStats = new Dictionary<uint, BookStats>();
+        foreach (var review in reviews)
         {
-            var key = new Tuple<uint, uint>(review.UserId, review.BookId);
-            if (booksStats.ContainsKey(key))
+            BookStats stats;
+            if (booksStats.ContainsKey(review.BookId))
             {
-                var stats = booksStats[key];
-                stats.AverageRating =
-                    ((stats.AverageRating * stats.TotalReviewCount) + review.Rate)
-                    / (stats.TotalReviewCount + 1);
+                stats = booksStats[review.BookId];
+                stats.AverageRating += review.Rate;
                 stats.TotalReviewCount++;
             }
             else
             {
-                var stats = new BookStats
+                stats = new BookStats
                 {
                     BookId = review.BookId,
                     Book = review.Book,
                     TotalReviewCount = 1,
                     AverageRating = review.Rate,
                 };
-                uint _ = review.Rate switch
-                {
-                    0 => stats.OneStarReviewCount++,
-                    (>= 1) and (< 2) => stats.OneStarReviewCount++,
-                    (>= 2) and (< 3) => stats.TwoStarReviewCount++,
-                    (>= 3) and (< 4) => stats.ThreeStarReviewCount++,
-                    (>= 4) and (< 5) => stats.FourStarReviewCount++,
-                    5 => stats.FiveStarReviewCount++,
-                    _ => 0,
-                };
-                booksStats[key] = stats;
+
+                booksStats[review.BookId] = stats;
             }
+
+            uint _ = review.Rate switch
+            {
+                0 => stats.OneStarReviewCount++,
+                (>= 1) and (< 2) => stats.OneStarReviewCount++,
+                (>= 2) and (< 3) => stats.TwoStarReviewCount++,
+                (>= 3) and (< 4) => stats.ThreeStarReviewCount++,
+                (>= 4) and (< 5) => stats.FourStarReviewCount++,
+                5 => stats.FiveStarReviewCount++,
+                _ => 0,
+            };
         }
 
+        foreach (var stats in booksStats.Values)
+        {
+            stats.AverageRating /= stats.TotalReviewCount;
+            stats.AverageRating = Math.Round(stats.AverageRating, 1);
+        }
         context.BookStats.AddRange(booksStats.Values);
         context.SaveChanges();
 
