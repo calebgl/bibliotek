@@ -1,60 +1,9 @@
 import dayjs from 'dayjs'
 import { useEffect, useRef, useState } from 'react'
 
-async function fetchBook(id: string) {
-	const resp = await fetch('/api/books/' + id)
-	if (!resp.ok) {
-		throw new Error('error fetching book ' + id)
-	}
-
-	return resp.json()
-}
-
-async function fetchReviews(bookId: string): Promise<Review[]> {
-	const resp = await fetch('/api/reviews/' + bookId)
-	if (!resp.ok) {
-		throw new Error('error fetching reviews for book ' + bookId)
-	}
-
-	return resp.json()
-}
-
-type Book = {
-	id: string
-	title: string
-	author: string
-	coverUrl: string
-	description: string
-	price: number
-	totalReviews: number
-	averageRating: number
-	stars: {
-		one: number
-		two: number
-		three: number
-		four: number
-		five: number
-	}
-}
-
-type Review = {
-	id: number
-	rate: number
-	userId: number
-	username: string
-	comment: string
-	createdAt: string | Date
-	updatedAt: string | Date
-}
-
-const format = new Intl.NumberFormat('es-mx', {
-	style: 'currency',
-	currency: 'MXN',
-}).format
-
-function sleep(ms: number = 1000) {
-	return new Promise((r) => setTimeout(r, ms))
-}
+import { fetchBook, fetchReviews } from '../lib/api'
+import { formatCurrency, sleep } from '../lib/utils'
+import type { Book, Review } from '../types'
 
 export function Book() {
 	const [toggleCart, setToggleCart] = useState<boolean>(false)
@@ -64,13 +13,14 @@ export function Book() {
 	const [reviews, setReviews] = useState<Review[]>([])
 
 	useEffect(() => {
+		const bookId = '1'
 		;(async () => {
 			await sleep()
-			setBook(await fetchBook('1'))
+			setBook(await fetchBook(bookId))
 		})()
 		;(async () => {
 			await sleep()
-			setReviews(await fetchReviews('1'))
+			setReviews(await fetchReviews(bookId))
 		})()
 	}, [])
 
@@ -151,7 +101,9 @@ export function Book() {
 							</div>
 							<div className="text-xl">
 								<span>
-									{book?.price ? format(book.price) : '-'}
+									{book?.price
+										? formatCurrency(book.price)
+										: '-'}
 								</span>
 							</div>
 							<div className="mt-auto flex gap-2">
