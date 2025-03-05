@@ -4,7 +4,6 @@ import { BookDetails } from '../components/book-details'
 import { BookImagePreview } from '../components/book-image-preview'
 import { BookPurchaseInfo } from '../components/book-purchase-info'
 import { BookReview } from '../components/book-review'
-import { Navbar } from '../components/navbar'
 import { RatingLine } from '../components/rating-line'
 import { fetchBook, fetchReviews } from '../lib/api'
 
@@ -21,7 +20,6 @@ export function Book() {
 
 	return (
 		<>
-			<Navbar />
 			<div>
 				<div className="space-y-16 p-4">
 					<div className="flex gap-8">

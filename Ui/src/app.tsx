@@ -1,3 +1,12 @@
+import { Outlet } from 'react-router'
+
+import { Navbar } from './components/navbar'
+
 export function App() {
-	return <div>hello world!</div>
+	return (
+		<div>
+			<Navbar />
+			<Outlet />
+		</div>
+	)
 }
