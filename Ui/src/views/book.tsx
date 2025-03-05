@@ -4,6 +4,7 @@ import useSWR from 'swr'
 import { BookDetails } from '../components/book-details'
 import { BookImagePreview } from '../components/book-image-preview'
 import { BookPurchaseInfo } from '../components/book-purchase-info'
+import { BookReviewForm } from '../components/book-review-form'
 import { BookReviewList } from '../components/book-review-list'
 import { RatingLine } from '../components/rating-line'
 import { fetchBook } from '../lib/api'
@@ -53,6 +54,7 @@ export function Book() {
 			</div>
 			<div className="flex gap-16">
 				<div className="basis-2/3 space-y-16">
+					<BookReviewForm />
 					<BookReviewList />
 				</div>
 				<div className="basis-1/3">

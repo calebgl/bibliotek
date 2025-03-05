@@ -10,7 +10,7 @@ export function BookReview(props: BookReviewProps) {
 	return (
 		<div className="grid grid-cols-[auto_1fr] gap-2">
 			<div className="size-12 bg-violet-200"></div>
-			<div className="">
+			<div className="max-w-prose">
 				<div className="flex justify-between">
 					<div>{props.username}</div>
 					<div>{dayjs(props.createdAt).format('LLL')}</div>
