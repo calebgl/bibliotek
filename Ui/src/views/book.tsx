@@ -1,26 +1,20 @@
 import dayjs from 'dayjs'
-import { useEffect, useState } from 'react'
+import useSWR from 'swr'
 
-import { fetchBook, fetchReviews } from '../lib/api'
-import { formatCurrency, sleep } from '../lib/utils'
-import type { Book, Review } from '../types'
 import { Navbar } from '../components/navbar'
+import { fetchBook, fetchReviews } from '../lib/api'
+import { formatCurrency } from '../lib/utils'
 
 export function Book() {
-	const [book, setBook] = useState<Book | null>(null)
-	const [reviews, setReviews] = useState<Review[]>([])
+	const bookId = '1'
 
-	useEffect(() => {
-		const bookId = '1'
-		;(async () => {
-			await sleep()
-			setBook(await fetchBook(bookId))
-		})()
-		;(async () => {
-			await sleep()
-			setReviews(await fetchReviews(bookId))
-		})()
-	}, [])
+	const { data: book } = useSWR('/api/book/' + bookId, () =>
+		fetchBook(bookId),
+	)
+
+	const { data: reviews } = useSWR('/api/reviews/' + bookId, () =>
+		fetchReviews(bookId),
+	)
 
 	return (
 		<>
@@ -74,7 +68,8 @@ export function Book() {
 					<div className="max-w-prose">{book?.description}</div>
 					<div className="flex gap-16">
 						<div className="basis-2/3 space-y-16">
-							{reviews.map((r) => (
+							{reviews?.length === 0 && 'no reviews found'}
+							{reviews?.map((r) => (
 								<div
 									key={r.id}
 									className="grid grid-cols-[auto_1fr] gap-2"
