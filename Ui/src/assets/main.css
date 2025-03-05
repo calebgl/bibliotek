@@ -1,1 +1,11 @@
 @import 'tailwindcss';
+
+.jiji::before {
+	content: ' ';
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: calc(min(var(--width, 0), 1) * 100%);
+	background-color: oklch(0.795 0.184 86.047);
+}
