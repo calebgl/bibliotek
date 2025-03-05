@@ -20,7 +20,7 @@ public static class DbInitializer
 
         var books = new Book[]
         {
-            new Book
+            new()
             {
                 Title = "1984",
                 Author = "Goerge Orwell",
@@ -30,7 +30,7 @@ public static class DbInitializer
                 StockQuantity = 10,
                 Price = 10.99M,
             },
-            new Book
+            new()
             {
                 Title = "Words of Radiance",
                 Author = "Brandon Sanderson",
@@ -108,7 +108,7 @@ Skyward
                 StockQuantity = 1000,
                 Price = 8.99M,
             },
-            new Book
+            new()
             {
                 Title = "La Sombra del Viento",
                 Author = "Carlos Zafon",
@@ -118,7 +118,7 @@ Skyward
                 StockQuantity = 20,
                 Price = 5.99M,
             },
-            new Book
+            new()
             {
                 Title = "The Subtle Art of Not Giving a F*ck",
                 Author = "Mark Manson",
@@ -127,7 +127,7 @@ Skyward
                 StockQuantity = 10,
                 Price = 14.99M,
             },
-            new Book
+            new()
             {
                 Title = "The Eye of the World: Book One of the Wheel of Time",
                 Author = "Robert Jordan",
@@ -175,7 +175,7 @@ Patterns of the Wheel: Coloring Art Based on Robert Jordan's The Wheel of Time",
                 StockQuantity = 85,
                 Price = 39.99M,
             },
-            new Book
+            new()
             {
                 Title = "The Wild Robot",
                 Author = "Peter Brown",
@@ -195,7 +195,7 @@ From bestselling and award-winning author and illustrator Peter Brown comes a he
                 StockQuantity = 20,
                 Price = 12.99M,
             },
-            new Book
+            new()
             {
                 Title = "Atomic Habits",
                 Author = "James Clear",
@@ -204,7 +204,7 @@ From bestselling and award-winning author and illustrator Peter Brown comes a he
                 StockQuantity = 20,
                 Price = 5.99M,
             },
-            new Book
+            new()
             {
                 Title = "The Martian",
                 Author = "Andy Weir",
@@ -220,7 +220,7 @@ From bestselling and award-winning author and illustrator Peter Brown comes a he
 
         var reviews = new Review[]
         {
-            new Review
+            new()
             {
                 UserId = users[0].Id,
                 BookId = books[0].Id,
@@ -229,7 +229,7 @@ From bestselling and award-winning author and illustrator Peter Brown comes a he
                 Book = books[0],
                 Rate = 4.5M,
             },
-            new Review
+            new()
             {
                 UserId = users[1].Id,
                 BookId = books[0].Id,
@@ -239,7 +239,7 @@ From bestselling and award-winning author and illustrator Peter Brown comes a he
                     "lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum ",
                 Rate = 4.8M,
             },
-            new Review
+            new()
             {
                 UserId = users[0].Id,
                 BookId = books[0].Id,
