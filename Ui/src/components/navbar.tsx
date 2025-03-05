@@ -49,7 +49,7 @@ export function Navbar() {
 					</div>
 				</div>
 				<div className="p-4 pt-0">
-					<nav className="flex justify-stretch gap-2">
+					<nav className="flex justify-start gap-2">
 						{[1, 2, 3, 4, 5].map((index) => (
 							<NavLink key={index} to={'/books/' + index}>
 								{index}
