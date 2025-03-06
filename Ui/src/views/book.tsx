@@ -1,5 +1,5 @@
+import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router'
-import useSWR from 'swr'
 
 import { BookDetails } from '../components/book-details'
 import { BookImagePreview } from '../components/book-image-preview'
@@ -20,7 +20,10 @@ export function Book() {
 		data: book,
 		isLoading,
 		error,
-	} = useSWR('/api/books/' + bookId, () => fetchBook(bookId))
+	} = useQuery({
+		queryKey: ['books', bookId],
+		queryFn: () => fetchBook(bookId),
+	})
 
 	if (error) {
 		throw error

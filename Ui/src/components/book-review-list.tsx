@@ -1,8 +1,9 @@
+import { Mutation, useMutationState, useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router'
-import useSWR from 'swr'
 
 import { fetchReviews } from '../lib/api'
 import { BookReview } from './book-review'
+import { Review } from '../types'
 
 export function BookReviewList() {
 	const params = useParams()
@@ -15,7 +16,11 @@ export function BookReviewList() {
 		data: reviews,
 		isLoading,
 		error,
-	} = useSWR('/api/reviews/' + bookId, () => fetchReviews(bookId))
+	} = useQuery({
+		queryKey: ['reviews', 'books', bookId],
+		queryFn: () => fetchReviews(bookId),
+	})
+
 
 	if (error) {
 		throw error
