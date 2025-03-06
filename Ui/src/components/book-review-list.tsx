@@ -21,6 +21,16 @@ export function BookReviewList() {
 		queryFn: () => fetchReviews(bookId),
 	})
 
+	const [variables] = useMutationState<
+		Pick<Review, 'userId' | 'comment' | 'rate'>
+	>({
+		filters: { mutationKey: ['postReview'], status: 'pending' },
+		select: (mutation) =>
+			mutation.state.variables as Pick<
+				Review,
+				'userId' | 'comment' | 'rate'
+			>,
+	})
 
 	if (error) {
 		throw error
@@ -40,6 +50,27 @@ export function BookReviewList() {
 
 	return (
 		<>
+			{variables && (
+				<div className="grid grid-cols-[auto_1fr] gap-2 opacity-50">
+					<div className="size-12 bg-violet-200"></div>
+					<div className="max-w-prose">
+						<div className="flex justify-between">
+							<div>{variables.userId}</div>
+							<div>today</div>
+						</div>
+						<div className="max-w-prose">{variables.comment}</div>
+						<div className="mt-12 flex gap-2">
+							<button className="size-8 cursor-pointer bg-gray-300 px-2 py-1">
+								<span className="">l</span>
+							</button>
+							<button className="size-8 cursor-pointer bg-gray-300 px-2 py-1">
+								<span className="">d</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
+
 			{reviews.map((review) => (
 				<BookReview
 					key={review.id}
