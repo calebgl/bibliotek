@@ -37,6 +37,8 @@ export function Book() {
 		throw new Error()
 	}
 
+	const totalReviewsNormalized = book.totalReviews || 1
+
 	return (
 		<div className="space-y-16 p-4">
 			<div className="flex gap-8">
@@ -45,15 +47,15 @@ export function Book() {
 				</div>
 				<div className="flex basis-1/2 flex-col">
 					<BookPurchaseInfo
-						title={book?.title ?? ''}
-						averageRating={book?.averageRating ?? 0}
-						totalReviews={book?.totalReviews ?? 0}
-						price={book?.price ?? 0}
+						title={book.title}
+						averageRating={book.averageRating}
+						totalReviews={book.totalReviews}
+						price={book.price}
 					/>
 				</div>
 			</div>
 			<div>
-				<BookDetails description={book?.description ?? ''} />
+				<BookDetails description={book.description} />
 			</div>
 			<div className="flex gap-16">
 				<div className="basis-2/3 space-y-16">
@@ -63,52 +65,37 @@ export function Book() {
 				<div className="basis-1/3">
 					<div className="flex justify-between">
 						<div>★★★★☆</div>
-						<div>{book?.averageRating}</div>
+						<div>{book.averageRating}</div>
 					</div>
 					<div>
 						<RatingLine
 							rating={5}
-							count={book?.stars.five ?? 0}
-							progress={
-								(book?.stars.five ?? 0) /
-								(book?.totalReviews ?? 1)
-							}
+							count={book.stars.five}
+							progress={book.stars.five / totalReviewsNormalized}
 						/>
 
 						<RatingLine
 							rating={4}
-							count={book?.stars.four ?? 0}
-							progress={
-								(book?.stars.four ?? 0) /
-								(book?.totalReviews ?? 1)
-							}
+							count={book.stars.four}
+							progress={book.stars.four / totalReviewsNormalized}
 						/>
 
 						<RatingLine
 							rating={3}
-							count={book?.stars.three ?? 0}
-							progress={
-								(book?.stars.three ?? 0) /
-								(book?.totalReviews ?? 1)
-							}
+							count={book.stars.three}
+							progress={book.stars.three / totalReviewsNormalized}
 						/>
 
 						<RatingLine
 							rating={2}
-							count={book?.stars.two ?? 0}
-							progress={
-								(book?.stars.two ?? 0) /
-								(book?.totalReviews ?? 1)
-							}
+							count={book.stars.two}
+							progress={book.stars.two / totalReviewsNormalized}
 						/>
 
 						<RatingLine
 							rating={1}
-							count={book?.stars.one ?? 0}
-							progress={
-								(book?.stars.one ?? 0) /
-								(book?.totalReviews ?? 1)
-							}
+							count={book.stars.one}
+							progress={book.stars.one / totalReviewsNormalized}
 						/>
 					</div>
 				</div>
