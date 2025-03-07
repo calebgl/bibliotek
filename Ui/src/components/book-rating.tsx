@@ -1,12 +1,12 @@
 import { useParams } from 'react-router'
+
 import { useBook } from '../hooks/use-api'
+import { assert } from '../lib/assert'
 import { RatingLine } from './rating-line'
 
 export function BookRating() {
 	const { bookId } = useParams()
-	if (!bookId) {
-		throw new Error('')
-	}
+	assert(bookId)
 
 	const { data: book, isLoading, error } = useBook(bookId)
 	if (error) {
@@ -15,9 +15,8 @@ export function BookRating() {
 	if (isLoading) {
 		return 'loading...'
 	}
-	if (!book) {
-		throw new Error()
-	}
+
+	assert(book)
 
 	const totalReviewsNormalized = book.totalReviews || 1
 

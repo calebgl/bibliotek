@@ -2,16 +2,23 @@ import { useMutationState } from '@tanstack/react-query'
 import { useParams } from 'react-router'
 
 import { useReviews } from '../hooks/use-api'
+import { assert } from '../lib/assert'
 import { Review } from '../types'
 import { BookReview } from './book-review'
 
 export function BookReviewList() {
 	const { bookId } = useParams()
-	if (!bookId) {
-		throw new Error('bookId is required on books')
-	}
+	assert(bookId)
 
 	const { data: reviews, isLoading, error } = useReviews(bookId)
+	if (error) {
+		throw error
+	}
+	if (isLoading) {
+		return <div>loading reviews...</div>
+	}
+
+	assert(reviews)
 
 	const [variables] = useMutationState<
 		Pick<Review, 'userId' | 'comment' | 'rate'>
@@ -23,22 +30,6 @@ export function BookReviewList() {
 				'userId' | 'comment' | 'rate'
 			>,
 	})
-
-	if (error) {
-		throw error
-	}
-
-	if (isLoading) {
-		return <div>loading reviews...</div>
-	}
-
-	if (!reviews) {
-		throw new Error()
-	}
-
-	if (reviews.length === 0) {
-		return <div>no reviews found</div>
-	}
 
 	return (
 		<>
@@ -63,6 +54,7 @@ export function BookReviewList() {
 				</div>
 			)}
 
+			{reviews.length === 0 && !variables && <div>no reviews found</div>}
 			{reviews.map((review) => (
 				<BookReview
 					key={review.id}

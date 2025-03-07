@@ -1,12 +1,11 @@
 import { useParams } from 'react-router'
 
 import { useBook } from '../hooks/use-api'
+import { assert } from '../lib/assert'
 
 export function BookDetails() {
 	const { bookId } = useParams()
-	if (!bookId) {
-		throw new Error()
-	}
+	assert(bookId)
 
 	const { data: book, isLoading, error } = useBook(bookId)
 	if (error) {
@@ -15,9 +14,8 @@ export function BookDetails() {
 	if (isLoading) {
 		return 'loading...'
 	}
-	if (!book) {
-		throw new Error()
-	}
+
+	assert(book)
 
 	return <div className="max-w-prose">{book.description}</div>
 }

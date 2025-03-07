@@ -3,14 +3,13 @@ import { MouseEvent } from 'react'
 import { useParams } from 'react-router'
 
 import { useBook } from '../hooks/use-api'
+import { assert } from '../lib/assert'
 import { formatCurrency } from '../lib/utils'
 import { booksAtom } from '../stores/cart'
 
 export function BookPurchaseInfo() {
 	const { bookId } = useParams()
-	if (!bookId) {
-		throw new Error()
-	}
+	assert(bookId)
 
 	const setBooksAtom = useSetAtom(booksAtom)
 
@@ -21,17 +20,12 @@ export function BookPurchaseInfo() {
 	if (isLoading) {
 		return 'loading'
 	}
-	if (!book) {
-		throw new Error()
-	}
+
+	assert(book)
 
 	function addToCart(_: MouseEvent<HTMLButtonElement>) {
-		if (!bookId) {
-			throw new Error()
-		}
-		if (!book) {
-			throw new Error()
-		}
+		assert(bookId)
+		assert(book)
 
 		setBooksAtom((prev) => {
 			const cloned = structuredClone(prev)
