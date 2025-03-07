@@ -1,4 +1,5 @@
 import { Book, Review } from '../types'
+import { HttpError, HttpStatus } from './http'
 import { sleep } from './utils'
 
 enum Method {
@@ -13,7 +14,10 @@ enum MimeType {
 export async function fetchBook(id: string): Promise<Book> {
 	const resp = await fetch('/api/books/' + id)
 	if (!resp.ok) {
-		throw new Error('error fetching book ' + id)
+		throw new HttpError(
+			resp.status as HttpStatus,
+			'error fetching book ' + id,
+		)
 	}
 
 	await sleep()
@@ -24,7 +28,10 @@ export async function fetchBook(id: string): Promise<Book> {
 export async function fetchReviews(bookId: string): Promise<Review[]> {
 	const resp = await fetch('/api/reviews/' + bookId)
 	if (!resp.ok) {
-		throw new Error('error fetching reviews for book ' + bookId)
+		throw new HttpError(
+			resp.status as HttpStatus,
+			'error fetching reviews for book ' + bookId,
+		)
 	}
 
 	await sleep()
@@ -51,7 +58,10 @@ export async function postReview(
 		}),
 	})
 	if (!resp.ok) {
-		throw new Error('error posting review for book ' + bookId)
+		throw new HttpError(
+			resp.status as HttpStatus,
+			'error posting review for book ' + bookId,
+		)
 	}
 
 	return resp.json()
