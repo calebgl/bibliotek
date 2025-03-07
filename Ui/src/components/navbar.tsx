@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { NavLink } from 'react-router'
 
+import { Cart } from './cart'
+
 export function Navbar() {
 	const [toggleCart, setToggleCart] = useState<boolean>(false)
 	const modalRef = useRef<HTMLDivElement>(null)
@@ -31,7 +33,9 @@ export function Navbar() {
 						}
 					}}
 				>
-					<div className="fixed top-0 right-0 h-full w-1/3 bg-white"></div>
+					<div className="fixed top-0 right-0 h-full w-1/3 bg-white">
+						<Cart />
+					</div>
 				</div>
 			)}
 			<div className="sticky top-0 left-0">
@@ -50,7 +54,7 @@ export function Navbar() {
 				</div>
 				<div className="p-4 pt-0">
 					<nav className="flex justify-start gap-2">
-						{[1, 2, 3, 4, 5].map((index) => (
+						{[1, 2, 3, 4, 15].map((index) => (
 							<NavLink key={index} to={'/books/' + index}>
 								{index}
 							</NavLink>
