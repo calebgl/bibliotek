@@ -10,16 +10,6 @@ export function BookReviewList() {
 	const { bookId } = useParams()
 	assert(bookId)
 
-	const { data: reviews, isLoading, error } = useReviews(bookId)
-	if (error) {
-		throw error
-	}
-	if (isLoading) {
-		return <div>loading reviews...</div>
-	}
-
-	assert(reviews)
-
 	const [variables] = useMutationState<
 		Pick<Review, 'userId' | 'comment' | 'rate'>
 	>({
@@ -30,6 +20,16 @@ export function BookReviewList() {
 				'userId' | 'comment' | 'rate'
 			>,
 	})
+
+	const { data: reviews, isLoading, error } = useReviews(bookId)
+	if (error) {
+		throw error
+	}
+	if (isLoading) {
+		return <div>loading reviews...</div>
+	}
+
+	assert(reviews)
 
 	return (
 		<>
