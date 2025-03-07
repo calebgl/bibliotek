@@ -30,7 +30,14 @@ export function BookPurchaseInfo() {
 		setBooksAtom((prev) => {
 			const cloned = structuredClone(prev)
 			if (!cloned[bookId]) {
-				cloned[bookId] = Object.assign({ quantity: 0 }, book)
+				cloned[bookId] = {
+					id: book.id,
+					title: book.title,
+					author: book.author,
+					price: book.price,
+					coverUrl: book.coverUrl,
+					quantity: 0,
+				}
 			}
 
 			cloned[bookId].quantity++

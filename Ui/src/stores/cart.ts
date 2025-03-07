@@ -1,6 +1,13 @@
 import { atom } from 'jotai'
 
-export const booksAtom = atom<Record<string, any>>({})
+import { Book } from '../types'
+
+type CartBook = Omit<
+	Book,
+	'stars' | 'totalReviews' | 'averageRating' | 'description'
+> & { quantity: number }
+
+export const booksAtom = atom<Record<string, CartBook>>({})
 
 export const countAtom = atom<number>((get) => {
 	const books = Object.values(get(booksAtom))
@@ -25,7 +32,7 @@ export const totalAtom = atom<number>((get) => {
 })
 
 type Cart = {
-	books: Record<string, any>
+	books: Record<string, CartBook>
 	count: number
 	total: number
 }
