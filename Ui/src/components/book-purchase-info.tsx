@@ -1,28 +1,68 @@
+import { useSetAtom } from 'jotai'
+import { MouseEvent } from 'react'
+import { useParams } from 'react-router'
+
+import { useBook } from '../hooks/use-api'
 import { formatCurrency } from '../lib/utils'
+import { booksAtom } from '../stores/cart'
 
-type BookPurchaseInfo = {
-	title: string
-	averageRating: number
-	totalReviews: number
-	price: number
-}
+export function BookPurchaseInfo() {
+	const { bookId } = useParams()
+	if (!bookId) {
+		throw new Error()
+	}
 
-export function BookPurchaseInfo(props: BookPurchaseInfo) {
+	const setBooksAtom = useSetAtom(booksAtom)
+
+	const { data: book, isLoading, error } = useBook(bookId)
+	if (error) {
+		throw error
+	}
+	if (isLoading) {
+		return 'loading'
+	}
+	if (!book) {
+		throw new Error()
+	}
+
+	function addToCart(_: MouseEvent<HTMLButtonElement>) {
+		if (!bookId) {
+			throw new Error()
+		}
+		if (!book) {
+			throw new Error()
+		}
+
+		setBooksAtom((prev) => {
+			const cloned = structuredClone(prev)
+			if (!cloned[bookId]) {
+				cloned[bookId] = Object.assign({ quantity: 0 }, book)
+			}
+
+			cloned[bookId].quantity++
+
+			return cloned
+		})
+	}
+
 	return (
 		<>
 			<div className="text-4xl font-semibold">
-				<h1>{props.title}</h1>
+				<h1>{book.title}</h1>
 			</div>
 			<div className="flex items-center gap-1">
 				<span>★★★★☆</span>
-				<span className="text-sm">{props.averageRating}</span>
-				<span className="text-xs">({props.totalReviews})</span>
+				<span className="text-sm">{book.averageRating}</span>
+				<span className="text-xs">({book.totalReviews})</span>
 			</div>
 			<div className="text-xl">
-				<span>{formatCurrency(props.price)}</span>
+				<span>{formatCurrency(book.price)}</span>
 			</div>
 			<div className="mt-auto flex gap-2">
-				<button className="grow cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500">
+				<button
+					onClick={addToCart}
+					className="grow cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500"
+				>
 					Add to cart
 				</button>
 				<button className="cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500">
