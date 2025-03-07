@@ -5,6 +5,7 @@ import { useParams } from 'react-router'
 
 import { postReview } from '../lib/api'
 import { Review } from '../types'
+import { assert } from '../lib/assert'
 
 const user = {
 	id: 1,
@@ -18,9 +19,7 @@ const formInitialState: { rate: number; comment: string } = {
 
 export function BookReviewForm() {
 	const { bookId } = useParams()
-	if (!bookId) {
-		throw new Error('bookId is required on review form')
-	}
+	assert(bookId)
 
 	const [form, setForm] = useState<typeof formInitialState>(formInitialState)
 
