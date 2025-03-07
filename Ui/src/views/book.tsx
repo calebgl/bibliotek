@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router'
 
 import { BookDetails } from '../components/book-details'
@@ -7,23 +6,15 @@ import { BookPurchaseInfo } from '../components/book-purchase-info'
 import { BookReviewForm } from '../components/book-review-form'
 import { BookReviewList } from '../components/book-review-list'
 import { RatingLine } from '../components/rating-line'
-import { fetchBook } from '../lib/api'
+import { useBook } from '../hooks/use-api'
 
 export function Book() {
-	const params = useParams()
-	const bookId = params.bookId
+	const { bookId } = useParams()
 	if (!bookId) {
 		throw new Error('bookId is required on books')
 	}
 
-	const {
-		data: book,
-		isLoading,
-		error,
-	} = useQuery({
-		queryKey: ['books', bookId],
-		queryFn: () => fetchBook(bookId),
-	})
+	const { data: book, isLoading, error } = useBook(bookId)
 
 	if (error) {
 		throw error
