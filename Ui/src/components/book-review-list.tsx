@@ -1,9 +1,9 @@
-import { Mutation, useMutationState, useQuery } from '@tanstack/react-query'
+import { useMutationState, useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router'
 
 import { fetchReviews } from '../lib/api'
-import { BookReview } from './book-review'
 import { Review } from '../types'
+import { BookReview } from './book-review'
 
 export function BookReviewList() {
 	const params = useParams()
@@ -17,7 +17,7 @@ export function BookReviewList() {
 		isLoading,
 		error,
 	} = useQuery({
-		queryKey: ['reviews', 'books', bookId],
+		queryKey: ['reviews', bookId],
 		queryFn: () => fetchReviews(bookId),
 	})
 

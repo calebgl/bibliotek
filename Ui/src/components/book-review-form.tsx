@@ -11,6 +11,11 @@ const user = {
 	username: 'calebgl',
 }
 
+const formInitialState: { rate: number; comment: string } = {
+	rate: 5,
+	comment: '',
+}
+
 export function BookReviewForm() {
 	const params = useParams()
 	const bookId = params.bookId
@@ -18,31 +23,43 @@ export function BookReviewForm() {
 		throw new Error('bookId is required on review form')
 	}
 
-	const [rate, setRate] = useState<number>(5)
-	const [comment, setComment] = useState<string>('')
+	const [form, setForm] = useState<typeof formInitialState>(formInitialState)
 
 	const queryClient = useQueryClient()
 	const { mutate } = useMutation({
 		mutationKey: ['postReview'],
 		mutationFn: (review: Pick<Review, 'userId' | 'comment' | 'rate'>) =>
-			postReview(review.userId!, parseInt(bookId), rate, comment),
+			postReview(
+				review.userId!,
+				parseInt(bookId),
+				review.rate,
+				review.comment,
+			),
 		onSettled: () =>
 			queryClient.invalidateQueries({
-				queryKey: ['reviews', 'books', bookId],
+				queryKey: ['reviews', bookId],
 			}),
 	})
 
 	async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault()
+
 		mutate({
 			userId: user.id,
-			rate,
-			comment,
+			rate: form.rate,
+			comment: form.comment,
 		})
+
+		setForm(formInitialState)
 	}
 
-	function handleChange(event: ChangeEvent<HTMLTextAreaElement>) {
-		setComment(event.currentTarget.value)
+	function handleChange(
+		event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
+	) {
+		setForm({
+			...form,
+			[event.target.name]: event.target.value,
+		})
 	}
 
 	return (
@@ -54,14 +71,22 @@ export function BookReviewForm() {
 					<div>{dayjs().format('LLL')}</div>
 				</div>
 				<form onSubmit={handleSubmit}>
-					<input type="number" max={5} min={1} step={1} name="rate" />
+					<input
+						type="number"
+						max={5}
+						min={1}
+						step={1}
+						name="rate"
+						value={form.rate}
+						onChange={handleChange}
+					/>
 					<textarea
 						placeholder="Leave a review..."
-						className="w-full max-w-prose resize-none bg-white"
 						rows={5}
-						value={comment}
-						onChange={handleChange}
 						name="comment"
+						value={form.comment}
+						onChange={handleChange}
+						className="w-full max-w-prose resize-none bg-white"
 					></textarea>
 					<button
 						type="submit"
