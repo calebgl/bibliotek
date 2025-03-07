@@ -1,25 +1,17 @@
-import { useMutationState, useQuery } from '@tanstack/react-query'
+import { useMutationState } from '@tanstack/react-query'
 import { useParams } from 'react-router'
 
-import { fetchReviews } from '../lib/api'
+import { useReviews } from '../hooks/use-api'
 import { Review } from '../types'
 import { BookReview } from './book-review'
 
 export function BookReviewList() {
-	const params = useParams()
-	const bookId = params.bookId
+	const { bookId } = useParams()
 	if (!bookId) {
 		throw new Error('bookId is required on books')
 	}
 
-	const {
-		data: reviews,
-		isLoading,
-		error,
-	} = useQuery({
-		queryKey: ['reviews', bookId],
-		queryFn: () => fetchReviews(bookId),
-	})
+	const { data: reviews, isLoading, error } = useReviews(bookId)
 
 	const [variables] = useMutationState<
 		Pick<Review, 'userId' | 'comment' | 'rate'>

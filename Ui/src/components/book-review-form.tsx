@@ -17,8 +17,7 @@ const formInitialState: { rate: number; comment: string } = {
 }
 
 export function BookReviewForm() {
-	const params = useParams()
-	const bookId = params.bookId
+	const { bookId } = useParams()
 	if (!bookId) {
 		throw new Error('bookId is required on review form')
 	}
