@@ -16,7 +16,7 @@ export function AdminBooks() {
 	assert(books)
 
 	return (
-		<div className="container mx-auto">
+		<>
 			<h2 className="text-xl font-bold">Books</h2>
 			<NavLink to="/admin/books/create">add book</NavLink>
 			<table className="w-full table-auto">
@@ -61,6 +61,6 @@ export function AdminBooks() {
 					))}
 				</tbody>
 			</table>
-		</div>
+		</>
 	)
 }

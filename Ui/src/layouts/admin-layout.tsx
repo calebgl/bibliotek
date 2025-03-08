@@ -1,5 +1,9 @@
 import { Outlet } from 'react-router'
 
 export function AdminLayout() {
-	return <Outlet />
+	return (
+		<div className="container mx-auto">
+			<Outlet />
+		</div>
+	)
 }
