@@ -53,7 +53,7 @@ export const totalAtom = atom<number>((get) => {
 		total += book.quantity * book.price
 	}
 
-	return 0
+	return total
 })
 
 type Cart = {
