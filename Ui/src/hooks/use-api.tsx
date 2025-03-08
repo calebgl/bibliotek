@@ -1,6 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { fetchBook, fetchBooks, fetchReviews } from '../lib/api'
+import {
+	fetchAdminBooks,
+	fetchBook,
+	fetchBooks,
+	fetchReviews,
+} from '../lib/api'
 
 export function useBooks() {
 	return useQuery({
@@ -20,5 +25,12 @@ export function useReviews(bookId: string) {
 	return useQuery({
 		queryKey: ['reviews', bookId],
 		queryFn: () => fetchReviews(bookId),
+	})
+}
+
+export function useAdminBooks() {
+	return useQuery({
+		queryKey: ['admin', 'books'],
+		queryFn: () => fetchAdminBooks(),
 	})
 }

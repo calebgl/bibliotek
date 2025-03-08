@@ -11,6 +11,19 @@ enum MimeType {
 	JSON = 'application/json',
 }
 
+export async function fetchAdminBooks(): Promise<
+	(Omit<Book, 'stars'> & { stockQuantity: number })[]
+> {
+	const resp = await fetch('/api/admin/books')
+	if (!resp.ok) {
+		throw new HttpError(resp.status as HttpStatus, 'error fetching books')
+	}
+
+	await sleep()
+
+	return resp.json()
+}
+
 export async function fetchBooks(): Promise<Omit<Book, 'stars'>[]> {
 	const resp = await fetch('/api/books')
 	if (!resp.ok) {
