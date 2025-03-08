@@ -1,11 +1,6 @@
 import { atom } from 'jotai'
 
-import { Book } from '../types'
-
-type CartBook = Omit<
-	Book,
-	'stars' | 'totalReviews' | 'averageRating' | 'description'
-> & { quantity: number }
+import { CartBook } from '../types'
 
 export const booksAtom = atom<Record<string, CartBook>>({
 	'1': {

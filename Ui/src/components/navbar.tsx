@@ -1,18 +1,30 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { NavLink } from 'react-router'
 
 import { Cart } from './cart'
-import { createPortal } from 'react-dom'
+import { useAtomValue } from 'jotai'
+import { countAtom } from '../stores/cart'
+import { assert } from '../lib/assert'
 
 export function Navbar() {
 	const [toggleCart, setToggleCart] = useState<boolean>(false)
 	const modalRef = useRef<HTMLDivElement>(null)
+
+	const count = useAtomValue(countAtom)
+	assert(count >= 0)
 
 	useEffect(() => {
 		function ev(e: KeyboardEvent) {
 			if (toggleCart && e.code === 'Escape') {
 				setToggleCart(false)
 			}
+		}
+
+		if (toggleCart) {
+			document.body.style.overflowY = 'hidden'
+		} else {
+			document.body.style.overflowY = 'visible'
 		}
 
 		window.addEventListener('keyup', ev)
@@ -44,7 +56,7 @@ export function Navbar() {
 					<div className="justify-self-center">searchbar</div>
 					<div className="flex gap-2 justify-self-end">
 						<button onClick={() => setToggleCart((prev) => !prev)}>
-							cart
+							cart{count > 0 && <span>({count})</span>}
 						</button>
 						<button>saved</button>
 						<button>profile</button>
