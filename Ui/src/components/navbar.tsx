@@ -3,16 +3,11 @@ import { createPortal } from 'react-dom'
 import { NavLink } from 'react-router'
 
 import { Cart } from './cart'
-import { useAtomValue } from 'jotai'
-import { countAtom } from '../stores/cart'
-import { assert } from '../lib/assert'
+import { NavbarActions } from './navbar-actions'
 
 export function Navbar() {
 	const [toggleCart, setToggleCart] = useState<boolean>(true)
 	const modalRef = useRef<HTMLDivElement>(null)
-
-	const count = useAtomValue(countAtom)
-	assert(count >= 0)
 
 	useEffect(() => {
 		function ev(e: KeyboardEvent) {
@@ -55,11 +50,9 @@ export function Navbar() {
 					</div>
 					<div className="justify-self-center">searchbar</div>
 					<div className="flex gap-2 justify-self-end">
-						<button onClick={() => setToggleCart((prev) => !prev)}>
-							cart{count > 0 && <span>({count})</span>}
-						</button>
-						<button>saved</button>
-						<button>profile</button>
+						<NavbarActions
+							onCloseCart={() => setToggleCart((prev) => !prev)}
+						/>
 					</div>
 				</div>
 				<div className="p-4 pt-0">
