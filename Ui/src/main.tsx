@@ -6,9 +6,10 @@ import { createBrowserRouter, RouterProvider } from 'react-router'
 import './assets/main.css'
 import './config.ts'
 
-import { App } from './app.tsx'
-import { Book } from './views/book.tsx'
-import { Home } from './views/home.tsx'
+import { App } from './app'
+import { Admin } from './views/admin'
+import { Book } from './views/book'
+import { Home } from './views/home'
 
 const queryClient = new QueryClient()
 const router = createBrowserRouter([
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
 				element: <Book />,
 			},
 		],
+	},
+	{
+		path: '/admin',
+		element: <Admin />,
 	},
 ])
 
