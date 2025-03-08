@@ -37,6 +37,18 @@ export function CartList() {
 		})
 	}, [])
 
+	const handleDelete = useCallback((id: string) => {
+		setBooks((prev: Record<string, CartBook>) => {
+			const cloned = structuredClone(prev)
+			assert(cloned[id])
+			assert(cloned[id].quantity > 0)
+
+			delete cloned[id]
+
+			return cloned
+		})
+	}, [])
+
 	return (
 		<div className="space-y-8">
 			{cartBooks.length === 0 && 'There are no books in your cart!'}
@@ -46,6 +58,7 @@ export function CartList() {
 					{...book}
 					onDecrement={handleDecrement}
 					onIncrement={handleIncrement}
+					onDelete={handleDelete}
 				/>
 			))}
 		</div>

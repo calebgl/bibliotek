@@ -8,7 +8,7 @@ import { countAtom } from '../stores/cart'
 import { assert } from '../lib/assert'
 
 export function Navbar() {
-	const [toggleCart, setToggleCart] = useState<boolean>(false)
+	const [toggleCart, setToggleCart] = useState<boolean>(true)
 	const modalRef = useRef<HTMLDivElement>(null)
 
 	const count = useAtomValue(countAtom)
