@@ -8,7 +8,7 @@ import './config.ts'
 
 import { AdminLayout } from './layouts/admin-layout.tsx'
 import { BaseLayout } from './layouts/base-layout.tsx'
-import { Admin } from './views/admin'
+import { AdminBooks } from './views/admin-books.tsx'
 import { Book } from './views/book'
 import { Home } from './views/home'
 
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
 		children: [
 			{
 				path: '/admin/books',
-				element: <Admin />,
+				element: <AdminBooks />,
 				children: [
 					{
 						path: '/admin/books/create',
