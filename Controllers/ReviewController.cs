@@ -13,7 +13,7 @@ public class ReviewController(BibliotekContext context) : ControllerBase
     public IActionResult ListBookReviews(
         uint bookId,
         [FromQuery(Name = "page")] uint page = 1,
-        [FromQuery(Name = "limit")] uint limit = 1
+        [FromQuery(Name = "limit")] uint limit = 30
     )
     {
         var book = context.Books.Find(bookId);
