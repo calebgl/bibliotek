@@ -6,7 +6,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router'
 import './assets/main.css'
 import './config.ts'
 
-import { App } from './app'
+import { AdminLayout } from './layouts/admin-layout.tsx'
+import { BaseLayout } from './layouts/base-layout.tsx'
 import { Admin } from './views/admin'
 import { Book } from './views/book'
 import { Home } from './views/home'
@@ -15,7 +16,7 @@ const queryClient = new QueryClient()
 const router = createBrowserRouter([
 	{
 		path: '/',
-		element: <App />,
+		element: <BaseLayout />,
 		children: [
 			{
 				index: true,
@@ -28,8 +29,19 @@ const router = createBrowserRouter([
 		],
 	},
 	{
-		path: '/admin/books',
-		element: <Admin />,
+		path: '/admin',
+		element: <AdminLayout />,
+		children: [
+			{
+				path: '/admin/books',
+				element: <Admin />,
+				children: [
+					{
+						path: '/admin/books/create',
+					},
+				],
+			},
+		],
 	},
 ])
 
