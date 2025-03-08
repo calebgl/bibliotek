@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { NavLink } from 'react-router'
 
 import { Cart } from './cart'
+import { createPortal } from 'react-dom'
 
 export function Navbar() {
 	const [toggleCart, setToggleCart] = useState<boolean>(false)
@@ -23,21 +24,18 @@ export function Navbar() {
 
 	return (
 		<>
-			{toggleCart && (
-				<div
-					ref={modalRef}
-					className="fixed inset-0 z-50 overflow-y-hidden bg-gray-900/30 backdrop-blur-xs"
-					onClick={(e) => {
-						if (e.target === modalRef.current) {
-							setToggleCart(false)
-						}
-					}}
-				>
-					<div className="fixed top-0 right-0 h-full w-1/3 bg-white">
-						<Cart />
-					</div>
-				</div>
-			)}
+			{toggleCart &&
+				createPortal(
+					<Cart
+						ref={modalRef}
+						onClose={(event) => {
+							if (event.target === modalRef.current) {
+								setToggleCart(false)
+							}
+						}}
+					/>,
+					document.body,
+				)}
 			<div className="sticky top-0 left-0">
 				<div className="grid grid-cols-3 justify-between p-4">
 					<div>
