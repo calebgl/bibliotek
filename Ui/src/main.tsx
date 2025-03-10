@@ -35,11 +35,9 @@ const router = createBrowserRouter([
 			{
 				path: '/admin/books',
 				element: <AdminBooks />,
-				children: [
-					{
-						path: '/admin/books/create',
-					},
-				],
+			},
+			{
+				path: '/admin/books/create',
 			},
 		],
 	},
