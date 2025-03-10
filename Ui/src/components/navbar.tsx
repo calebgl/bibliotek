@@ -6,7 +6,7 @@ import { Cart } from './cart'
 import { NavbarActions } from './navbar-actions'
 
 export function Navbar() {
-	const [toggleCart, setToggleCart] = useState<boolean>(true)
+	const [toggleCart, setToggleCart] = useState<boolean>(false)
 	const modalRef = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {
