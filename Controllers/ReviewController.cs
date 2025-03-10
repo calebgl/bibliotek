@@ -57,7 +57,6 @@ public class ReviewController(BibliotekContext context) : ControllerBase
         }
 
         var userId = uint.Parse(userIdString);
-
         if (userId is 0)
         {
             return BadRequest();
