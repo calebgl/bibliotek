@@ -46,8 +46,18 @@ public class ReviewController(BibliotekContext context) : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult PostReview([FromHeader] uint userId, CreateReviewDto createReviewDto)
+    public IActionResult PostReview(
+        [FromHeader(Name = "Bibliotek-User-Id")] string userIdString,
+        CreateReviewDto createReviewDto
+    )
     {
+        if (String.IsNullOrEmpty(userIdString))
+        {
+            return BadRequest();
+        }
+
+        var userId = uint.Parse(userIdString);
+
         if (userId is 0)
         {
             return BadRequest();
