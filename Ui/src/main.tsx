@@ -8,6 +8,7 @@ import './config.ts'
 
 import { AdminLayout } from './layouts/admin-layout.tsx'
 import { BaseLayout } from './layouts/base-layout.tsx'
+import { AdminBookCreate } from './views/admin-book-create.tsx'
 import { AdminBooks } from './views/admin-books.tsx'
 import { Book } from './views/book'
 import { Home } from './views/home'
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: '/admin/books/create',
+				element: <AdminBookCreate />,
 			},
 		],
 	},
