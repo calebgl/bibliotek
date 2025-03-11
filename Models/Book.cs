@@ -1,6 +1,6 @@
 namespace Bibliotek.Models;
 
-public class Book
+public class Book : ITimestamps
 {
     public Book()
     {
@@ -10,6 +10,7 @@ public class Book
     }
 
     public uint Id { get; set; }
+
     public required string Title { get; set; }
     public required string Author { get; set; }
     public string? Subtitle { get; set; }
@@ -19,6 +20,9 @@ public class Book
 
     public uint StockQuantity { get; set; }
     public decimal Price { get; set; }
+
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     public List<Review> Reviews { get; set; }
     public BookStats BookStats { get; set; }
