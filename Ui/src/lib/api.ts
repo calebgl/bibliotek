@@ -1,14 +1,11 @@
 import { Book, Review } from '../types'
+import { MimeType } from '../types/utils'
 import { HttpError, HttpStatus } from './http'
 import { sleep } from './utils'
 
 enum Method {
 	GET = 'GET',
 	POST = 'POST',
-}
-
-enum MimeType {
-	JSON = 'application/json',
 }
 
 export async function fetchAdminBooks(): Promise<
