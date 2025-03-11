@@ -1,44 +1,134 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, FormEvent, useState } from 'react'
 import { NavLink } from 'react-router'
 
 export function AdminBookCreate() {
-	const [form, setForm] = useState<object>({
-		title: '',
-		subtitle: '',
-		author: '',
-		description: '',
-		price: '',
-		stockQuantity: 0,
-		coverImage: '',
-		releasedAt: new Date(),
-	})
+	const [coverImage, setCoverImage] = useState<File | null | undefined>()
 
-	function handleChange(
-		event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-	) {
-		setForm({
-			...form,
-			[event.target.name]: event.target.value,
-		})
+	function handleChange(event: ChangeEvent<HTMLInputElement>) {
+		setCoverImage(event.target.files?.[0])
+	}
+
+	function handleSubmit(event: FormEvent<HTMLFormElement>) {
+		event.preventDefault()
+
+		const formData = new FormData(event.currentTarget)
 	}
 
 	return (
-		<div>
-			<NavLink to="/admin/books">back</NavLink>
-			<form>
-				<label>
-					Title
-					<input type="text" onChange={handleChange} />
-				</label>
-				<label>
-					Author
-					<input type="text" onChange={handleChange} />
-				</label>
-				<label>
-					Description
-					<textarea onChange={handleChange} className="resize-none" />
-				</label>
-			</form>
-		</div>
+		<form onSubmit={handleSubmit} className="space-y-4">
+			<div className="flex items-center gap-4">
+				<NavLink
+					to="/admin/books"
+					className="cursor-pointer bg-gray-300 px-4 py-2"
+				>
+					back
+				</NavLink>
+				<h2>Create book</h2>
+				<div className="ml-auto flex gap-2">
+					<NavLink
+						to="/admin/books"
+						className="cursor-pointer bg-gray-300 px-4 py-2"
+					>
+						cancel
+					</NavLink>
+					<button
+						type="submit"
+						className="cursor-pointer bg-gray-300 px-4 py-2"
+					>
+						save
+					</button>
+				</div>
+			</div>
+			<div className="flex gap-4">
+				<div className="basis-1/4">
+					<fieldset className="">
+						<label className="grid aspect-square size-full max-w-48 cursor-pointer place-content-center border border-dashed border-gray-300 bg-gray-50">
+							<div className="">
+								{coverImage ? (
+									<img
+										src={URL.createObjectURL(coverImage)}
+									/>
+								) : (
+									<p>Click to upload</p>
+								)}
+							</div>
+							<input
+								type="file"
+								accept="image/png"
+								name="coverImage"
+								onChange={handleChange}
+								className="hidden"
+							/>
+						</label>
+					</fieldset>
+				</div>
+				<div className="grow border border-gray-300">
+					<div className="space-y-4 bg-white p-8 pb-12">
+						<section className="space-y-4">
+							<h3 className="text-xl font-semibold">
+								Book details
+							</h3>
+							<fieldset className="grid grid-cols-2 gap-4">
+								<label className="grid grid-rows-2">
+									Title
+									<input
+										type="text"
+										name="title"
+										className="border border-gray-200 px-2 py-1"
+									/>
+								</label>
+								<label className="grid grid-rows-2">
+									Subtitle
+									<input
+										type="text"
+										name="title"
+										className="border border-gray-200 px-2 py-1"
+									/>
+								</label>
+								<label className="grid grid-rows-2">
+									Author
+									<input
+										type="text"
+										name="author"
+										className="border border-gray-200 px-2 py-1"
+									/>
+								</label>
+								<label className="col-span-2 grid">
+									Description
+									<textarea
+										name="description"
+										className="resize-none border border-gray-200 px-2 py-1"
+									/>
+								</label>
+							</fieldset>
+						</section>
+						<div className="my-8 h-[1px] w-full bg-gray-300" />
+						<section className="space-y-4">
+							<h3 className="text-xl font-semibold">
+								Stock details
+							</h3>
+							<fieldset className="grid grid-cols-2 gap-4">
+								<label className="grid grid-rows-2">
+									Stock quantity
+									<input
+										type="number"
+										name="quantity"
+										className="border border-gray-200 px-2 py-1"
+									/>
+								</label>
+								<label className="grid grid-rows-2">
+									Price
+									<input
+										type="string"
+										name="price"
+										className="border border-gray-200 px-2 py-1"
+									/>
+								</label>
+							</fieldset>
+						</section>
+					</div>
+				</div>
+			</div>
+		</form>
 	)
 }
