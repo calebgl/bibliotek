@@ -25,7 +25,11 @@ public class AdminController(BibliotekContext context) : ControllerBase
                     b.Description,
                     TotalReviews = b.BookStats.TotalReviewCount,
                     AverageRating = b.BookStats.AverageRating,
+                    b.CreatedAt,
+                    b.UpdatedAt,
                 })
+                .OrderByDescending(b => b.UpdatedAt)
+                .ThenByDescending(b => b.CreatedAt)
                 .ToList()
         );
     }
