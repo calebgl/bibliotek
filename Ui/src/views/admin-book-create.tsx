@@ -81,7 +81,7 @@ export function AdminBookCreate() {
 									Subtitle
 									<input
 										type="text"
-										name="title"
+										name="subtitle"
 										className="border border-gray-200 px-2 py-1"
 									/>
 								</label>
@@ -112,7 +112,7 @@ export function AdminBookCreate() {
 									Stock quantity
 									<input
 										type="number"
-										name="quantity"
+										name="stockQuantity"
 										className="border border-gray-200 px-2 py-1"
 									/>
 								</label>
