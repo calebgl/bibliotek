@@ -1,4 +1,5 @@
 import { Book, Review } from '../types'
+import { AdminBook, CreateBook } from '../types/book'
 import { MimeType } from '../types/utils'
 import { HttpError, HttpStatus } from './http'
 import { sleep } from './utils'
@@ -8,15 +9,31 @@ enum Method {
 	POST = 'POST',
 }
 
-export async function fetchAdminBooks(): Promise<
-	(Omit<Book, 'stars'> & { stockQuantity: number })[]
-> {
+export async function fetchAdminBooks(): Promise<AdminBook[]> {
 	const resp = await fetch('/api/admin/books')
 	if (!resp.ok) {
 		throw new HttpError(resp.status as HttpStatus, 'error fetching books')
 	}
 
 	await sleep()
+
+	return resp.json()
+}
+
+// TODO: handle image upload
+export async function createAdminBook(book: CreateBook): Promise<AdminBook> {
+	const resp = await fetch('/api/admin/books', {
+		method: Method.POST,
+		headers: {
+			'Content-Type': MimeType.JSON,
+		},
+		body: JSON.stringify(book),
+	})
+	if (!resp.ok) {
+		throw new HttpError(resp.status as HttpStatus, 'error creating book')
+	}
+
+	await sleep(2000)
 
 	return resp.json()
 }

@@ -1,9 +1,10 @@
 export type Book = {
 	id: string
 	title: string
+	subtitle: string | null
 	author: string
-	coverUrl: string
-	description: string
+	coverUrl: string | null
+	description: string | null
 	price: number
 	totalReviews: number
 	averageRating: number
@@ -15,3 +16,13 @@ export type Book = {
 		five: number
 	}
 }
+
+export type AdminBook = Omit<Book, 'stars'> & {
+	stockQuantity: number
+}
+
+export type CreateBook = Pick<Book, 'title' | 'author' | 'price'> &
+	Partial<Pick<Book, 'description' | 'subtitle'>> & {
+		stockQuantity: number
+		coverImage: File | null
+	}
