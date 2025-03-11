@@ -1,11 +1,18 @@
+import { useMutationState } from '@tanstack/react-query'
 import { NavLink } from 'react-router'
 
 import { useAdminBooks } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 import { formatCurrency } from '../lib/utils'
+import { CreateBook } from '../types/book'
 
 export function AdminBooks() {
 	const { data: books, isLoading, error } = useAdminBooks()
+	const [variables] = useMutationState<CreateBook>({
+		filters: { mutationKey: ['createAdminBook'], status: 'pending' },
+		select: (mutation) => mutation.state.variables as CreateBook,
+	})
+
 	if (error) {
 		throw error
 	}
@@ -32,6 +39,23 @@ export function AdminBooks() {
 					</tr>
 				</thead>
 				<tbody className="">
+					{variables && (
+						<tr className="odd:bg-neutral-100 even:bg-white/80 [&>td]:p-2">
+							<td className="w-4">
+								<input type="checkbox" className="" />
+							</td>
+							<td>{variables.title}</td>
+							<td>{formatCurrency(variables.price)}</td>
+							<td>{variables.stockQuantity}</td>
+							<td>{variables.author}</td>
+							<td className="flex gap-2">
+								<button className="cursor-pointer">edit</button>
+								<button className="cursor-pointer">
+									delete
+								</button>
+							</td>
+						</tr>
+					)}
 					{books.map((book) => (
 						<tr
 							key={book.id}
@@ -40,13 +64,6 @@ export function AdminBooks() {
 							<td className="w-4">
 								<input type="checkbox" className="" />
 							</td>
-							{/*<td className="w-16">
-							<img
-								className="block h-full object-contain"
-								src={book.coverUrl}
-								alt={book.title}
-							/>
-						</td>*/}
 							<td>{book.title}</td>
 							<td>{formatCurrency(book.price)}</td>
 							<td>{book.stockQuantity}</td>

@@ -1,8 +1,24 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ChangeEvent, FormEvent, useState } from 'react'
-import { NavLink } from 'react-router'
+import { NavLink, useNavigate } from 'react-router'
+
+import { createAdminBook } from '../lib/api'
+import { assert } from '../lib/assert'
+import { CreateBook } from '../types/book'
 
 export function AdminBookCreate() {
+	const navigate = useNavigate()
 	const [coverImage, setCoverImage] = useState<File | null | undefined>()
+
+	const queryClient = useQueryClient()
+	const { mutateAsync } = useMutation({
+		mutationKey: ['createAdminBook'],
+		mutationFn: (book: CreateBook) => createAdminBook(book),
+		onSettled: () =>
+			queryClient.invalidateQueries({
+				queryKey: ['admin', 'books'],
+			}),
+	})
 
 	function handleChange(event: ChangeEvent<HTMLInputElement>) {
 		setCoverImage(event.target.files?.[0])
@@ -12,6 +28,31 @@ export function AdminBookCreate() {
 		event.preventDefault()
 
 		const formData = new FormData(event.currentTarget)
+		const title = formData.get('title')
+		const description = formData.get('description')
+		const author = formData.get('author')
+		const subtitle = formData.get('subtitle')
+		const price = formData.get('price')
+		const stockQuantity = formData.get('stockQuantity')
+
+		assert(typeof title == 'string')
+		assert(typeof description === 'string')
+		assert(typeof author === 'string')
+		assert(typeof subtitle === 'string')
+		assert(typeof price === 'string')
+		assert(typeof stockQuantity === 'string')
+
+		mutateAsync({
+			title,
+			subtitle,
+			author,
+			description,
+			price: Number.parseInt(price),
+			stockQuantity: Number.parseInt(stockQuantity),
+			coverImage: null,
+		})
+
+		navigate('/admin/books')
 	}
 
 	return (
