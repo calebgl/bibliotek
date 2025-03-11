@@ -4,7 +4,7 @@ import { CartBook } from '../types'
 
 export const booksAtom = atom<Record<string, CartBook>>({
 	'1': {
-		id: 1,
+		id: '1',
 		title: '1984',
 		author: 'Goerge Orwell',
 		price: 10.99,
@@ -12,7 +12,7 @@ export const booksAtom = atom<Record<string, CartBook>>({
 		quantity: 2,
 	},
 	'2': {
-		id: 2,
+		id: '2',
 		title: 'Words of Radiance',
 		author: 'Brandon Sanderson',
 		price: 8.99,
@@ -20,7 +20,7 @@ export const booksAtom = atom<Record<string, CartBook>>({
 		quantity: 1,
 	},
 	'3': {
-		id: 3,
+		id: '3',
 		title: 'La Sombra del Viento',
 		author: 'Carlos Zafon',
 		price: 5.99,
