@@ -30,7 +30,7 @@ public class AdminController(BibliotekContext context) : ControllerBase
         );
     }
 
-    [HttpPost]
+    [HttpPost("books")]
     public IActionResult Create(CreateBookDto book)
     {
         var newBook = new Book
