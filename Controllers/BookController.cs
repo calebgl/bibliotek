@@ -1,4 +1,3 @@
-using Bibliotek.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -57,26 +56,4 @@ public class BookController(BibliotekContext context) : ControllerBase
                 .Single()
         );
     }
-
-    [HttpPost]
-    public IActionResult Create(CreateBookDto book)
-    {
-        var newBook = new Book { Title = book.Title, Author = book.Author };
-
-        context.Books.Add(newBook);
-        context.SaveChanges();
-
-        return Ok(
-            new
-            {
-                newBook.Id,
-                newBook.Title,
-                newBook.Author,
-                newBook.ReleasedAt,
-                newBook.Reviews,
-            }
-        );
-    }
 }
-
-public record CreateBookDto(string Title, string Author);
