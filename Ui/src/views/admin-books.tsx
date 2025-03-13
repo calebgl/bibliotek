@@ -73,7 +73,12 @@ export function AdminBooks() {
 							<td className="text-right">{book.stockQuantity}</td>
 							<td>{book.author}</td>
 							<td className="flex gap-2">
-								<button className="cursor-pointer">edit</button>
+								<NavLink
+									className="cursor-pointer"
+									to={`/admin/books/` + book.id}
+								>
+									edit
+								</NavLink>
 								<button className="cursor-pointer">
 									delete
 								</button>
