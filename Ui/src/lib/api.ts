@@ -7,6 +7,7 @@ import { sleep } from './utils'
 enum Method {
 	GET = 'GET',
 	POST = 'POST',
+	PUT = 'PUT',
 }
 
 export async function fetchAdminBooks(): Promise<AdminBook[]> {
@@ -33,7 +34,44 @@ export async function createAdminBook(book: CreateBook): Promise<AdminBook> {
 		throw new HttpError(resp.status as HttpStatus, 'error creating book')
 	}
 
-	await sleep(2000)
+	await sleep()
+
+	return resp.json()
+}
+
+export async function putAdminBook(
+	id: string,
+	book: CreateBook,
+): Promise<AdminBook> {
+	const resp = await fetch('/api/admin/books/' + id, {
+		method: Method.PUT,
+		headers: {
+			'Content-Type': MimeType.JSON,
+		},
+		body: JSON.stringify(book),
+	})
+	if (!resp.ok) {
+		throw new HttpError(
+			resp.status as HttpStatus,
+			'error updating book' + id,
+		)
+	}
+
+	await sleep()
+
+	return resp.json()
+}
+
+export async function fetchAdminBook(id: string): Promise<AdminBook> {
+	const resp = await fetch('/api/admin/books/' + id)
+	if (!resp.ok) {
+		throw new HttpError(
+			resp.status as HttpStatus,
+			'error fetching book ' + id,
+		)
+	}
+
+	await sleep()
 
 	return resp.json()
 }
