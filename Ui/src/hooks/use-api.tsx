@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
 import {
+	fetchAdminBook,
 	fetchAdminBooks,
 	fetchBook,
 	fetchBooks,
@@ -32,5 +33,12 @@ export function useAdminBooks() {
 	return useQuery({
 		queryKey: ['admin', 'books'],
 		queryFn: () => fetchAdminBooks(),
+	})
+}
+
+export function useAdminBook(id: string) {
+	return useQuery({
+		queryKey: ['admin', 'books', id],
+		queryFn: () => fetchAdminBook(id),
 	})
 }
