@@ -6,3 +6,9 @@ export const formatCurrency = new Intl.NumberFormat('es-mx', {
 	style: 'currency',
 	currency: 'MXN',
 }).format
+
+export const formatDecimal = new Intl.NumberFormat('es-mx', {
+	style: 'decimal',
+	minimumFractionDigits: 2,
+	maximumFractionDigits: 2,
+}).format
