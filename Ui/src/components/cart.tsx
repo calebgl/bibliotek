@@ -19,11 +19,16 @@ export function Cart(props: {
 			onClick={props.onClose}
 		>
 			<div className="fixed top-0 right-0 h-full w-1/3 bg-white">
-				<div className="h-full overflow-y-auto p-8">
-					<h2 className="mb-4 text-3xl font-bold">
+				<div className="relative flex h-full flex-col gap-4 p-8">
+					<h2 className="text-3xl font-bold">
 						Cart{count > 0 && <span>({count})</span>}
 					</h2>
-					<CartList />
+					<div className="shrink grow overflow-y-auto">
+						<CartList />
+					</div>
+					<button className="cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500">
+						Buy
+					</button>
 				</div>
 			</div>
 		</div>
