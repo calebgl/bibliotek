@@ -20,7 +20,7 @@ export function BookImagePreview() {
 	return (
 		<div className="bg-gray-100 p-16">
 			<img
-				src={book.coverUrl}
+				src={book.coverUrl ?? undefined}
 				alt="book-cover"
 				className="mx-auto max-w-64"
 			/>
