@@ -17,5 +17,9 @@ export function BookDetails() {
 
 	assert(book)
 
-	return <div className="max-w-prose">{book.description}</div>
+	return (
+		<div className="max-w-prose whitespace-pre-wrap">
+			{book.description}
+		</div>
+	)
 }
