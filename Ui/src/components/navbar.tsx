@@ -1,22 +1,24 @@
-import { useEffect, useRef, useState } from 'react'
+import { useAtom } from 'jotai'
+import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { NavLink } from 'react-router'
 
+import { openAtom } from '../stores/cart'
 import { Cart } from './cart'
 import { NavbarActions } from './navbar-actions'
 
 export function Navbar() {
-	const [toggleCart, setToggleCart] = useState<boolean>(false)
+	const [open, setOpen] = useAtom(openAtom)
 	const modalRef = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {
 		function ev(e: KeyboardEvent) {
-			if (toggleCart && e.code === 'Escape') {
-				setToggleCart(false)
+			if (open && e.code === 'Escape') {
+				setOpen(false)
 			}
 		}
 
-		if (toggleCart) {
+		if (open) {
 			document.body.style.overflowY = 'hidden'
 		} else {
 			document.body.style.overflowY = 'visible'
@@ -27,17 +29,17 @@ export function Navbar() {
 		return () => {
 			window.removeEventListener('keyup', ev)
 		}
-	}, [toggleCart])
+	}, [open])
 
 	return (
 		<>
-			{toggleCart &&
+			{open &&
 				createPortal(
 					<Cart
 						ref={modalRef}
 						onClose={(event) => {
 							if (event.target === modalRef.current) {
-								setToggleCart(false)
+								setOpen(false)
 							}
 						}}
 					/>,
@@ -51,7 +53,7 @@ export function Navbar() {
 					<div className="justify-self-center">searchbar</div>
 					<div className="flex gap-2 justify-self-end">
 						<NavbarActions
-							onCloseCart={() => setToggleCart((prev) => !prev)}
+							onCloseCart={() => setOpen((prev) => !prev)}
 						/>
 					</div>
 				</div>
