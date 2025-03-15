@@ -1,11 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ChangeEvent, FormEvent, useState } from 'react'
 import { NavLink, useParams } from 'react-router'
 
-import { useAdminBook } from '../hooks/use-api'
-import { putAdminBook } from '../lib/api'
+import { useAdminBook, useUpdateAdminBookMutation } from '../hooks/use-api'
 import { assert } from '../lib/assert'
-import { CreateBook } from '../types/book'
 
 export function AdminBookUpdate() {
 	const { bookId } = useParams()
@@ -14,16 +11,8 @@ export function AdminBookUpdate() {
 	const { data: book, isLoading, error } = useAdminBook(bookId)
 	const [coverImage, setCoverImage] = useState<File | null | undefined>()
 
-	const queryClient = useQueryClient()
-	const { mutateAsync, isIdle, isPaused, isPending } = useMutation({
-		mutationKey: ['updateAdminBook', bookId],
-		mutationFn: (variables: { bookId: string; book: CreateBook }) =>
-			putAdminBook(variables.bookId, variables.book),
-		onSettled: () =>
-			queryClient.invalidateQueries({
-				queryKey: ['admin', 'books'],
-			}),
-	})
+	const { mutateAsync, isIdle, isPaused, isPending } =
+		useUpdateAdminBookMutation(bookId)
 
 	if (isLoading) {
 		return 'loading...'
@@ -59,16 +48,13 @@ export function AdminBookUpdate() {
 		assert(bookId)
 
 		mutateAsync({
-			bookId,
-			book: {
-				title,
-				subtitle,
-				author,
-				description,
-				price: Number.parseInt(price),
-				stockQuantity: Number.parseInt(stockQuantity),
-				coverImage: null,
-			},
+			title,
+			subtitle,
+			author,
+			description,
+			price: Number.parseInt(price),
+			stockQuantity: Number.parseInt(stockQuantity),
+			coverImage: null,
 		})
 	}
 

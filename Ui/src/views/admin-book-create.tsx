@@ -1,24 +1,14 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ChangeEvent, FormEvent, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router'
 
-import { createAdminBook } from '../lib/api'
+import { useCreateAdminBookMutation } from '../hooks/use-api'
 import { assert } from '../lib/assert'
-import { CreateBook } from '../types/book'
 
 export function AdminBookCreate() {
 	const navigate = useNavigate()
 	const [coverImage, setCoverImage] = useState<File | null | undefined>()
 
-	const queryClient = useQueryClient()
-	const { mutateAsync } = useMutation({
-		mutationKey: ['createAdminBook'],
-		mutationFn: (book: CreateBook) => createAdminBook(book),
-		onSettled: () =>
-			queryClient.invalidateQueries({
-				queryKey: ['admin', 'books'],
-			}),
-	})
+	const { mutateAsync } = useCreateAdminBookMutation()
 
 	function handleChange(event: ChangeEvent<HTMLInputElement>) {
 		setCoverImage(event.target.files?.[0])

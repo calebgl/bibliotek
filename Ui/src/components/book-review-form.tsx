@@ -1,10 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { ChangeEvent, FormEvent, useState } from 'react'
 import { useParams } from 'react-router'
 
-import { postReview } from '../lib/api'
-import { Review } from '../types'
+import { useCreateReviewMutation } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 
 const user = {
@@ -23,21 +21,7 @@ export function BookReviewForm() {
 
 	const [form, setForm] = useState<typeof formInitialState>(formInitialState)
 
-	const queryClient = useQueryClient()
-	const { mutate } = useMutation({
-		mutationKey: ['postReview'],
-		mutationFn: (review: Pick<Review, 'userId' | 'comment' | 'rate'>) =>
-			postReview(
-				review.userId!,
-				parseInt(bookId),
-				review.rate,
-				review.comment,
-			),
-		onSettled: () =>
-			queryClient.invalidateQueries({
-				queryKey: ['reviews', bookId],
-			}),
-	})
+	const { mutate } = useCreateReviewMutation(bookId)
 
 	async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault()
