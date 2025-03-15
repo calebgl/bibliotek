@@ -13,23 +13,66 @@ import {
 import { CreateBook } from '../types/book'
 import { Review } from '../types'
 
+// prettier-ignore
+const queryKeys = {
+	public: {
+		books: {
+			all: () => ['public', 'books'],
+			list: () => [...queryKeys.public.books.all(), 'list'],
+			detail: (id: string) => [...queryKeys.public.books.all(), 'detail', id],
+			reviews: {
+				all: (bookId: string) => [...queryKeys.public.books.detail(bookId), 'reviews'],
+				list: (bookId: string) => [...queryKeys.public.books.reviews.all(bookId), 'list'],
+			},
+		},
+	},
+	admin: {
+		books: {
+			all: () => ['admin', 'books'],
+			list: () => [...queryKeys.admin.books.all(), 'list'],
+			detail: (id: string) => [...queryKeys.admin.books.all(), 'detail', id],
+		},
+	},
+}
+
+// prettier-ignore
+const mutationKeys = {
+	public: {
+		books: {
+			all: () => ['public', 'books'],
+			reviews: {
+				all: (bookId: string) => [...mutationKeys.public.books.all(), bookId, 'reviews'],
+				create: (bookId:string) => [...mutationKeys.public.books.reviews.all(bookId), 'create'],
+				update: (bookId:string, reviewId: string) => [...mutationKeys.public.books.reviews.all(bookId), 'update', reviewId],
+			}
+		}
+	},
+	admin: {
+		books: {
+			all: () => ['admin', 'books'],
+			create: () => [...mutationKeys.admin.books.all(), 'create'],
+			update: (id: string) => [...mutationKeys.admin.books.all(), 'update', id],
+		},
+	},
+}
+
 export function useBooks() {
 	return useQuery({
-		queryKey: ['books'],
+		queryKey: queryKeys.public.books.list(),
 		queryFn: () => fetchBooks(),
 	})
 }
 
 export function useBook(id: string) {
 	return useQuery({
-		queryKey: ['books', id],
+		queryKey: queryKeys.public.books.detail(id),
 		queryFn: () => fetchBook(id),
 	})
 }
 
 export function useReviews(bookId: string) {
 	return useQuery({
-		queryKey: ['reviews', bookId],
+		queryKey: queryKeys.public.books.reviews.list(bookId),
 		queryFn: () => fetchReviews(bookId),
 	})
 }
@@ -37,7 +80,7 @@ export function useReviews(bookId: string) {
 export function useCreateReviewMutation(bookId: string) {
 	const queryClient = useQueryClient()
 	return useMutation({
-		mutationKey: ['postReview'],
+		mutationKey: mutationKeys.public.books.reviews.create(bookId),
 		mutationFn: (review: Pick<Review, 'userId' | 'comment' | 'rate'>) =>
 			postReview(
 				review.userId!,
@@ -47,21 +90,21 @@ export function useCreateReviewMutation(bookId: string) {
 			),
 		onSettled: () =>
 			queryClient.invalidateQueries({
-				queryKey: ['reviews', bookId],
+				queryKey: queryKeys.public.books.reviews.list(bookId),
 			}),
 	})
 }
 
 export function useAdminBooks() {
 	return useQuery({
-		queryKey: ['admin', 'books'],
+		queryKey: queryKeys.admin.books.list(),
 		queryFn: () => fetchAdminBooks(),
 	})
 }
 
 export function useAdminBook(id: string) {
 	return useQuery({
-		queryKey: ['admin', 'books', id],
+		queryKey: queryKeys.admin.books.detail(id),
 		queryFn: () => fetchAdminBook(id),
 	})
 }
@@ -69,23 +112,27 @@ export function useAdminBook(id: string) {
 export function useCreateAdminBookMutation() {
 	const queryClient = useQueryClient()
 	return useMutation({
-		mutationKey: ['createAdminBook'],
+		mutationKey: mutationKeys.admin.books.create(),
 		mutationFn: (book: CreateBook) => createAdminBook(book),
 		onSettled: () =>
 			queryClient.invalidateQueries({
-				queryKey: ['admin', 'books'],
+				queryKey: queryKeys.admin.books.list(),
 			}),
 	})
 }
 
-export function useUpdateAdminBookMutation(bookId: string) {
+export function useUpdateAdminBookMutation(id: string) {
 	const queryClient = useQueryClient()
 	return useMutation({
-		mutationKey: ['updateAdminBook', bookId],
-		mutationFn: (book: CreateBook) => putAdminBook(bookId, book),
-		onSettled: () =>
+		mutationKey: mutationKeys.admin.books.update(id),
+		mutationFn: (book: CreateBook) => putAdminBook(id, book),
+		onSettled: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['admin', 'books'],
-			}),
+				queryKey: queryKeys.admin.books.detail(id),
+			})
+			queryClient.refetchQueries({
+				queryKey: queryKeys.admin.books.list(),
+			})
+		},
 	})
 }
