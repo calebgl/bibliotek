@@ -68,7 +68,7 @@ export function AdminBooks() {
 							<td>{book.title}</td>
 							<td className="flex justify-between text-right">
 								<span>$</span>
-								<span>{formatDecimal(book.price * 1250)}</span>
+								<span>{formatDecimal(book.price)}</span>
 							</td>
 							<td className="text-right">{book.stockQuantity}</td>
 							<td>{book.author}</td>
