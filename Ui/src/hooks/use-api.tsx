@@ -77,7 +77,7 @@ export function useReviews(bookId: string) {
 	})
 }
 
-export function useCreateReviewMutation(bookId: string) {
+export function useCreateReview(bookId: string) {
 	const queryClient = useQueryClient()
 	return useMutation({
 		mutationKey: mutationKeys.public.books.reviews.create(bookId),
@@ -109,7 +109,7 @@ export function useAdminBook(id: string) {
 	})
 }
 
-export function useCreateAdminBookMutation() {
+export function useCreateAdminBook() {
 	const queryClient = useQueryClient()
 	return useMutation({
 		mutationKey: mutationKeys.admin.books.create(),
@@ -121,7 +121,7 @@ export function useCreateAdminBookMutation() {
 	})
 }
 
-export function useUpdateAdminBookMutation(id: string) {
+export function useUpdateAdminBook(id: string) {
 	const queryClient = useQueryClient()
 	return useMutation({
 		mutationKey: mutationKeys.admin.books.update(id),

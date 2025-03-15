@@ -1,18 +1,18 @@
 import { ChangeEvent, FormEvent, useState } from 'react'
 import { NavLink, useParams } from 'react-router'
 
-import { useAdminBook, useUpdateAdminBookMutation } from '../hooks/use-api'
+import { useAdminBook, useUpdateAdminBook } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 
 export function AdminBookUpdate() {
 	const { bookId } = useParams()
 	assert(bookId)
 
-	const { data: book, isLoading, error } = useAdminBook(bookId)
 	const [coverImage, setCoverImage] = useState<File | null | undefined>()
 
+	const { data: book, isLoading, error } = useAdminBook(bookId)
 	const { mutateAsync, isIdle, isPaused, isPending } =
-		useUpdateAdminBookMutation(bookId)
+		useUpdateAdminBook(bookId)
 
 	if (isLoading) {
 		return 'loading...'

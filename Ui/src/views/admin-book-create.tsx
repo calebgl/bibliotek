@@ -1,14 +1,14 @@
 import { ChangeEvent, FormEvent, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router'
 
-import { useCreateAdminBookMutation } from '../hooks/use-api'
+import { useCreateAdminBook } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 
 export function AdminBookCreate() {
 	const navigate = useNavigate()
 	const [coverImage, setCoverImage] = useState<File | null | undefined>()
 
-	const { mutateAsync } = useCreateAdminBookMutation()
+	const { mutate, isSuccess, isError } = useCreateAdminBook()
 
 	function handleChange(event: ChangeEvent<HTMLInputElement>) {
 		setCoverImage(event.target.files?.[0])
@@ -32,7 +32,7 @@ export function AdminBookCreate() {
 		assert(typeof price === 'string')
 		assert(typeof stockQuantity === 'string')
 
-		mutateAsync({
+		mutate({
 			title,
 			subtitle,
 			author,
@@ -42,7 +42,13 @@ export function AdminBookCreate() {
 			coverImage: null,
 		})
 
-		navigate('/admin/books')
+		if (isError) {
+			// TODO: show toast error
+		}
+		if (isSuccess) {
+			// TODO: show toast success
+			navigate('/admin/books')
+		}
 	}
 
 	return (

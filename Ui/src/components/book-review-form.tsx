@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import { ChangeEvent, FormEvent, useState } from 'react'
 import { useParams } from 'react-router'
 
-import { useCreateReviewMutation } from '../hooks/use-api'
+import { useCreateReview } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 
 const user = {
@@ -21,7 +21,7 @@ export function BookReviewForm() {
 
 	const [form, setForm] = useState<typeof formInitialState>(formInitialState)
 
-	const { mutate } = useCreateReviewMutation(bookId)
+	const { mutate } = useCreateReview(bookId)
 
 	async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault()
