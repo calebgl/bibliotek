@@ -12,6 +12,7 @@ import { AdminBookCreate } from './views/admin-book-create.tsx'
 import { AdminBookUpdate } from './views/admin-book-update.tsx'
 import { AdminBooks } from './views/admin-books.tsx'
 import { Book } from './views/book'
+import { Books } from './views/books.tsx'
 import { Home } from './views/home'
 
 const queryClient = new QueryClient()
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
 			{
 				index: true,
 				element: <Home />,
+			},
+			{
+				path: '/books',
+				element: <Books />,
 			},
 			{
 				path: '/books/:bookId',
