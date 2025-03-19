@@ -54,7 +54,7 @@ export function Books() {
 										</span>
 									</div>
 									<div>
-										<div />
+										<div className="h-4 w-8 animate-pulse bg-gray-200" />
 									</div>
 								</div>
 							</div>
