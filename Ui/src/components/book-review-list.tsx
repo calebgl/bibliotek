@@ -26,7 +26,13 @@ export function BookReviewList() {
 		throw error
 	}
 	if (isLoading) {
-		return <div>loading reviews...</div>
+		return (
+			<>
+				{Array.from({ length: 5 }, (_, index) => (
+					<BookReview.Skeleton key={'review-skeleton-' + index} />
+				))}
+			</>
+		)
 	}
 
 	assert(reviews)
