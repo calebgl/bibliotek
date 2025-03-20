@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
+import { HTMLAttributes } from 'react'
 
-type BookReviewProps = {
+type BookReviewProps = HTMLAttributes<HTMLDivElement> & {
 	username: string
 	createdAt: string
 	comment: string
@@ -8,7 +9,7 @@ type BookReviewProps = {
 
 export function BookReview(props: BookReviewProps) {
 	return (
-		<div className="grid grid-cols-[auto_1fr] gap-2">
+		<div className={props.className + ' grid grid-cols-[auto_1fr] gap-2'}>
 			<div className="size-12 bg-violet-200"></div>
 			<div className="max-w-prose">
 				<div className="flex justify-between">
