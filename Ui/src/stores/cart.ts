@@ -12,6 +12,7 @@ export const booksAtom = atom<Record<string, CartBook>>({
 		price: 10.99,
 		coverUrl: 'http://localhost:5173/1984.jpg',
 		quantity: 2,
+		subtitle: null,
 	},
 	'2': {
 		id: '2',
@@ -20,6 +21,7 @@ export const booksAtom = atom<Record<string, CartBook>>({
 		price: 8.99,
 		coverUrl: 'http://localhost:5173/wor.jpg',
 		quantity: 1,
+		subtitle: null,
 	},
 	'3': {
 		id: '3',
@@ -28,6 +30,7 @@ export const booksAtom = atom<Record<string, CartBook>>({
 		price: 5.99,
 		coverUrl: 'http://localhost:5173/sv.jpg',
 		quantity: 1,
+		subtitle: null,
 	},
 })
 
