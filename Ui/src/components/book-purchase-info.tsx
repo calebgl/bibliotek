@@ -108,6 +108,7 @@ function Actions() {
 					price: book.price,
 					coverUrl: book.coverUrl,
 					quantity: 0,
+					subtitle: book.subtitle,
 				}
 			}
 
