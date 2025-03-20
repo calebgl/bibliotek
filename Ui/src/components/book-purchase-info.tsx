@@ -129,7 +129,7 @@ function Actions() {
 			</button>
 			<button
 				disabled={isLoading || isError}
-				className="cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500"
+				className="cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500 disabled:cursor-not-allowed disabled:bg-gray-100"
 			>
 				<span className="size-4">❤</span>
 			</button>
