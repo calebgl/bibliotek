@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+
 import { BookDetails } from '../components/book-details'
 import { BookImagePreview } from '../components/book-image-preview'
 import { BookPurchaseInfo } from '../components/book-purchase-info'
@@ -6,6 +8,10 @@ import { BookReviewForm } from '../components/book-review-form'
 import { BookReviewList } from '../components/book-review-list'
 
 export function Book() {
+	useEffect(() => {
+		window.scrollTo({ top: 0 })
+	}, [])
+
 	return (
 		<div className="container mx-auto">
 			<div className="space-y-16 p-4">
