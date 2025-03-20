@@ -70,10 +70,14 @@ export function useBook(id: string) {
 	})
 }
 
-export function useReviews(bookId: string) {
+export function useReviews(
+	bookId: string,
+	options: { enabled: boolean } = { enabled: true },
+) {
 	return useQuery({
 		queryKey: queryKeys.public.books.reviews.list(bookId),
 		queryFn: () => fetchReviews(bookId),
+		enabled: options.enabled,
 	})
 }
 
