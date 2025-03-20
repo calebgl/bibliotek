@@ -1,5 +1,5 @@
 import { useMutationState } from '@tanstack/react-query'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useParams } from 'react-router'
 
 import { useReviews } from '../hooks/use-api'
