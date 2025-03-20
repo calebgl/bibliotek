@@ -8,57 +8,19 @@ import { formatCurrency } from '../lib/utils'
 import { booksAtom } from '../stores/cart'
 
 export function BookPurchaseInfo() {
-	const { bookId } = useParams()
-	assert(bookId)
-
-	const setBooksAtom = useSetAtom(booksAtom)
-
-	const { data: book } = useBook(bookId)
-
-	function addToCart(_: MouseEvent<HTMLButtonElement>) {
-		assert(bookId)
-		assert(book)
-
-		setBooksAtom((prev) => {
-			const cloned = structuredClone(prev)
-			if (!cloned[bookId]) {
-				cloned[bookId] = {
-					id: book.id,
-					title: book.title,
-					author: book.author,
-					price: book.price,
-					coverUrl: book.coverUrl,
-					quantity: 0,
-				}
-			}
-
-			cloned[bookId].quantity++
-
-			return cloned
-		})
-	}
-
 	return (
 		<>
 			<div className="text-4xl font-semibold">
-				<BookTitle />
+				<Title />
 			</div>
 			<div className="flex items-center gap-1">
-				<BookRating />
+				<Rating />
 			</div>
 			<div className="text-xl">
-				<BookPrice />
+				<Price />
 			</div>
 			<div className="mt-auto flex gap-2">
-				<button
-					onClick={addToCart}
-					className="grow cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500"
-				>
-					Add to cart
-				</button>
-				<button className="cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500">
-					<span className="size-4">❤</span>
-				</button>
+				<Actions />
 			</div>
 			<div className="">
 				<p className="text-sm">Free delivery on orders over $30.00</p>
@@ -67,7 +29,7 @@ export function BookPurchaseInfo() {
 	)
 }
 
-function BookTitle() {
+function Title() {
 	const { bookId } = useParams()
 	assert(bookId)
 
@@ -84,7 +46,7 @@ function BookTitle() {
 	return <h1>{book.title}</h1>
 }
 
-function BookRating() {
+function Rating() {
 	const { bookId } = useParams()
 	assert(bookId)
 
@@ -107,7 +69,7 @@ function BookRating() {
 	)
 }
 
-function BookPrice() {
+function Price() {
 	const { bookId } = useParams()
 	assert(bookId)
 
@@ -122,4 +84,54 @@ function BookPrice() {
 	assert(book)
 
 	return <span>{formatCurrency(book.price)}</span>
+}
+
+function Actions() {
+	const { bookId } = useParams()
+	assert(bookId)
+
+	const setBooksAtom = useSetAtom(booksAtom)
+
+	const { data: book, isLoading, isError } = useBook(bookId)
+
+	function addToCart(_: MouseEvent<HTMLButtonElement>) {
+		assert(bookId)
+		assert(book)
+
+		setBooksAtom((prev) => {
+			const cloned = { ...prev }
+			if (!cloned[bookId]) {
+				cloned[bookId] = {
+					id: book.id,
+					title: book.title,
+					author: book.author,
+					price: book.price,
+					coverUrl: book.coverUrl,
+					quantity: 0,
+				}
+			}
+
+			cloned[bookId].quantity++
+
+			return cloned
+		})
+	}
+
+	return (
+		<>
+			<button
+				onClick={addToCart}
+				disabled={isLoading || isError}
+				className="grow cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500 disabled:cursor-not-allowed disabled:bg-gray-100"
+			>
+				Add to cart
+			</button>
+			<button
+				disabled={isLoading || isError}
+				className="cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500"
+			>
+				<span className="size-4">❤</span>
+			</button>
+		</>
+	)
 }

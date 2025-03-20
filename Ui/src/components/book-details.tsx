@@ -6,12 +6,12 @@ import { assert } from '../lib/assert'
 export function BookDetails() {
 	return (
 		<div className="max-w-prose whitespace-pre-wrap">
-			<BookDescription />
+			<Description />
 		</div>
 	)
 }
 
-function BookDescription() {
+function Description() {
 	const { bookId } = useParams()
 	assert(bookId)
 
@@ -20,7 +20,20 @@ function BookDescription() {
 		throw error
 	}
 	if (isLoading) {
-		return <div className="h-16 w-full animate-pulse bg-gray-100" />
+		const length = 10
+		return (
+			<div className="flex flex-wrap gap-1">
+				{Array.from({ length }, (_, index) => (
+					<div
+						key={'book-description-' + index}
+						className="h-3 w-full animate-pulse bg-gray-200"
+						style={{
+							width: Math.max(0.2, Math.random()) * 100 + '%',
+						}}
+					/>
+				))}
+			</div>
+		)
 	}
 
 	assert(book)
