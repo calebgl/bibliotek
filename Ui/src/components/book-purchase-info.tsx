@@ -13,15 +13,7 @@ export function BookPurchaseInfo() {
 
 	const setBooksAtom = useSetAtom(booksAtom)
 
-	const { data: book, isLoading, error } = useBook(bookId)
-	if (error) {
-		throw error
-	}
-	if (isLoading) {
-		return 'loading'
-	}
-
-	assert(book)
+	const { data: book } = useBook(bookId)
 
 	function addToCart(_: MouseEvent<HTMLButtonElement>) {
 		assert(bookId)
@@ -49,15 +41,13 @@ export function BookPurchaseInfo() {
 	return (
 		<>
 			<div className="text-4xl font-semibold">
-				<h1>{book.title}</h1>
+				<BookTitle />
 			</div>
 			<div className="flex items-center gap-1">
-				<span>★★★★☆</span>
-				<span className="text-sm">{book.averageRating}</span>
-				<span className="text-xs">({book.totalReviews})</span>
+				<BookRating />
 			</div>
 			<div className="text-xl">
-				<span>{formatCurrency(book.price)}</span>
+				<BookPrice />
 			</div>
 			<div className="mt-auto flex gap-2">
 				<button
@@ -75,4 +65,61 @@ export function BookPurchaseInfo() {
 			</div>
 		</>
 	)
+}
+
+function BookTitle() {
+	const { bookId } = useParams()
+	assert(bookId)
+
+	const { data: book, isLoading, error } = useBook(bookId)
+	if (error) {
+		throw error
+	}
+	if (isLoading) {
+		return <div className="mb-1 h-9 w-24 animate-pulse bg-gray-200" />
+	}
+
+	assert(book)
+
+	return <h1>{book.title}</h1>
+}
+
+function BookRating() {
+	const { bookId } = useParams()
+	assert(bookId)
+
+	const { data: book, isLoading, error } = useBook(bookId)
+	if (error) {
+		throw error
+	}
+	if (isLoading) {
+		return <div className="mb-1 h-4 w-16 animate-pulse bg-gray-100" />
+	}
+
+	assert(book)
+
+	return (
+		<>
+			<span>★★★★☆</span>
+			<span className="text-sm">{book.averageRating}</span>
+			<span className="text-xs">({book.totalReviews})</span>
+		</>
+	)
+}
+
+function BookPrice() {
+	const { bookId } = useParams()
+	assert(bookId)
+
+	const { data: book, isLoading, error } = useBook(bookId)
+	if (error) {
+		throw error
+	}
+	if (isLoading) {
+		return <div className="h-6 w-8 animate-pulse bg-gray-200" />
+	}
+
+	assert(book)
+
+	return <span>{formatCurrency(book.price)}</span>
 }

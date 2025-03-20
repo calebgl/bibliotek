@@ -4,6 +4,14 @@ import { useBook } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 
 export function BookDetails() {
+	return (
+		<div className="max-w-prose whitespace-pre-wrap">
+			<BookDescription />
+		</div>
+	)
+}
+
+function BookDescription() {
 	const { bookId } = useParams()
 	assert(bookId)
 
@@ -12,14 +20,10 @@ export function BookDetails() {
 		throw error
 	}
 	if (isLoading) {
-		return 'loading...'
+		return <div className="h-16 w-full animate-pulse bg-gray-100" />
 	}
 
 	assert(book)
 
-	return (
-		<div className="max-w-prose whitespace-pre-wrap">
-			{book.description}
-		</div>
-	)
+	return book.description
 }

@@ -4,6 +4,16 @@ import { useBook } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 
 export function BookImagePreview() {
+	return (
+		<div className="bg-gray-100 p-16">
+			<div className="mx-auto aspect-[2/3] max-w-64">
+				<Image />
+			</div>
+		</div>
+	)
+}
+
+function Image() {
 	const { bookId } = useParams()
 	assert(bookId)
 
@@ -12,18 +22,16 @@ export function BookImagePreview() {
 		throw error
 	}
 	if (isLoading) {
-		return 'loading...'
+		return <div className="size-full animate-pulse bg-gray-200" />
 	}
 
 	assert(book)
 
 	return (
-		<div className="bg-gray-100 p-16">
-			<img
-				src={book.coverUrl ?? undefined}
-				alt="book-cover"
-				className="mx-auto max-w-64"
-			/>
-		</div>
+		<img
+			src={book.coverUrl ?? undefined}
+			alt="book-cover"
+			className="mx-auto object-fill"
+		/>
 	)
 }
