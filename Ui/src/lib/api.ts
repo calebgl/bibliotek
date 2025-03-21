@@ -140,5 +140,7 @@ export async function postReview(
 		)
 	}
 
+	await sleep()
+
 	return resp.json()
 }
