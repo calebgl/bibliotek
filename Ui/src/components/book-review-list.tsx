@@ -1,5 +1,5 @@
 import { useMutationState } from '@tanstack/react-query'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
 
 import { useReviews } from '../hooks/use-api'
@@ -9,7 +9,7 @@ import { BookReview } from './book-review'
 
 export function BookReviewList() {
 	const ref = useRef<HTMLDivElement>(null)
-	let reviewsVisible = false
+	const [reviewsVisible, setReviewsVisible] = useState<boolean>(false)
 
 	const { bookId } = useParams()
 	assert(bookId)
@@ -33,14 +33,12 @@ export function BookReviewList() {
 		data: reviews,
 		isLoading,
 		error,
-		refetch,
-	} = useReviews(bookId, { enabled: false })
+	} = useReviews(bookId, { enabled: reviewsVisible })
 
 	useEffect(() => {
 		const observer = new IntersectionObserver(([entry]) => {
 			if (entry.isIntersecting && !reviewsVisible) {
-				reviewsVisible = true
-				refetch()
+				setReviewsVisible(true)
 			}
 		})
 
@@ -51,19 +49,15 @@ export function BookReviewList() {
 		return () => {
 			observer.disconnect()
 		}
-	}, [refetch, bookId])
+	}, [reviewsVisible])
 
 	if (error) {
 		throw error
 	}
 	if (isLoading) {
-		return (
-			<>
-				{Array.from({ length: 1 }, (_, index) => (
-					<BookReview.Skeleton key={'review-skeleton-' + index} />
-				))}
-			</>
-		)
+		return Array.from({ length: 1 }, (_, index) => (
+			<BookReview.Skeleton key={'review-skeleton-' + index} />
+		))
 	}
 
 	return (

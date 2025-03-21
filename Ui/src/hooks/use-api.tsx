@@ -92,10 +92,14 @@ export function useCreateReview(bookId: string) {
 				review.rate,
 				review.comment,
 			),
-		onSettled: () =>
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: queryKeys.public.books.detail(bookId),
+			})
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.public.books.reviews.list(bookId),
-			}),
+			})
+		},
 	})
 }
 
