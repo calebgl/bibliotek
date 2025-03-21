@@ -1,11 +1,8 @@
 using Bibliotek.Models;
 using Microsoft.EntityFrameworkCore;
 
-public class BibliotekContext : DbContext
+public class BibliotekContext(DbContextOptions<BibliotekContext> options) : DbContext(options)
 {
-    public BibliotekContext(DbContextOptions<BibliotekContext> options)
-        : base(options) { }
-
     public DbSet<Book> Books { get; set; } = null!;
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Review> Reviews { get; set; } = null!;
