@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+	useMutation,
+	useMutationState,
+	useQuery,
+	useQueryClient,
+} from '@tanstack/react-query'
 
 import {
 	createAdminBook,
@@ -10,8 +15,8 @@ import {
 	postReview,
 	putAdminBook,
 } from '../lib/api'
-import { CreateBook } from '../types/book'
 import { Review } from '../types'
+import { CreateBook } from '../types/book'
 
 // prettier-ignore
 const queryKeys = {
@@ -99,6 +104,20 @@ export function useCreateReview(bookId: string) {
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.public.books.reviews.list(bookId),
 			})
+		},
+	})
+}
+
+export function useCreateReviewState(bookId: string) {
+	return useMutationState({
+		filters: {
+			mutationKey: mutationKeys.public.books.reviews.create(bookId),
+			status: 'pending',
+		},
+		select(mutation) {
+			return mutation.state.variables as
+				| Pick<Review, 'userId' | 'comment' | 'rate'>
+				| undefined
 		},
 	})
 }

@@ -1,10 +1,8 @@
-import { useMutationState } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
 
-import { useReviews } from '../hooks/use-api'
+import { useCreateReviewState, useReviews } from '../hooks/use-api'
 import { assert } from '../lib/assert'
-import { Review } from '../types'
 import { BookReview } from './book-review'
 
 export function BookReviewList() {
@@ -17,17 +15,7 @@ export function BookReviewList() {
 	// TODO: implement useSession
 	const username = 'calebgl' // useSession();
 
-	// TODO: refactor into custom hook
-	const [variables] = useMutationState<
-		Pick<Review, 'userId' | 'comment' | 'rate'>
-	>({
-		filters: { mutationKey: ['postReview'], status: 'pending' },
-		select: (mutation) =>
-			mutation.state.variables as Pick<
-				Review,
-				'userId' | 'comment' | 'rate'
-			>,
-	})
+	const [variables] = useCreateReviewState(bookId)
 
 	const {
 		data: reviews,
@@ -61,16 +49,15 @@ export function BookReviewList() {
 	}
 
 	return (
-		<div ref={ref}>
+		<div ref={ref} className="space-y-12">
 			{variables && (
 				<BookReview
-					className="opacity-50"
 					username={username}
 					comment={variables.comment}
 					createdAt={new Date().toISOString()}
+					className="opacity-50"
 				/>
 			)}
-
 			{reviews?.length === 0 && !variables && <div>no reviews found</div>}
 			{reviews?.map((review) => (
 				<BookReview
