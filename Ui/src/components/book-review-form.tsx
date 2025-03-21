@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import { ChangeEvent, FormEvent, useState } from 'react'
 import { useParams } from 'react-router'
 
-import { useCreateReview } from '../hooks/use-api'
+import { useCreateReview, useCreateReviewState } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 
 const user = {
@@ -22,6 +22,7 @@ export function BookReviewForm() {
 	const [form, setForm] = useState<typeof formInitialState>(formInitialState)
 
 	const { mutate } = useCreateReview(bookId)
+	const [variables] = useCreateReviewState(bookId)
 
 	async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault()
@@ -72,7 +73,8 @@ export function BookReviewForm() {
 					></textarea>
 					<button
 						type="submit"
-						className="ml-auto cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500"
+						disabled={Boolean(variables)}
+						className="ml-auto cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500 disabled:cursor-not-allowed disabled:bg-gray-100"
 					>
 						comment
 					</button>
