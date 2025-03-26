@@ -22,3 +22,12 @@ export class HttpError extends Error {
 		this.status = status
 	}
 }
+
+export function isHttpError(error: unknown): error is HttpError {
+	return (
+		error != null &&
+		error instanceof Error &&
+		'status' in error &&
+		typeof error.status === 'number'
+	)
+}

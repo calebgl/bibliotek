@@ -2,7 +2,9 @@ import { Link } from 'react-router'
 
 import { useBooks } from '../hooks/use-api'
 import { assert } from '../lib/assert'
+import { isHttpError } from '../lib/http'
 import { formatCurrency } from '../lib/utils'
+import { useRef } from 'react'
 
 export function Books() {
 	return (
@@ -15,10 +17,45 @@ export function Books() {
 }
 
 function List() {
-	const { data: books, isLoading, error } = useBooks()
+	const failedAttempsRef = useRef<number>(0)
+	const { data: books, isLoading, error, refetch } = useBooks()
+
 	if (error) {
-		throw error
+		if (!isHttpError(error)) {
+			throw error
+		}
+
+		const maxRetries = 3
+		const message = 'Something went wrong! Please try again.'
+
+		const getMessage = () => {
+			if (failedAttempsRef.current === 0) return message
+			if (failedAttempsRef.current >= 3) {
+				return "We're having trouble loading this content. Please try again later or contact support if the problem persists."
+			}
+
+			return `${message} (Attemp ${failedAttempsRef.current} of ${maxRetries})`
+		}
+
+		return (
+			<div>
+				<div>
+					{getMessage()}
+					<button
+						onClick={() => {
+							failedAttempsRef.current += 1
+							refetch()
+						}}
+					>
+						{failedAttempsRef.current >= 3
+							? 'Contact support'
+							: 'Retry'}
+					</button>
+				</div>
+			</div>
+		)
 	}
+
 	if (isLoading) {
 		return Array.from({ length: 8 }, (_, index) => (
 			<div key={'skeleton-book-' + index} className="">
