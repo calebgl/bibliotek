@@ -30,11 +30,11 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
     app.UseDeveloperExceptionPage();
 }
-else
-{
-    app.UseHsts();
-    app.UseExceptionHandler("/error");
-}
+
+app.UseExceptionHandler("/error");
+app.UseHsts();
+app.UseHttpsRedirection();
+app.UseAuthorization();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -46,8 +46,6 @@ using (var scope = app.Services.CreateScope())
     DbInitializer.Initialize(context);
 }
 
-app.UseHttpsRedirection();
-app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
