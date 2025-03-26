@@ -8,26 +8,19 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-if (builder.Environment.IsDevelopment())
+builder.Services.AddDbContext<BibliotekContext>(options =>
 {
-    builder.Logging.ClearProviders();
-    builder.Logging.AddConsole();
-
-    builder.Services.AddDbContext<BibliotekContext>(options =>
-    {
-        options.UseSqlite(builder.Configuration.GetConnectionString("SQLite"));
-        options.EnableSensitiveDataLogging();
-    });
-}
-else
-{
-    builder.Services.AddDbContext<BibliotekContext>(options =>
-        options.UseSqlite(
-            builder.Configuration.GetConnectionString("SQLite")
-                ?? throw new InvalidOperationException("Connection string 'SQLite' not found.")
-        )
+    options.UseSqlite(
+        builder.Configuration.GetConnectionString("SQLite")
+            ?? throw new InvalidOperationException("Connection string 'SQLite' not found.")
     );
-}
+
+    if (builder.Environment.IsDevelopment())
+    {
+        options.EnableSensitiveDataLogging();
+        options.EnableDetailedErrors();
+    }
+});
 
 var app = builder.Build();
 
