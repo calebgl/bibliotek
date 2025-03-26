@@ -9,7 +9,11 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddIdentityApiEndpoints<User>().AddEntityFrameworkStores<BibliotekContext>();
+var identityBuilder = builder.Services.AddIdentityApiEndpoints<User>(options =>
+{
+    options.User.RequireUniqueEmail = true;
+});
+identityBuilder.AddEntityFrameworkStores<BibliotekContext>();
 
 builder.Services.AddDbContext<BibliotekContext>(options =>
 {
