@@ -11,10 +11,10 @@ public static class DbInitializer
 
         var users = new User[]
         {
-            new User { Username = "calebgl" },
-            new User { Username = "theprimeagen" },
-            new User { Username = "tjdev" },
-            new User { Username = "lazymatt" },
+            new User { UserName = "calebgl" },
+            new User { UserName = "theprimeagen" },
+            new User { UserName = "tjdev" },
+            new User { UserName = "lazymatt" },
         };
 
         context.Users.AddRange(users);

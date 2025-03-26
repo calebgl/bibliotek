@@ -1,10 +1,12 @@
 using Bibliotek.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-public class BibliotekContext(DbContextOptions<BibliotekContext> options) : DbContext(options)
+public class BibliotekContext(DbContextOptions<BibliotekContext> options)
+    : IdentityDbContext<User, IdentityRole<uint>, uint>(options)
 {
     public DbSet<Book> Books { get; set; } = null!;
-    public DbSet<User> Users { get; set; } = null!;
     public DbSet<Review> Reviews { get; set; } = null!;
     public DbSet<BookStats> BookStats { get; set; } = null!;
     public DbSet<Order> Orders { get; set; } = null!;

@@ -10,18 +10,18 @@ public class UserController(BibliotekContext context) : ControllerBase
     [HttpPost]
     public IActionResult Register(RegisterUserDto user)
     {
-        var newUser = new User { Username = user.Username };
+        var newUser = new User { UserName = user.UserName };
 
         context.Users.Add(newUser);
         context.SaveChanges();
 
-        return Ok(new { newUser.Id, newUser.Username });
+        return Ok(new { newUser.Id, newUser.UserName });
     }
 
     public IActionResult ListUsers()
     {
-        return Ok(context.Users.Select(u => new { u.Id, u.Username }).ToList());
+        return Ok(context.Users.Select(u => new { u.Id, u.UserName }).ToList());
     }
 }
 
-public record RegisterUserDto(string Username);
+public record RegisterUserDto(string UserName);

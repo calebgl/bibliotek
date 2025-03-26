@@ -32,7 +32,7 @@ public class ReviewController(BibliotekContext context) : ControllerBase
                 r.Id,
                 r.Rate,
                 r.UserId,
-                Username = r.User.Username,
+                UserName = r.User.UserName,
                 r.Comment,
                 r.CreatedAt,
                 r.UpdatedAt,
