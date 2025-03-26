@@ -1,3 +1,4 @@
+using Bibliotek.Models;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -7,6 +8,8 @@ builder.Services.AddControllers();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddIdentityApiEndpoints<User>().AddEntityFrameworkStores<BibliotekContext>();
 
 builder.Services.AddDbContext<BibliotekContext>(options =>
 {
@@ -46,6 +49,7 @@ using (var scope = app.Services.CreateScope())
     DbInitializer.Initialize(context);
 }
 
+app.MapIdentityApi<User>();
 app.MapControllers();
 
 app.Run();
