@@ -27,7 +27,7 @@ public class BookController(BibliotekContext context) : ControllerBase
         );
     }
 
-    [HttpGet("{bookId:int}")]
+    [HttpGet("{bookId}")]
     public IActionResult ViewBook(uint bookId)
     {
         var book = context

@@ -90,7 +90,8 @@ public class ReviewController(BibliotekContext context) : ControllerBase
                 var bookStats = book.BookStats;
                 bookStats.AverageRating = Math.Round(
                     ((bookStats.AverageRating * bookStats.TotalReviewCount) + newReview.Rate)
-                        / (bookStats.TotalReviewCount + 1), 1
+                        / (bookStats.TotalReviewCount + 1),
+                    1
                 );
                 bookStats.TotalReviewCount += 1;
 
