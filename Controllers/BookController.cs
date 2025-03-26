@@ -27,33 +27,38 @@ public class BookController(BibliotekContext context) : ControllerBase
         );
     }
 
-    [HttpGet("{bookId}")]
+    [HttpGet("{bookId:int}")]
     public IActionResult ViewBook(uint bookId)
     {
-        return Ok(
-            context
-                .Books.Include(b => b.BookStats)
-                .Select(b => new
+        var book = context
+            .Books.Include(b => b.BookStats)
+            .Where(b => b.Id == bookId)
+            .Select(b => new
+            {
+                b.Id,
+                b.Title,
+                b.Author,
+                b.CoverUrl,
+                b.Description,
+                b.Price,
+                TotalReviews = b.BookStats.TotalReviewCount,
+                AverageRating = b.BookStats.AverageRating,
+                Stars = new
                 {
-                    b.Id,
-                    b.Title,
-                    b.Author,
-                    b.CoverUrl,
-                    b.Description,
-                    b.Price,
-                    TotalReviews = b.BookStats.TotalReviewCount,
-                    AverageRating = b.BookStats.AverageRating,
-                    Stars = new
-                    {
-                        One = b.BookStats.OneStarReviewCount,
-                        Two = b.BookStats.TwoStarReviewCount,
-                        Three = b.BookStats.ThreeStarReviewCount,
-                        Four = b.BookStats.FourStarReviewCount,
-                        Five = b.BookStats.FiveStarReviewCount,
-                    },
-                })
-                .Where(b => b.Id == bookId)
-                .Single()
-        );
+                    One = b.BookStats.OneStarReviewCount,
+                    Two = b.BookStats.TwoStarReviewCount,
+                    Three = b.BookStats.ThreeStarReviewCount,
+                    Four = b.BookStats.FourStarReviewCount,
+                    Five = b.BookStats.FiveStarReviewCount,
+                },
+            })
+            .FirstOrDefault();
+
+        if (book is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(book);
     }
 }
