@@ -62,7 +62,7 @@ export function BookReviewList() {
 			{reviews?.map((review) => (
 				<BookReview
 					key={review.id}
-					username={review.username}
+					username={review.userName}
 					comment={review.comment}
 					createdAt={review.createdAt}
 				/>
