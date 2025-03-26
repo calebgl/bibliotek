@@ -18,6 +18,7 @@ public class UserController(BibliotekContext context) : ControllerBase
         return Ok(new { newUser.Id, newUser.UserName });
     }
 
+    [HttpGet]
     public IActionResult ListUsers()
     {
         return Ok(context.Users.Select(u => new { u.Id, u.UserName }).ToList());
