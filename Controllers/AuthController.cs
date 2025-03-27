@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bibliotek.Controllers;
 
 [ApiController]
+[Route("api/auth")]
 public class AuthController(
     SignInManager<User> signInManager,
     UserManager<User> userManager,
@@ -13,7 +14,7 @@ public class AuthController(
     ILogger<AuthController> logger
 ) : ControllerBase
 {
-    [HttpGet("api/auth/github")]
+    [HttpGet("github")]
     public IActionResult SignInGitHub()
     {
         var redirectUrl = Url.Action(nameof(HandleExternalLogin), "Auth");
@@ -24,8 +25,7 @@ public class AuthController(
         return Challenge(properties, "GitHub");
     }
 
-    [HttpGet("signin-github")]
-    [HttpGet("api/auth/external")]
+    [HttpGet("external")]
     public async Task<IActionResult> HandleExternalLogin()
     {
         var authNSection = configuration.GetRequiredSection("Authentication");
