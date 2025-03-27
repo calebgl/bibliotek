@@ -1,0 +1,98 @@
+using System.Security.Claims;
+using Bibliotek.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Bibliotek.Controllers;
+
+[ApiController]
+public class AuthController(
+    SignInManager<User> signInManager,
+    UserManager<User> userManager,
+    IConfiguration configuration,
+    ILogger<AuthController> logger
+) : ControllerBase
+{
+    [HttpGet("api/auth/github")]
+    public IActionResult SignInGitHub()
+    {
+        var redirectUrl = Url.Action(nameof(HandleExternalLogin), "Auth");
+        var properties = signInManager.ConfigureExternalAuthenticationProperties(
+            "GitHub",
+            redirectUrl
+        );
+        return Challenge(properties, "GitHub");
+    }
+
+    [HttpGet("signin-github")]
+    [HttpGet("api/auth/external")]
+    public async Task<IActionResult> HandleExternalLogin()
+    {
+        var authNSection = configuration.GetRequiredSection("Authentication");
+        var successRedirectUrl =
+            authNSection["SuccessRedirectUrl"]
+            ?? throw new InvalidOperationException(
+                "Authentication string 'SuccessRedirectUrl' not found."
+            );
+        var errorRedirectUrl =
+            authNSection["ErrorRedirectUrl"]
+            ?? throw new InvalidOperationException(
+                "Authentication string 'ErrorRedirectUrl' not found."
+            );
+
+        var info = await signInManager.GetExternalLoginInfoAsync();
+        if (info is null)
+        {
+            logger.LogWarning("External login info is null");
+            return Redirect(errorRedirectUrl);
+        }
+
+        var result = await signInManager.ExternalLoginSignInAsync(
+            info.LoginProvider,
+            info.ProviderKey,
+            isPersistent: false
+        );
+
+        if (result.Succeeded)
+        {
+            return Redirect(successRedirectUrl);
+        }
+
+        try
+        {
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                logger.LogError("Email is required from the login provider");
+                return Redirect(errorRedirectUrl);
+            }
+
+            var userName = info.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                byte[] bytes = new byte[8];
+                Random.Shared.NextBytes(bytes);
+                userName = email.Split("@")[0] + bytes.ToString();
+            }
+
+            var user = new User { UserName = userName, Email = email };
+
+            var createResult = await userManager.CreateAsync(user);
+            if (!createResult.Succeeded)
+            {
+                logger.LogError("User creation failed", createResult.Errors);
+                return Redirect(errorRedirectUrl);
+            }
+
+            await userManager.AddLoginAsync(user, info);
+            await signInManager.SignInAsync(user, isPersistent: false);
+
+            return Redirect(successRedirectUrl);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("Auth: failed to login", ex);
+            return Redirect(successRedirectUrl);
+        }
+    }
+}

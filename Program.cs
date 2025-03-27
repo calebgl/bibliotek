@@ -1,19 +1,50 @@
 using Bibliotek.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-var identityBuilder = builder.Services.AddIdentityApiEndpoints<User>(options =>
-{
-    options.User.RequireUniqueEmail = true;
-});
-identityBuilder.AddEntityFrameworkStores<BibliotekContext>();
+builder
+    .Services.AddIdentityApiEndpoints<User>(options =>
+    {
+        options.User.RequireUniqueEmail = true;
+    })
+    .AddEntityFrameworkStores<BibliotekContext>();
+
+builder
+    .Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+    })
+    .AddCookie(options =>
+    {
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+        options.SlidingExpiration = true;
+    })
+    .AddGitHub(options =>
+    {
+        IConfigurationSection githubAuthNSection = builder.Configuration.GetSection(
+            "Authentication:GitHub"
+        );
+
+        options.ClientId =
+            githubAuthNSection["ClientId"]
+            ?? throw new InvalidOperationException(
+                "Authentication GitHub string 'ClientId' not found."
+            );
+        options.ClientSecret =
+            githubAuthNSection["ClientSecret"]
+            ?? throw new InvalidOperationException(
+                "Authentication GitHub string 'ClientSecret' not found."
+            );
+        options.Scope.Add("user:email");
+        options.SaveTokens = true;
+    });
 
 builder.Services.AddDbContext<BibliotekContext>(options =>
 {
@@ -24,8 +55,7 @@ builder.Services.AddDbContext<BibliotekContext>(options =>
 
     if (builder.Environment.IsDevelopment())
     {
-        options.EnableSensitiveDataLogging();
-        options.EnableDetailedErrors();
+        options.EnableSensitiveDataLogging().EnableDetailedErrors();
     }
 });
 
@@ -38,10 +68,20 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
+var cookieOptions = new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax };
+app.UseCookiePolicy(cookieOptions);
+
 app.UseExceptionHandler("/error");
 app.UseHsts();
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors(config =>
+{
+    config.AllowAnyOrigin();
+    config.AllowAnyMethod();
+    config.AllowAnyHeader();
+});
 
 using (var scope = app.Services.CreateScope())
 {
