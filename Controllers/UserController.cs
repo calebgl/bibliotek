@@ -16,13 +16,17 @@ public class UserController(BibliotekContext context) : ControllerBase
         var user = Utils.ValidateCurrentUser(User, context);
         var savedBooks = context
             .SavedBooks.Include(sb => sb.Book)
+            .Include(sb => sb.Book.BookStats)
             .Where(sb => sb.UserId == user.Id)
             .Select(sb => new
             {
-                BookId = sb.BookId,
+                Id = sb.BookId,
                 Title = sb.Book.Title,
+                Author = sb.Book.Author,
                 Price = sb.Book.Price,
                 CoverUrl = sb.Book.CoverUrl,
+                AverageRating = sb.Book.BookStats.AverageRating,
+                TotalReviews = sb.Book.BookStats.TotalReviewCount,
                 SavedAt = sb.CreatedAt,
             });
 
