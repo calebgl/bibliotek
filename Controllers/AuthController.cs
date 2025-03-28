@@ -17,7 +17,7 @@ public class AuthController(
 ) : ControllerBase
 {
     [HttpGet]
-    [Route("signin-github")]
+    [Route("~/signin-github")]
     public IActionResult SignInGithub()
     {
         return RedirectToAction("HandleExternalLogin", "AuthController");
@@ -106,8 +106,8 @@ public class AuthController(
     }
 
     [HttpGet]
+    [Route("~/logout")]
     [Authorize]
-    [Route("logout")]
     public async Task<IActionResult> Logout()
     {
         await signInManager.SignOutAsync();
