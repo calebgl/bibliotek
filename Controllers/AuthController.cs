@@ -105,6 +105,15 @@ public class AuthController(
         }
     }
 
+    [HttpGet]
+    [Authorize]
+    [Route("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await signInManager.SignOutAsync();
+        return NoContent();
+    }
+
     [HttpGet("session")]
     [Authorize]
     public IActionResult ValidateSession()
