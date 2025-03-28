@@ -15,16 +15,28 @@ builder
     })
     .AddEntityFrameworkStores<BibliotekContext>();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events = new Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationEvents
+    {
+        OnRedirectToAccessDenied = context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            return Task.FromResult(0);
+        },
+        OnRedirectToLogin = context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Task.FromResult(0);
+        },
+    };
+});
+
 builder
     .Services.AddAuthentication(options =>
     {
         options.DefaultScheme = IdentityConstants.ApplicationScheme;
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
-    .AddCookie(options =>
-    {
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-        options.SlidingExpiration = true;
     })
     .AddGitHub(options =>
     {
@@ -67,9 +79,6 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
     app.UseDeveloperExceptionPage();
 }
-
-var cookieOptions = new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax };
-app.UseCookiePolicy(cookieOptions);
 
 app.UseExceptionHandler("/error");
 app.UseHsts();
