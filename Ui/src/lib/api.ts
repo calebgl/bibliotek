@@ -30,11 +30,11 @@ export async function login(
 		return
 	}
 
-	const url = new URL('/auth/login')
-	url.searchParams.set('useCookies', 'true')
-	url.searchParams.set('useSessionCookies', 'true')
+	const searchParams = new URLSearchParams()
+	searchParams.set('useCookies', 'true')
+	searchParams.set('useSessionCookies', 'true')
 
-	const resp = await fetch(url, {
+	const resp = await fetch('/authz/login?' + searchParams.toString(), {
 		method: Method.POST,
 		headers: {
 			'Content-Type': MimeType.JSON,
@@ -54,7 +54,7 @@ export async function login(
 export async function logout(): Promise<void> {
 	await sleep()
 
-	const resp = await fetch('/api/auth/logout', {
+	const resp = await fetch('/authz/logout', {
 		credentials: 'include',
 	})
 	if (!resp.ok) {
