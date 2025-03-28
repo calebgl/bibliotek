@@ -15,6 +15,11 @@ export default defineConfig({
 	server: {
 		proxy: {
 			'/api': 'http://localhost:5191',
+			'/auth/login': {
+				target: 'http://localhost:5191',
+				secure: true,
+				rewrite: (path) => path.replace(/^\/auth/, ''),
+			},
 		},
 	},
 })
