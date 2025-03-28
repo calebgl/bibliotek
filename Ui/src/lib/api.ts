@@ -1,4 +1,4 @@
-import { Book, Review } from '../types'
+import { Book, Credentials, Review, User } from '../types'
 import { AdminBook, CreateBook } from '../types/book'
 import { MimeType } from '../types/utils'
 import { HttpError, HttpStatus } from './http'
@@ -8,6 +8,81 @@ enum Method {
 	GET = 'GET',
 	POST = 'POST',
 	PUT = 'PUT',
+}
+
+export async function login(provider: 'github'): Promise<void>
+export async function login(credentials: Credentials): Promise<void>
+export async function login(
+	credentials: Credentials | 'github',
+): Promise<void> {
+	await sleep()
+
+	if (typeof credentials === 'string') {
+		switch (credentials) {
+			case 'github':
+				window.location.href = 'http://localhost:5191/api/auth/github'
+				break
+
+			default:
+				throw new Error()
+		}
+
+		return
+	}
+
+	const url = new URL('/auth/login')
+	url.searchParams.set('useCookies', 'true')
+	url.searchParams.set('useSessionCookies', 'true')
+
+	const resp = await fetch(url, {
+		method: Method.POST,
+		headers: {
+			'Content-Type': MimeType.JSON,
+		},
+		body: JSON.stringify(
+			Object.assign({}, credentials, {
+				twoFactorCode: null,
+				twoFactorRecoveryCode: null,
+			}),
+		),
+	})
+	if (!resp.ok) {
+		throw new HttpError(resp.status as HttpStatus, 'error login in')
+	}
+}
+
+export async function logout(): Promise<void> {
+	await sleep()
+
+	const resp = await fetch('/api/auth/logout', {
+		credentials: 'include',
+	})
+	if (!resp.ok) {
+		throw new HttpError(resp.status as HttpStatus, 'error login out')
+	}
+}
+
+export async function checkSession(init?: RequestInit): Promise<User | null> {
+	await sleep()
+	const resp = await fetch(
+		'/api/auth/session',
+		Object.assign({}, init, {
+			credentials: 'include',
+		}),
+	)
+
+	if (!resp.ok) {
+		if (resp.status !== HttpStatus.Unauthorized) {
+			throw new HttpError(
+				resp.status as HttpStatus,
+				'error checking session',
+			)
+		}
+
+		return null
+	}
+
+	return resp.json()
 }
 
 export async function fetchAdminBooks(): Promise<AdminBook[]> {
@@ -136,3 +211,20 @@ export async function postReview(
 
 	return resp.json()
 }
+
+// type Fetcher = (input: RequestInfo | URL, init?: RequestInit) => Promise<any>
+//
+// function createFetch(): Fetcher {
+// 	return async function (input: RequestInfo | URL, init?: RequestInit) {
+// 		const [resp] = await Promise.all([fetch(input, init), await sleep()])
+// 		if (!resp.ok) {
+// 			throw new HttpError(
+// 				resp.status as HttpStatus,
+// 				'error in ' + input.toString(),
+// 			)
+// 		}
+// 		return resp.json()
+// 	}
+// }
+//
+// const fetch = createFetch()

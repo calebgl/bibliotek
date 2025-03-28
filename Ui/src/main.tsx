@@ -16,6 +16,7 @@ import { AdminBooks } from './views/admin-books.tsx'
 import { Book } from './views/book'
 import { Books } from './views/books.tsx'
 import { Home } from './views/home'
+import { Login } from './views/login.tsx'
 
 const queryClient = new QueryClient()
 const router = createBrowserRouter([
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
 				element: <Book />,
 			},
 		],
+	},
+	{
+		path: '/login',
+		element: <Login />,
 	},
 	{
 		path: '/admin',
