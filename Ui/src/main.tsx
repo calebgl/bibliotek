@@ -3,9 +3,11 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router'
 
+import 'jotai-devtools/styles.css'
 import './assets/main.css'
 import './config.ts'
 
+import { DevTools } from 'jotai-devtools'
 import { AdminLayout } from './layouts/admin-layout.tsx'
 import { BaseLayout } from './layouts/base-layout.tsx'
 import { AdminBookCreate } from './views/admin-book-create.tsx'
@@ -57,6 +59,7 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>
+		<DevTools />
 		<QueryClientProvider client={queryClient}>
 			<RouterProvider router={router} />
 		</QueryClientProvider>
