@@ -8,6 +8,7 @@ import './assets/main.css'
 import './config.ts'
 
 import { DevTools } from 'jotai-devtools'
+import { RequireAuth } from './components/require-auth.tsx'
 import { AdminLayout } from './layouts/admin-layout.tsx'
 import { PublicLayout } from './layouts/public-layout.tsx'
 import { AdminBookCreateView } from './views/admin-book-create-view.tsx'
@@ -17,6 +18,7 @@ import { BookView } from './views/book-view.tsx'
 import { BooksView } from './views/books-view.tsx'
 import { HomeView } from './views/home-view.tsx'
 import { LoginView } from './views/login-view.tsx'
+import { SavedView } from './views/saved-view.tsx'
 
 const queryClient = new QueryClient()
 const router = createBrowserRouter([
@@ -35,6 +37,14 @@ const router = createBrowserRouter([
 			{
 				path: '/books/:bookId',
 				element: <BookView />,
+			},
+			{
+				path: '/saved',
+				element: (
+					<RequireAuth>
+						<SavedView />
+					</RequireAuth>
+				),
 			},
 		],
 	},
