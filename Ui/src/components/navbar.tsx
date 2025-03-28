@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai'
-import { useEffect, useRef } from 'react'
+import { Suspense, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { NavLink } from 'react-router'
 
@@ -51,10 +51,16 @@ export function Navbar() {
 						<NavLink to="/">logo</NavLink>
 					</div>
 					<div className="justify-self-center">searchbar</div>
-					<div className="flex gap-2 justify-self-end">
-						<NavbarActions
-							onCloseCart={() => setOpen((prev) => !prev)}
-						/>
+					<div className="flex items-center gap-2 justify-self-end">
+						<Suspense
+							fallback={
+								<div className="h-5 w-32 animate-pulse bg-gray-200" />
+							}
+						>
+							<NavbarActions
+								onCloseCart={() => setOpen((prev) => !prev)}
+							/>
+						</Suspense>
 					</div>
 				</div>
 				<div className="p-4 pt-0">
