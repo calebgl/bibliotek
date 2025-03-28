@@ -1,5 +1,5 @@
 import { Book, Credentials, Review, User } from '../types'
-import { AdminBook, CreateBook } from '../types/book'
+import { AdminBook, CreateBook, SavedBook } from '../types/book'
 import { MimeType } from '../types/utils'
 import { HttpError, HttpStatus } from './http'
 import { sleep } from './utils'
@@ -208,6 +208,21 @@ export async function postReview(
 		throw new HttpError(
 			resp.status as HttpStatus,
 			'error posting review for book ' + bookId,
+		)
+	}
+
+	return resp.json()
+}
+
+export async function fetchFavoriteBooks(): Promise<SavedBook[]> {
+	const resp = await fetch('/api/users/favorites', {
+		credentials: 'include',
+	})
+	await sleep()
+	if (!resp.ok) {
+		throw new HttpError(
+			resp.status as HttpStatus,
+			'error fetching favorite books',
 		)
 	}
 

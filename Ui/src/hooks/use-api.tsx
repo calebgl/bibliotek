@@ -11,6 +11,7 @@ import {
 	fetchAdminBooks,
 	fetchBook,
 	fetchBooks,
+	fetchFavoriteBooks,
 	fetchReviews,
 	postReview,
 	putAdminBook,
@@ -24,6 +25,7 @@ const queryKeys = {
 		books: {
 			all: () => ['public', 'books'],
 			list: () => [...queryKeys.public.books.all(), 'list'],
+            saved: () => [...queryKeys.public.books.all(), 'saved'],
 			detail: (id: string) => [...queryKeys.public.books.all(), 'detail', id],
 			reviews: {
 				all: (bookId: string) => [...queryKeys.public.books.detail(bookId), 'reviews'],
@@ -119,6 +121,13 @@ export function useCreateReviewState(bookId: string) {
 				| Pick<Review, 'userId' | 'comment' | 'rate'>
 				| undefined
 		},
+	})
+}
+
+export function useSavedBooks() {
+	return useQuery({
+		queryKey: queryKeys.public.books.saved(),
+		queryFn: () => fetchFavoriteBooks(),
 	})
 }
 

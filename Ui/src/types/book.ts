@@ -17,6 +17,16 @@ export type Book = {
 	}
 }
 
+export type SavedBook = {
+	id: string
+	title: string
+	author: string
+	coverUrl: string | null
+	price: number
+	totalReviews: number
+	averageRating: number
+}
+
 export type AdminBook = Omit<Book, 'stars'> & {
 	stockQuantity: number
 }
