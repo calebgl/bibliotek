@@ -16,6 +16,7 @@ import { AdminBookUpdateView } from './views/admin-book-update-view.tsx'
 import { AdminBooksView } from './views/admin-books-view.tsx'
 import { BookView } from './views/book-view.tsx'
 import { BooksView } from './views/books-view.tsx'
+import { CartView } from './views/cart-view.tsx'
 import { HomeView } from './views/home-view.tsx'
 import { LoginView } from './views/login-view.tsx'
 import { SavedView } from './views/saved-view.tsx'
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
 						<SavedView />
 					</RequireAuth>
 				),
+			},
+			{
+				path: '/cart',
+				element: <CartView />,
 			},
 		],
 	},

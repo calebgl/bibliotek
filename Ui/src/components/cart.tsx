@@ -1,16 +1,25 @@
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { MouseEvent, RefObject } from 'react'
+import { useNavigate } from 'react-router'
 
 import { assert } from '../lib/assert'
-import { countAtom } from '../stores/cart'
+import { countAtom, openAtom } from '../stores/cart'
 import { CartList } from './cart-list'
 
 export function Cart(props: {
 	ref: RefObject<HTMLDivElement | null>
 	onClose(event: MouseEvent<HTMLElement>): void
 }) {
+	const navigate = useNavigate()
+
+	const setOpen = useSetAtom(openAtom)
 	const count = useAtomValue(countAtom)
 	assert(count >= 0)
+
+	function handleBuy() {
+		navigate('/cart')
+		setOpen(false)
+	}
 
 	return (
 		<div
@@ -26,7 +35,10 @@ export function Cart(props: {
 					<div className="shrink grow overflow-y-auto">
 						<CartList />
 					</div>
-					<button className="cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500">
+					<button
+						onClick={handleBuy}
+						className="cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500"
+					>
 						Buy
 					</button>
 				</div>
