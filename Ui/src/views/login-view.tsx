@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react'
-import { useNavigate, Navigate, useLocation } from 'react-router'
+import { useNavigate, useLocation, Navigate } from 'react-router'
 
 import { useAuth } from '../hooks/use-auth'
 import { assert } from '../lib/assert'
@@ -13,7 +13,7 @@ export function LoginView() {
 	const from = location.state?.from?.pathname || '/'
 
 	if (user) {
-		return <Navigate to="/" />
+		return <Navigate to={from} replace />
 	}
 
 	async function handleSubmit(event: FormEvent<HTMLFormElement>) {
