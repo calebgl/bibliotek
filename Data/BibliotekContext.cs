@@ -16,6 +16,7 @@ public class BibliotekContext(DbContextOptions<BibliotekContext> options)
     public DbSet<PaymentCard> PaymentCards { get; set; } = null!;
     public DbSet<PaymentPayPal> PaymentPayPals { get; set; } = null!;
     public DbSet<PaymentCash> PaymentCashes { get; set; } = null!;
+    public DbSet<SavedBook> SavedBooks { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

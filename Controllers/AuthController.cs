@@ -118,14 +118,7 @@ public class AuthController(
     [Authorize]
     public IActionResult ValidateSession()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        Utils.Assert(userId);
-
-        var user = context.Users.Where(u => u.Id == uint.Parse(userId!)).FirstOrDefault();
-        Utils.Assert(user);
-        Utils.Assert(!string.IsNullOrWhiteSpace(user!.Email));
-        Utils.Assert(!string.IsNullOrWhiteSpace(user!.UserName));
-
+        var user = Utils.ValidateCurrentUser(User, context);
         return Ok(
             new
             {

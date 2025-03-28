@@ -1,25 +1,22 @@
+using System.Diagnostics;
+using System.Security.Claims;
+using Bibliotek.Models;
+
 public static class Utils
 {
-    public static void Assert<T>(T condition, string? message = null)
+    public static User ValidateCurrentUser(
+        ClaimsPrincipal claimsPrincipal,
+        BibliotekContext context
+    )
     {
-        if (condition is null)
-        {
-            throw new InvalidOperationException(message);
-        }
-        if (condition is bool cond)
-        {
-            if (!cond)
-            {
-                throw new InvalidOperationException(message);
-            }
-        }
-    }
+        var userId = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);
+        Debug.Assert(!string.IsNullOrWhiteSpace(userId));
 
-    public static void AssertNull<T>(T condition, string? message = null)
-    {
-        if (condition is not null)
-        {
-            throw new InvalidOperationException(message);
-        }
+        var user = context.Users.Where(u => u.Id == uint.Parse(userId!)).FirstOrDefault();
+        Debug.Assert(user is not null);
+        Debug.Assert(!string.IsNullOrWhiteSpace(user.Email));
+        Debug.Assert(!string.IsNullOrWhiteSpace(user.UserName));
+
+        return user;
     }
 }
