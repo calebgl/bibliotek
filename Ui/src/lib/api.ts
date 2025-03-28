@@ -62,7 +62,9 @@ export async function logout(): Promise<void> {
 	}
 }
 
-export async function checkSession(init?: RequestInit): Promise<User | null> {
+export async function validateSession(
+	init?: RequestInit,
+): Promise<User | null> {
 	await sleep()
 	const resp = await fetch(
 		'/api/auth/session',
