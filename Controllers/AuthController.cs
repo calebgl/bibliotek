@@ -16,6 +16,13 @@ public class AuthController(
     BibliotekContext context
 ) : ControllerBase
 {
+    [HttpGet]
+    [Route("signin-github")]
+    public IActionResult SignInGithub()
+    {
+        return RedirectToAction("HandleExternalLogin", "AuthController");
+    }
+
     [HttpGet("github")]
     public IActionResult SignInGitHub()
     {
