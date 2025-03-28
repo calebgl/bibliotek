@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Bibliotek.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,7 +12,8 @@ public class AuthController(
     SignInManager<User> signInManager,
     UserManager<User> userManager,
     IConfiguration configuration,
-    ILogger<AuthController> logger
+    ILogger<AuthController> logger,
+    BibliotekContext context
 ) : ControllerBase
 {
     [HttpGet("github")]
@@ -94,5 +96,27 @@ public class AuthController(
             logger.LogError("Auth: failed to login", ex);
             return Redirect(successRedirectUrl);
         }
+    }
+
+    [HttpGet("session")]
+    [Authorize]
+    public IActionResult ValidateSession()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        Utils.Assert(userId);
+
+        var user = context.Users.Where(u => u.Id == uint.Parse(userId!)).FirstOrDefault();
+        Utils.Assert(user);
+        Utils.Assert(!string.IsNullOrWhiteSpace(user!.Email));
+        Utils.Assert(!string.IsNullOrWhiteSpace(user!.UserName));
+
+        return Ok(
+            new
+            {
+                Id = user.Id,
+                Email = user.Email,
+                UserName = user.UserName,
+            }
+        );
     }
 }
