@@ -2,7 +2,7 @@ import { atom } from 'jotai'
 
 import { CartBook } from '../types'
 
-export const openAtom = atom<boolean>()
+export const openAtom = atom<boolean>(false)
 
 export const booksAtom = atom<Record<string, CartBook>>({
 	'1': {
