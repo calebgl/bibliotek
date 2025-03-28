@@ -11,8 +11,7 @@ export function AdminBookUpdateView() {
 	const [coverImage, setCoverImage] = useState<File | null | undefined>()
 
 	const { data: book, isLoading, error } = useAdminBook(bookId)
-	const { mutateAsync, isIdle, isPaused, isPending } =
-		useUpdateAdminBook(bookId)
+	const { mutateAsync, isPending } = useUpdateAdminBook(bookId)
 
 	if (isLoading) {
 		return 'loading...'
