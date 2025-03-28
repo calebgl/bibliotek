@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, Navigate } from 'react-router'
 
 import { useAuth } from '../hooks/use-auth'
 import { assert } from '../lib/assert'
@@ -7,7 +7,11 @@ import { assert } from '../lib/assert'
 export function Login() {
 	const navigate = useNavigate()
 	const [disabled, setDisabled] = useState<boolean>(false)
-	const { login, signInGitHub } = useAuth()
+	const { user, login, signInGitHub } = useAuth()
+
+	if (user) {
+		return <Navigate to="/" />
+	}
 
 	async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault()
