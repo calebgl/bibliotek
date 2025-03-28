@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom'
 import { NavLink } from 'react-router'
 
 import { openAtom } from '../stores/cart'
-import { Cart } from './cart'
+import { CartDrawer } from './cart-drawer'
 import { NavbarActions } from './navbar-actions'
 
 export function Navbar() {
@@ -35,7 +35,7 @@ export function Navbar() {
 		<>
 			{open &&
 				createPortal(
-					<Cart
+					<CartDrawer
 						ref={modalRef}
 						onClose={(event) => {
 							if (event.target === modalRef.current) {

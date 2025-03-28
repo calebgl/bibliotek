@@ -4,9 +4,9 @@ import { useCallback } from 'react'
 import { assert } from '../lib/assert'
 import { booksAtom } from '../stores/cart'
 import type { CartBook } from '../types'
-import { CartItem } from './cart-item'
+import { CartDrawerItem } from './cart-drawer-item'
 
-export function CartList() {
+export function CartDrawerList() {
 	const [books, setBooks] = useAtom(booksAtom)
 	const cartBooks = Object.values(books)
 
@@ -53,7 +53,7 @@ export function CartList() {
 		<div className="space-y-8">
 			{cartBooks.length === 0 && 'There are no books in your cart!'}
 			{cartBooks.map((book) => (
-				<CartItem
+				<CartDrawerItem
 					key={book.id}
 					{...book}
 					onDecrement={handleDecrement}

@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router'
 
 import { assert } from '../lib/assert'
 import { countAtom, openAtom } from '../stores/cart'
-import { CartList } from './cart-list'
+import { CartDrawerList } from './cart-drawer-list'
 
-export function Cart(props: {
+export function CartDrawer(props: {
 	ref: RefObject<HTMLDivElement | null>
 	onClose(event: MouseEvent<HTMLElement>): void
 }) {
@@ -33,7 +33,7 @@ export function Cart(props: {
 						Cart{count > 0 && <span>({count})</span>}
 					</h2>
 					<div className="shrink grow overflow-y-auto">
-						<CartList />
+						<CartDrawerList />
 					</div>
 					<button
 						onClick={handleBuy}

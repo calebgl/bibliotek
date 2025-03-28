@@ -6,7 +6,7 @@ import { formatCurrency } from '../lib/utils'
 import { openAtom } from '../stores/cart'
 import type { CartBook } from '../types'
 
-export const CartItem = memo(
+export const CartDrawerItem = memo(
 	(
 		props: CartBook & {
 			onIncrement(bookId: string): void
