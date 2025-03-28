@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react'
-import { useNavigate, Navigate } from 'react-router'
+import { useNavigate, Navigate, useLocation } from 'react-router'
 
 import { useAuth } from '../hooks/use-auth'
 import { assert } from '../lib/assert'
@@ -8,6 +8,9 @@ export function Login() {
 	const navigate = useNavigate()
 	const [disabled, setDisabled] = useState<boolean>(false)
 	const { user, login, signInGitHub } = useAuth()
+
+	const location = useLocation()
+	const from = location.state?.from?.pathname || '/'
 
 	if (user) {
 		return <Navigate to="/" />
@@ -26,7 +29,7 @@ export function Login() {
 
 		try {
 			await login({ email, password })
-			navigate('/')
+			navigate(from, { replace: true })
 		} catch (error) {
 			console.error(error)
 		} finally {
