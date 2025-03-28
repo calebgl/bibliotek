@@ -1,12 +1,8 @@
 import { Outlet } from 'react-router'
 
-import { Navbar } from '../components/navbar'
+import { useAuth } from '../hooks/use-auth'
 
 export function BaseLayout() {
-	return (
-		<>
-			<Navbar />
-			<Outlet />
-		</>
-	)
+	useAuth()
+	return <Outlet />
 }

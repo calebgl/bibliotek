@@ -10,6 +10,7 @@ import './config.ts'
 import { DevTools } from 'jotai-devtools'
 import { AdminLayout } from './layouts/admin-layout.tsx'
 import { BaseLayout } from './layouts/base-layout.tsx'
+import { PublicLayout } from './layouts/public-layout.tsx'
 import { AdminBookCreate } from './views/admin-book-create.tsx'
 import { AdminBookUpdate } from './views/admin-book-update.tsx'
 import { AdminBooks } from './views/admin-books.tsx'
@@ -25,38 +26,44 @@ const router = createBrowserRouter([
 		element: <BaseLayout />,
 		children: [
 			{
-				index: true,
-				element: <Home />,
+				path: '/',
+				element: <PublicLayout />,
+				children: [
+					{
+						index: true,
+						element: <Home />,
+					},
+					{
+						path: '/books',
+						element: <Books />,
+					},
+					{
+						path: '/books/:bookId',
+						element: <Book />,
+					},
+				],
 			},
 			{
-				path: '/books',
-				element: <Books />,
+				path: '/login',
+				element: <Login />,
 			},
 			{
-				path: '/books/:bookId',
-				element: <Book />,
-			},
-		],
-	},
-	{
-		path: '/login',
-		element: <Login />,
-	},
-	{
-		path: '/admin',
-		element: <AdminLayout />,
-		children: [
-			{
-				path: '/admin/books',
-				element: <AdminBooks />,
-			},
-			{
-				path: '/admin/books/create',
-				element: <AdminBookCreate />,
-			},
-			{
-				path: '/admin/books/:bookId',
-				element: <AdminBookUpdate />,
+				path: '/admin',
+				element: <AdminLayout />,
+				children: [
+					{
+						path: '/admin/books',
+						element: <AdminBooks />,
+					},
+					{
+						path: '/admin/books/create',
+						element: <AdminBookCreate />,
+					},
+					{
+						path: '/admin/books/:bookId',
+						element: <AdminBookUpdate />,
+					},
+				],
 			},
 		],
 	},
