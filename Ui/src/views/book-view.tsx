@@ -8,7 +8,7 @@ import { BookReviewForm } from '../components/book-review-form'
 import { BookReviewList } from '../components/book-review-list'
 import { assert } from '../lib/assert'
 
-export function Book() {
+export function BookView() {
 	const { bookId } = useParams()
 	assert(bookId)
 

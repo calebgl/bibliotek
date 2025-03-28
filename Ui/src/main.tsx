@@ -10,13 +10,13 @@ import './config.ts'
 import { DevTools } from 'jotai-devtools'
 import { AdminLayout } from './layouts/admin-layout.tsx'
 import { PublicLayout } from './layouts/public-layout.tsx'
-import { AdminBookCreate } from './views/admin-book-create.tsx'
-import { AdminBookUpdate } from './views/admin-book-update.tsx'
-import { AdminBooks } from './views/admin-books.tsx'
-import { Book } from './views/book'
-import { Books } from './views/books.tsx'
-import { Home } from './views/home'
-import { Login } from './views/login.tsx'
+import { AdminBookCreateView } from './views/admin-book-create-view.tsx'
+import { AdminBookUpdateView } from './views/admin-book-update-view.tsx'
+import { AdminBooksView } from './views/admin-books-view.tsx'
+import { BookView } from './views/book-view.tsx'
+import { BooksView } from './views/books-view.tsx'
+import { HomeView } from './views/home-view.tsx'
+import { LoginView } from './views/login-view.tsx'
 
 const queryClient = new QueryClient()
 const router = createBrowserRouter([
@@ -26,21 +26,21 @@ const router = createBrowserRouter([
 		children: [
 			{
 				index: true,
-				element: <Home />,
+				element: <HomeView />,
 			},
 			{
 				path: '/books',
-				element: <Books />,
+				element: <BooksView />,
 			},
 			{
 				path: '/books/:bookId',
-				element: <Book />,
+				element: <BookView />,
 			},
 		],
 	},
 	{
 		path: '/login',
-		element: <Login />,
+		element: <LoginView />,
 	},
 	{
 		path: '/admin',
@@ -48,15 +48,15 @@ const router = createBrowserRouter([
 		children: [
 			{
 				path: '/admin/books',
-				element: <AdminBooks />,
+				element: <AdminBooksView />,
 			},
 			{
 				path: '/admin/books/create',
-				element: <AdminBookCreate />,
+				element: <AdminBookCreateView />,
 			},
 			{
 				path: '/admin/books/:bookId',
-				element: <AdminBookUpdate />,
+				element: <AdminBookUpdateView />,
 			},
 		],
 	},

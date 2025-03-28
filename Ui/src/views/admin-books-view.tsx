@@ -6,7 +6,7 @@ import { assert } from '../lib/assert'
 import { formatCurrency, formatDecimal } from '../lib/utils'
 import { CreateBook } from '../types/book'
 
-export function AdminBooks() {
+export function AdminBooksView() {
 	const { data: books, isLoading, error } = useAdminBooks()
 	const [variables] = useMutationState<CreateBook>({
 		filters: { mutationKey: ['createAdminBook'], status: 'pending' },

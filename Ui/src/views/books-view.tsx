@@ -6,7 +6,7 @@ import { isHttpError } from '../lib/http'
 import { formatCurrency } from '../lib/utils'
 import { useRef } from 'react'
 
-export function Books() {
+export function BooksView() {
 	return (
 		<div className="container mx-auto">
 			<div className="grid grid-cols-4 gap-8">

@@ -4,7 +4,7 @@ import { useNavigate, Navigate, useLocation } from 'react-router'
 import { useAuth } from '../hooks/use-auth'
 import { assert } from '../lib/assert'
 
-export function Login() {
+export function LoginView() {
 	const navigate = useNavigate()
 	const [disabled, setDisabled] = useState<boolean>(false)
 	const { user, login, signInGitHub } = useAuth()

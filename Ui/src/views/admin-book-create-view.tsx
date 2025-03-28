@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from 'react-router'
 import { useCreateAdminBook } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 
-export function AdminBookCreate() {
+export function AdminBookCreateView() {
 	const navigate = useNavigate()
 	const [coverImage, setCoverImage] = useState<File | null | undefined>()
 

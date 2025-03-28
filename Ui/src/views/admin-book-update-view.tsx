@@ -4,7 +4,7 @@ import { NavLink, useParams } from 'react-router'
 import { useAdminBook, useUpdateAdminBook } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 
-export function AdminBookUpdate() {
+export function AdminBookUpdateView() {
 	const { bookId } = useParams()
 	assert(bookId)
 
