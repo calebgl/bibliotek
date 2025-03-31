@@ -1,29 +1,24 @@
 import { useSetAtom } from 'jotai'
 import type { ButtonHTMLAttributes, MouseEvent } from 'react'
-import { useParams } from 'react-router'
 
-import { useBook } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 import { cn } from '../lib/utils'
 import { booksAtom } from '../stores/cart'
+import { Book } from '../types'
 import { Button } from './button'
 
 type ButtonAddToCartProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-	bookId?: string
+	book?: Pick<Book, 'id' | 'title' | 'price'> &
+		Partial<Pick<Book, 'coverUrl' | 'subtitle' | 'author'>>
 }
 
 export function ButtonAddToCart(props: ButtonAddToCartProps) {
-	const { bookId: bookIdProps, disabled, className, ...rest } = props
-	const { bookId: bookIdParams } = useParams()
-
-	const bookId = bookIdProps || bookIdParams
-	assert(bookId)
+	const { book, className, ...rest } = props
 
 	const setBooksAtom = useSetAtom(booksAtom)
 
-	const { data: book, isLoading, isError } = useBook(bookId)
-
 	function addToCart(_: MouseEvent<HTMLButtonElement>) {
+		const bookId = book?.id
 		assert(bookId)
 		assert(book)
 
@@ -33,11 +28,11 @@ export function ButtonAddToCart(props: ButtonAddToCartProps) {
 				cloned[bookId] = {
 					id: book.id,
 					title: book.title,
-					author: book.author,
+					author: book.author ?? '',
 					price: book.price,
-					coverUrl: book.coverUrl,
+					coverUrl: book.coverUrl ?? null,
 					quantity: 0,
-					subtitle: book.subtitle,
+					subtitle: book.subtitle ?? '',
 				}
 			}
 
@@ -50,7 +45,6 @@ export function ButtonAddToCart(props: ButtonAddToCartProps) {
 	return (
 		<Button
 			{...rest}
-			disabled={disabled || isLoading || isError}
 			onClick={addToCart}
 			className={cn(
 				'cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500 disabled:animate-pulse disabled:cursor-not-allowed disabled:bg-gray-100',
