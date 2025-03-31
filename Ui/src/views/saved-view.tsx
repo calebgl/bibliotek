@@ -5,6 +5,7 @@ import { ButtonSaveBook } from '../components/button-save-book'
 import { useSavedBooks } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 import { formatCurrency } from '../lib/utils'
+import { Button } from '../components/button'
 
 export function SavedView() {
 	return (
@@ -21,18 +22,18 @@ function List() {
 	const { data: books, isLoading } = useSavedBooks()
 
 	if (isLoading) {
-		return Array.from({ length: 4 }, (_, index) => {
+		return Array.from({ length: 3 }, (_, index) => {
 			return (
 				<div key={'skeleton-book-' + index} className="flex gap-8">
 					<div className="aspect-2/3 w-40 animate-pulse bg-gray-200" />
 					<div className="flex grow flex-col gap-1">
-						<div className="h-7 w-32 animate-pulse bg-gray-200" />
-						<div className="h-4 w-16 animate-pulse bg-gray-100" />
-						<div className="h-5 w-24 animate-pulse bg-gray-100" />
-						<div className="h-6 w-12 animate-pulse bg-gray-200" />
+						<div className="h-7 w-64 animate-pulse bg-gray-200" />
+						<div className="h-4 w-32 animate-pulse bg-gray-100" />
+						<div className="h-5 w-48 animate-pulse bg-gray-100" />
+						<div className="h-6 w-24 animate-pulse bg-gray-200" />
 						<div className="mt-auto flex gap-4">
-							<ButtonAddToCart bookId="1" />
-							<ButtonSaveBook bookId="2" />
+							<Button className="h-12 min-w-32 animate-pulse bg-gray-200" />
+							<Button className="h-12 min-w-16 animate-pulse bg-gray-200" />
 						</div>
 					</div>
 				</div>
@@ -44,7 +45,7 @@ function List() {
 
 	return books.map((book) => (
 		<div key={'favorite-' + book.id} className="flex gap-8">
-			<Link to={'/books/' + book.id} className="max-w-40">
+			<Link to={'/books/' + book.id} className="aspect-2/3 w-40 max-w-40">
 				<img src={book.coverUrl ?? undefined} alt={book.title} />
 			</Link>
 			<div className="flex grow flex-col">
@@ -62,7 +63,7 @@ function List() {
 				<div className="text-base">{book.author}</div>
 				<div className="text-xl">{formatCurrency(book.price)}</div>
 				<div className="mt-auto flex gap-4">
-					<ButtonAddToCart bookId={book.id} />
+					<ButtonAddToCart book={book} />
 					<ButtonSaveBook bookId={book.id} />
 				</div>
 			</div>
