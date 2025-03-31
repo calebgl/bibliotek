@@ -86,9 +86,18 @@ function Price() {
 }
 
 function Actions() {
+	const { bookId } = useParams()
+	assert(bookId)
+
+	const { data: book, isLoading, isError } = useBook(bookId)
+
 	return (
 		<>
-			<ButtonAddToCart className="grow" />
+			<ButtonAddToCart
+				disabled={isLoading || isError}
+				book={book}
+				className="grow"
+			/>
 			<ButtonSaveBook />
 		</>
 	)
