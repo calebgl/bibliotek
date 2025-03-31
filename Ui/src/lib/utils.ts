@@ -1,3 +1,7 @@
+import type { ClassValue } from 'clsx'
+import { clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
 export function sleep(ms: number = 500): Promise<void> {
 	return new Promise((r) => setTimeout(r, ms))
 }
@@ -12,3 +16,7 @@ export const formatDecimal = new Intl.NumberFormat('es-mx', {
 	minimumFractionDigits: 2,
 	maximumFractionDigits: 2,
 }).format
+
+export function cn(...inputs: ClassValue[]): string {
+	return twMerge(clsx(inputs))
+}
