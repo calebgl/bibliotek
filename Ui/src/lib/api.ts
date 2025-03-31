@@ -215,7 +215,7 @@ export async function postReview(
 }
 
 export async function fetchSavedBooks(): Promise<SavedBook[]> {
-	const resp = await fetch('/api/users/saved-books', {
+	const resp = await fetch('/api/saved-books', {
 		credentials: 'include',
 	})
 	await sleep()
