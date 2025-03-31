@@ -4,7 +4,6 @@ import { useBooks } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 import { isHttpError } from '../lib/http'
 import { formatCurrency } from '../lib/utils'
-import { useRef } from 'react'
 
 export function BooksView() {
 	return (
@@ -17,8 +16,7 @@ export function BooksView() {
 }
 
 function List() {
-	const failedAttempsRef = useRef<number>(0)
-	const { data: books, isLoading, error, refetch } = useBooks()
+	const { data: books, isLoading, error, refetch, failureCount } = useBooks()
 
 	if (error) {
 		if (!isHttpError(error)) {
@@ -29,12 +27,12 @@ function List() {
 		const message = 'Something went wrong! Please try again.'
 
 		const getMessage = () => {
-			if (failedAttempsRef.current === 0) return message
-			if (failedAttempsRef.current >= 3) {
+			if (failureCount === 0) return message
+			if (failureCount >= 3) {
 				return "We're having trouble loading this content. Please try again later or contact support if the problem persists."
 			}
 
-			return `${message} (Attemp ${failedAttempsRef.current} of ${maxRetries})`
+			return `${message} (Attemp ${failureCount} of ${maxRetries})`
 		}
 
 		return (
@@ -43,13 +41,10 @@ function List() {
 					{getMessage()}
 					<button
 						onClick={() => {
-							failedAttempsRef.current += 1
 							refetch()
 						}}
 					>
-						{failedAttempsRef.current >= 3
-							? 'Contact support'
-							: 'Retry'}
+						{failureCount >= 3 ? 'Contact support' : 'Retry'}
 					</button>
 				</div>
 			</div>
