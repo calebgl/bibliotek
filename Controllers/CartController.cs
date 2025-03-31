@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+namespace Bibliotek.Controllers;
 
 [ApiController]
 [Route("api/cart")]
-class CartController(BibliotekContext context) : ControllerBase
+public class CartController(BibliotekContext context) : ControllerBase
 {
     [HttpGet]
     public IActionResult ListCartBooks()
