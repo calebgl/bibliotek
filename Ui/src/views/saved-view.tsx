@@ -1,5 +1,7 @@
 import { Link } from 'react-router'
 
+import { ButtonAddToCart } from '../components/button-add-to-cart'
+import { ButtonSaveBook } from '../components/button-save-book'
 import { useSavedBooks } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 import { formatCurrency } from '../lib/utils'
@@ -44,12 +46,8 @@ export function SavedView() {
 								{formatCurrency(book.price)}
 							</div>
 							<div className="mt-auto flex gap-4">
-								<button className="cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500 disabled:cursor-not-allowed disabled:bg-gray-100">
-									Add to cart
-								</button>
-								<button className="cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500 disabled:cursor-not-allowed disabled:bg-gray-100">
-									<span className="size-4">❤</span>
-								</button>
+								<ButtonAddToCart bookId={book.id} />
+								<ButtonSaveBook bookId={book.id} />
 							</div>
 						</div>
 					</div>
