@@ -53,7 +53,7 @@ function List() {
 
 	if (isLoading) {
 		return Array.from({ length: 8 }, (_, index) => (
-			<div key={'skeleton-book-' + index} className="">
+			<div key={'skeleton-book-' + index}>
 				<div className="aspect-[8/9] bg-white p-8">
 					<div className="mx-auto aspect-[2/3] max-h-64 animate-pulse bg-gray-200" />
 				</div>

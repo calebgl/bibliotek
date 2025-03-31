@@ -7,52 +7,65 @@ import { assert } from '../lib/assert'
 import { formatCurrency } from '../lib/utils'
 
 export function SavedView() {
+	return (
+		<div className="container mx-auto space-y-4">
+			<h1 className="text-3xl font-bold">Saved</h1>
+			<div className="grid grid-cols-1 gap-12">
+				<List />
+			</div>
+		</div>
+	)
+}
+
+function List() {
 	const { data: books, isLoading } = useSavedBooks()
+
 	if (isLoading) {
-		return 'loading...'
+		return Array.from({ length: 4 }, (_, index) => {
+			return (
+				<div key={'skeleton-book-' + index} className="flex gap-8">
+					<div className="aspect-2/3 w-40 animate-pulse bg-gray-200" />
+					<div className="flex grow flex-col gap-1">
+						<div className="h-7 w-32 animate-pulse bg-gray-200" />
+						<div className="h-4 w-16 animate-pulse bg-gray-100" />
+						<div className="h-5 w-24 animate-pulse bg-gray-100" />
+						<div className="h-6 w-12 animate-pulse bg-gray-200" />
+						<div className="mt-auto flex gap-4">
+							<ButtonAddToCart bookId="1" />
+							<ButtonSaveBook bookId="2" />
+						</div>
+					</div>
+				</div>
+			)
+		})
 	}
 
 	assert(books)
 
-	return (
-		<div className="container mx-auto">
-			<div className="grid grid-cols-1 gap-12">
-				{books.map((book) => (
-					<div key={'favorite-' + book.id} className="flex gap-8">
-						<Link to={'/books/' + book.id} className="max-w-40">
-							<img
-								src={book.coverUrl ?? undefined}
-								alt={book.title}
-							/>
-						</Link>
-						<div className="flex grow flex-col">
-							<Link
-								to={'/books/' + book.id}
-								className="text-2xl font-semibold"
-							>
-								{book.title}
-							</Link>
-							<div className="flex items-center gap-1">
-								<span>★★★★☆</span>
-								<span className="text-sm">
-									{book.averageRating}
-								</span>
-								<span className="text-xs">
-									({book.totalReviews})
-								</span>
-							</div>
-							<div className="text-base">{book.author}</div>
-							<div className="text-xl">
-								{formatCurrency(book.price)}
-							</div>
-							<div className="mt-auto flex gap-4">
-								<ButtonAddToCart bookId={book.id} />
-								<ButtonSaveBook bookId={book.id} />
-							</div>
-						</div>
-					</div>
-				))}
+	return books.map((book) => (
+		<div key={'favorite-' + book.id} className="flex gap-8">
+			<Link to={'/books/' + book.id} className="max-w-40">
+				<img src={book.coverUrl ?? undefined} alt={book.title} />
+			</Link>
+			<div className="flex grow flex-col">
+				<Link
+					to={'/books/' + book.id}
+					className="text-2xl font-semibold"
+				>
+					{book.title}
+				</Link>
+				<div className="flex items-center gap-1">
+					<span>★★★★☆</span>
+					<span className="text-sm">{book.averageRating}</span>
+					<span className="text-xs">({book.totalReviews})</span>
+				</div>
+				<div className="text-base">{book.author}</div>
+				<div className="text-xl">{formatCurrency(book.price)}</div>
+				<div className="mt-auto flex gap-4">
+					<ButtonAddToCart bookId={book.id} />
+					<ButtonSaveBook bookId={book.id} />
+				</div>
 			</div>
 		</div>
-	)
+	))
 }
