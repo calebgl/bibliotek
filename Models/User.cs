@@ -9,7 +9,10 @@ public class User : IdentityUser<uint>
         Reviews = new List<Review>();
         Orders = new List<Order>();
         PaymentMethods = new List<PaymentMethod>();
+        Cart = new Cart { User = this };
     }
+
+    public Cart Cart { get; }
 
     public List<Review> Reviews { get; set; }
     public List<Order> Orders { get; set; }
