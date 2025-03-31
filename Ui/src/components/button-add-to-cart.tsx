@@ -1,5 +1,5 @@
 import { useSetAtom } from 'jotai'
-import type { ButtonHTMLAttributes, MouseEvent } from 'react'
+import type { ButtonHTMLAttributes } from 'react'
 
 import { assert } from '../lib/assert'
 import { cn } from '../lib/utils'
@@ -17,7 +17,7 @@ export function ButtonAddToCart(props: ButtonAddToCartProps) {
 
 	const setBooksAtom = useSetAtom(booksAtom)
 
-	function addToCart(_: MouseEvent<HTMLButtonElement>) {
+	function addToCart() {
 		const bookId = book?.id
 		assert(bookId)
 		assert(book)

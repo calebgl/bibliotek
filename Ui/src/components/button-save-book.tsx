@@ -7,9 +7,8 @@ type SaveButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 }
 
 export function ButtonSaveBook(props: SaveButtonProps) {
-	const { bookId, ...rest } = props
 	return (
-		<Button {...rest}>
+		<Button {...props}>
 			<span className="size-4">❤</span>
 		</Button>
 	)

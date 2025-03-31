@@ -29,7 +29,7 @@ export function Navbar() {
 		return () => {
 			window.removeEventListener('keyup', ev)
 		}
-	}, [open])
+	}, [open, setOpen])
 
 	return (
 		<>

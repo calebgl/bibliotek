@@ -10,44 +10,53 @@ export function CartDrawerList() {
 	const [books, setBooks] = useAtom(booksAtom)
 	const cartBooks = Object.values(books)
 
-	const handleIncrement = useCallback((id: string) => {
-		setBooks((prev: Record<string, CartBook>) => {
-			const cloned = structuredClone(prev)
-			assert(cloned[id])
-			assert(cloned[id].quantity > 0)
+	const handleIncrement = useCallback(
+		(id: string) => {
+			setBooks((prev: Record<string, CartBook>) => {
+				const cloned = structuredClone(prev)
+				assert(cloned[id])
+				assert(cloned[id].quantity > 0)
 
-			cloned[id].quantity++
+				cloned[id].quantity++
 
-			return cloned
-		})
-	}, [])
+				return cloned
+			})
+		},
+		[setBooks],
+	)
 
-	const handleDecrement = useCallback((id: string) => {
-		setBooks((prev: Record<string, CartBook>) => {
-			const cloned = structuredClone(prev)
-			assert(cloned[id])
-			assert(cloned[id].quantity > 0)
+	const handleDecrement = useCallback(
+		(id: string) => {
+			setBooks((prev: Record<string, CartBook>) => {
+				const cloned = structuredClone(prev)
+				assert(cloned[id])
+				assert(cloned[id].quantity > 0)
 
-			cloned[id].quantity--
-			if (cloned[id].quantity === 0) {
+				cloned[id].quantity--
+				if (cloned[id].quantity === 0) {
+					delete cloned[id]
+				}
+
+				return cloned
+			})
+		},
+		[setBooks],
+	)
+
+	const handleDelete = useCallback(
+		(id: string) => {
+			setBooks((prev: Record<string, CartBook>) => {
+				const cloned = structuredClone(prev)
+				assert(cloned[id])
+				assert(cloned[id].quantity > 0)
+
 				delete cloned[id]
-			}
 
-			return cloned
-		})
-	}, [])
-
-	const handleDelete = useCallback((id: string) => {
-		setBooks((prev: Record<string, CartBook>) => {
-			const cloned = structuredClone(prev)
-			assert(cloned[id])
-			assert(cloned[id].quantity > 0)
-
-			delete cloned[id]
-
-			return cloned
-		})
-	}, [])
+				return cloned
+			})
+		},
+		[setBooks],
+	)
 
 	return (
 		<div className="space-y-8">

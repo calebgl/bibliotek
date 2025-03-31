@@ -12,7 +12,7 @@ export function RatingLine(props: RatingLineProps) {
 				<div
 					className="jiji relative size-full bg-gray-200"
 					style={{
-						['--width' as any]: props.progress,
+						['--width' as string]: props.progress,
 					}}
 				/>
 			</div>
