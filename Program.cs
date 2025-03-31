@@ -71,6 +71,8 @@ builder.Services.AddDbContext<BibliotekContext>(options =>
     }
 });
 
+builder.Services.AddScoped<ValidateSession>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

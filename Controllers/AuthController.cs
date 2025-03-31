@@ -12,8 +12,7 @@ public class AuthController(
     SignInManager<User> signInManager,
     UserManager<User> userManager,
     IConfiguration configuration,
-    ILogger<AuthController> logger,
-    BibliotekContext context
+    ILogger<AuthController> logger
 ) : ControllerBase
 {
     [HttpGet]
@@ -89,7 +88,7 @@ public class AuthController(
             var createResult = await userManager.CreateAsync(user);
             if (!createResult.Succeeded)
             {
-                logger.LogError("User creation failed", createResult.Errors);
+                logger.LogError("User creation failed: {Errors}", createResult.Errors);
                 return Redirect(errorRedirectUrl);
             }
 
@@ -100,7 +99,7 @@ public class AuthController(
         }
         catch (Exception ex)
         {
-            logger.LogError("Auth: failed to login", ex);
+            logger.LogError("Auth failed to login: {Errors}", ex);
             return Redirect(successRedirectUrl);
         }
     }
@@ -116,9 +115,10 @@ public class AuthController(
 
     [HttpGet("session")]
     [Authorize]
+    [ValidateSession]
     public IActionResult ValidateSession()
     {
-        var user = Utils.ValidateCurrentUser(User, context);
+        var user = HttpContext.GetCurrentUser();
         return Ok(
             new
             {

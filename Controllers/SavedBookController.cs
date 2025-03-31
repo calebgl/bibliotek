@@ -11,9 +11,10 @@ public class SavedBookController(BibliotekContext context) : ControllerBase
 {
     [HttpGet]
     [Authorize]
+    [ValidateSession]
     public IActionResult ListSavedBooks()
     {
-        var user = Utils.ValidateCurrentUser(User, context);
+        var user = HttpContext.GetCurrentUser();
         var savedBooks = context
             .SavedBooks.Include(sb => sb.Book)
             .Include(sb => sb.Book.BookStats)
@@ -35,9 +36,10 @@ public class SavedBookController(BibliotekContext context) : ControllerBase
 
     [HttpPost]
     [Authorize]
+    [ValidateSession]
     public IActionResult SaveBook(SaveBookDto saveBookDto)
     {
-        var user = Utils.ValidateCurrentUser(User, context);
+        var user = HttpContext.GetCurrentUser();
         var book = context.Books.Where(b => b.Id == saveBookDto.BookId).FirstOrDefault();
         if (book is null)
         {
@@ -60,9 +62,10 @@ public class SavedBookController(BibliotekContext context) : ControllerBase
 
     [HttpDelete("{bookId}")]
     [Authorize]
+    [ValidateSession]
     public IActionResult RemoveSavedBook([FromRoute] uint bookId)
     {
-        var user = Utils.ValidateCurrentUser(User, context);
+        var user = HttpContext.GetCurrentUser();
         var savedBook = context
             .SavedBooks.Where(sb => sb.UserId == user.Id && sb.BookId == bookId)
             .FirstOrDefault();

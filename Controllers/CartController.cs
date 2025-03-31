@@ -7,7 +7,6 @@ class CartController(BibliotekContext context) : ControllerBase
     [HttpGet]
     public IActionResult ListCartBooks()
     {
-        Utils.ValidateCurrentUser(User, context);
         return Ok();
     }
 
