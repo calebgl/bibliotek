@@ -9,9 +9,9 @@ namespace Bibliotek.Controllers;
 [Route("api/users")]
 public class UserController(BibliotekContext context) : ControllerBase
 {
-    [HttpGet("favorites")]
+    [HttpGet("saved-books")]
     [Authorize]
-    public IActionResult ListFavoriteBooks()
+    public IActionResult ListSavedBooks()
     {
         var user = Utils.ValidateCurrentUser(User, context);
         var savedBooks = context
@@ -33,12 +33,12 @@ public class UserController(BibliotekContext context) : ControllerBase
         return Ok(savedBooks);
     }
 
-    [HttpPost("favorites")]
+    [HttpPost("saved-books")]
     [Authorize]
-    public IActionResult MarkAsFavorite(MarkAsFavoriteDto markAsFavoriteDto)
+    public IActionResult SaveBook(SaveBookDto saveBookDto)
     {
         var user = Utils.ValidateCurrentUser(User, context);
-        var book = context.Books.Where(b => b.Id == markAsFavoriteDto.BookId).FirstOrDefault();
+        var book = context.Books.Where(b => b.Id == saveBookDto.BookId).FirstOrDefault();
         if (book is null)
         {
             return NotFound();
@@ -55,12 +55,12 @@ public class UserController(BibliotekContext context) : ControllerBase
         context.SavedBooks.Update(savedBook);
         context.SaveChanges();
 
-        return Ok(new { BookId = markAsFavoriteDto.BookId, CreatedAt = savedBook.CreatedAt });
+        return Ok(new { BookId = saveBookDto.BookId, CreatedAt = savedBook.CreatedAt });
     }
 
-    [HttpDelete("favorites/{bookId}")]
+    [HttpDelete("saved-books/{bookId}")]
     [Authorize]
-    public IActionResult UnmarkAsFavorite([FromRoute] uint bookId)
+    public IActionResult RemoveSavedBook([FromRoute] uint bookId)
     {
         var user = Utils.ValidateCurrentUser(User, context);
         var savedBook = context
@@ -80,4 +80,4 @@ public class UserController(BibliotekContext context) : ControllerBase
 
 public record RegisterUserDto(string UserName);
 
-public record MarkAsFavoriteDto(uint BookId);
+public record SaveBookDto(uint BookId);

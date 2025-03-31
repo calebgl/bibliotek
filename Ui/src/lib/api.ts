@@ -214,15 +214,15 @@ export async function postReview(
 	return resp.json()
 }
 
-export async function fetchFavoriteBooks(): Promise<SavedBook[]> {
-	const resp = await fetch('/api/users/favorites', {
+export async function fetchSavedBooks(): Promise<SavedBook[]> {
+	const resp = await fetch('/api/users/saved-books', {
 		credentials: 'include',
 	})
 	await sleep()
 	if (!resp.ok) {
 		throw new HttpError(
 			resp.status as HttpStatus,
-			'error fetching favorite books',
+			'error fetching saved books',
 		)
 	}
 

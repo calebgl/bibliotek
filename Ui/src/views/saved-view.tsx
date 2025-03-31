@@ -53,7 +53,7 @@ function List() {
 		const to = '/books/' + book.id
 		const coverUrl = book.coverUrl ?? undefined
 		return (
-			<div key={'favorite-' + book.id} className="flex gap-8">
+			<div key={'saved-' + book.id} className="flex gap-8">
 				<Link to={to} className="aspect-2/3 w-40 max-w-40">
 					<img src={coverUrl} alt={book.title} />
 				</Link>

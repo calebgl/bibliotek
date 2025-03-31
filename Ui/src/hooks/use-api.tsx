@@ -11,7 +11,7 @@ import {
 	fetchAdminBooks,
 	fetchBook,
 	fetchBooks,
-	fetchFavoriteBooks,
+	fetchSavedBooks,
 	fetchReviews,
 	postReview,
 	putAdminBook,
@@ -127,7 +127,7 @@ export function useCreateReviewState(bookId: string) {
 export function useSavedBooks() {
 	return useQuery({
 		queryKey: queryKeys.public.books.saved(),
-		queryFn: () => fetchFavoriteBooks(),
+		queryFn: () => fetchSavedBooks(),
 	})
 }
 
