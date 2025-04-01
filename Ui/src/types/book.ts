@@ -1,13 +1,16 @@
-export type Book = {
+type BaseBook = {
 	id: string
 	title: string
 	subtitle: string | null
 	author: string
 	coverUrl: string | null
-	description: string | null
 	price: number
 	totalReviews: number
 	averageRating: number
+}
+
+export type Book = BaseBook & {
+	description: string | null
 	stars: {
 		one: number
 		two: number
@@ -17,17 +20,14 @@ export type Book = {
 	}
 }
 
-export type SavedBook = {
-	id: string
-	title: string
-	author: string
-	coverUrl: string | null
-	price: number
-	totalReviews: number
-	averageRating: number
+export type CartBook = Omit<BaseBook, 'totalReviews' | 'averageRating'> & {
+	quantity: number
 }
 
-export type AdminBook = Omit<Book, 'stars'> & {
+export type SavedBook = BaseBook
+
+export type AdminBook = BaseBook & {
+	description: string | null
 	stockQuantity: number
 }
 
