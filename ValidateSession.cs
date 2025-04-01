@@ -5,8 +5,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-public class ValidateSession(BibliotekContext dbContext, SignInManager<User> signInManager)
-    : IAsyncActionFilter
+public class ValidateSession(
+    BibliotekContext dbContext,
+    SignInManager<User> signInManager,
+    ILogger<ValidateSession> logger
+) : IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(
         ActionExecutingContext context,
@@ -18,23 +21,43 @@ public class ValidateSession(BibliotekContext dbContext, SignInManager<User> sig
             var contextClaim = context.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             if (contextClaim is null)
             {
-                throw new InvalidOperationException("Identifier claim not found");
+                throw new InvalidOperationException(
+                    $"Authentication failed: User identifier claim not found"
+                );
             }
 
-            var userId = contextClaim.Value;
-            if (string.IsNullOrWhiteSpace(contextClaim.Value))
+            var userIdString = contextClaim.Value;
+            if (string.IsNullOrWhiteSpace(userIdString))
             {
-                throw new InvalidOperationException("Invalid user id");
+                throw new InvalidOperationException(
+                    $"Authentication failed: Empty user identifier"
+                );
             }
 
-            var user = dbContext.Users.Where(u => u.Id == uint.Parse(userId)).FirstOrDefault();
+            uint userId;
+            if (uint.TryParse(userIdString, out userId))
+            {
+                throw new InvalidOperationException(
+                    $"Authentication failed: Invalid user id format '{userIdString}'"
+                );
+            }
+
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == userId);
             if (user is null)
             {
-                throw new InvalidOperationException("User not found");
+                throw new InvalidOperationException(
+                    $"Authentication failed: User with Id {userId} not found"
+                );
             }
 
-            Debug.Assert(!string.IsNullOrWhiteSpace(user.Email));
-            Debug.Assert(!string.IsNullOrWhiteSpace(user.UserName));
+            Debug.Assert(
+                !string.IsNullOrWhiteSpace(user.Email),
+                "User email should never be empty"
+            );
+            Debug.Assert(
+                !string.IsNullOrWhiteSpace(user.UserName),
+                "User name should never be empty"
+            );
 
             context.HttpContext.Items["CurrentUser"] = user;
             await next();
@@ -43,7 +66,7 @@ public class ValidateSession(BibliotekContext dbContext, SignInManager<User> sig
         {
             await signInManager.SignOutAsync();
 
-            Console.WriteLine(ex);
+            logger.LogError(ex, "Authentication middleware failure: {Message}", ex.Message);
 
             context.Result = new UnauthorizedObjectResult("Invalid user session");
         }
