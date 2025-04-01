@@ -40,18 +40,20 @@ public class AuthController(
         var successRedirectUrl =
             authNSection["SuccessRedirectUrl"]
             ?? throw new InvalidOperationException(
-                "Authentication string 'SuccessRedirectUrl' not found."
+                "Authentication configuration is incomplete: SuccessRedirectUrl not found"
             );
         var errorRedirectUrl =
             authNSection["ErrorRedirectUrl"]
             ?? throw new InvalidOperationException(
-                "Authentication string 'ErrorRedirectUrl' not found."
+                "Authentication configuration is incomplete: ErrorRedirectUrl not found"
             );
 
         var info = await signInManager.GetExternalLoginInfoAsync();
         if (info is null)
         {
-            logger.LogWarning("External login info is null");
+            logger.LogWarning(
+                "External authentication failed: No login information received from provider"
+            );
             return Redirect(errorRedirectUrl);
         }
 
@@ -71,7 +73,10 @@ public class AuthController(
             var email = info.Principal.FindFirstValue(ClaimTypes.Email);
             if (string.IsNullOrWhiteSpace(email))
             {
-                logger.LogError("Email is required from the login provider");
+                logger.LogError(
+                    "External authentication failed: Email claim not provided by {Provider}",
+                    info.LoginProvider
+                );
                 return Redirect(errorRedirectUrl);
             }
 
@@ -88,7 +93,8 @@ public class AuthController(
             var createResult = await userManager.CreateAsync(user);
             if (!createResult.Succeeded)
             {
-                logger.LogError("User creation failed: {Errors}", createResult.Errors);
+                var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
+                logger.LogError("User creation failed for {Email}: {Errors}", email, errors);
                 return Redirect(errorRedirectUrl);
             }
 
@@ -99,8 +105,8 @@ public class AuthController(
         }
         catch (Exception ex)
         {
-            logger.LogError("Auth failed to login: {Errors}", ex);
-            return Redirect(successRedirectUrl);
+            logger.LogError(ex, "External authentication failed: {Message}", ex.Message);
+            return Redirect(errorRedirectUrl);
         }
     }
 
