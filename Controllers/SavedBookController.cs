@@ -40,7 +40,7 @@ public class SavedBookController(BibliotekContext context) : ControllerBase
     public IActionResult SaveBook(SaveBookDto saveBookDto)
     {
         var user = HttpContext.GetCurrentUser();
-        var book = context.Books.Where(b => b.Id == saveBookDto.BookId).FirstOrDefault();
+        var book = context.Books.FirstOrDefault(b => b.Id == saveBookDto.BookId);
         if (book is null)
         {
             return NotFound();
@@ -66,9 +66,9 @@ public class SavedBookController(BibliotekContext context) : ControllerBase
     public IActionResult RemoveSavedBook([FromRoute] uint bookId)
     {
         var user = HttpContext.GetCurrentUser();
-        var savedBook = context
-            .SavedBooks.Where(sb => sb.UserId == user.Id && sb.BookId == bookId)
-            .FirstOrDefault();
+        var savedBook = context.SavedBooks.FirstOrDefault(sb =>
+            sb.UserId == user.Id && sb.BookId == bookId
+        );
         if (savedBook is null)
         {
             return NotFound();

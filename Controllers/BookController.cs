@@ -32,7 +32,6 @@ public class BookController(BibliotekContext context) : ControllerBase
     {
         var book = context
             .Books.Include(b => b.BookStats)
-            .Where(b => b.Id == bookId)
             .Select(b => new
             {
                 b.Id,
@@ -52,7 +51,7 @@ public class BookController(BibliotekContext context) : ControllerBase
                     Five = b.BookStats.FiveStarReviewCount,
                 },
             })
-            .FirstOrDefault();
+            .FirstOrDefault(b => b.Id == bookId);
 
         if (book is null)
         {
