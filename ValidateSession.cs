@@ -35,7 +35,7 @@ public class ValidateSession(
             }
 
             uint userId;
-            if (uint.TryParse(userIdString, out userId))
+            if (!uint.TryParse(userIdString, out userId))
             {
                 throw new InvalidOperationException(
                     $"Authentication failed: Invalid user id format '{userIdString}'"
