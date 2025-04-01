@@ -135,6 +135,26 @@ public class BibliotekContext(DbContextOptions<BibliotekContext> options)
             entity.Property(pc => pc.Id).ValueGeneratedOnAdd();
         });
 
+        modelBuilder.Entity<Cart>(entity =>
+        {
+            entity.Property(c => c.Id).ValueGeneratedOnAdd();
+            entity
+                .HasMany(c => c.CartBooks)
+                .WithOne()
+                .HasForeignKey(cb => cb.CartId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<CartBook>(entity =>
+        {
+            entity.Property(cb => cb.Id).ValueGeneratedOnAdd();
+            entity
+                .HasOne(cb => cb.Book)
+                .WithMany(b => b.CartBooks)
+                .HasForeignKey(cb => cb.BookId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
         base.OnModelCreating(modelBuilder);
     }
 

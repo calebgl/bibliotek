@@ -5,6 +5,7 @@ public class Book : ITimestamps
     public Book()
     {
         Reviews = new List<Review>();
+        CartBooks = new List<CartBook>();
         BookStats = new BookStats { Book = this };
         StockQuantity = 0;
     }
@@ -24,6 +25,7 @@ public class Book : ITimestamps
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    public List<Review> Reviews { get; set; }
-    public BookStats BookStats { get; set; }
+    public virtual List<Review> Reviews { get; set; }
+    public virtual List<CartBook> CartBooks { get; set; }
+    public virtual BookStats BookStats { get; set; }
 }

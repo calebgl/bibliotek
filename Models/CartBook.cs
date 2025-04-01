@@ -17,6 +17,6 @@ public class CartBook : ITimestamps
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    public required Cart Cart { get; set; }
-    public required Book Book { get; set; }
+    public virtual required Cart Cart { get; set; }
+    public virtual required Book Book { get; set; }
 }
