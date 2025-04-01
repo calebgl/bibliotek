@@ -12,7 +12,7 @@ public class User : IdentityUser<uint>
         Cart = new Cart { User = this };
     }
 
-    public Cart Cart { get; }
+    public Cart Cart { get; set; }
 
     public List<Review> Reviews { get; set; }
     public List<Order> Orders { get; set; }

@@ -38,6 +38,12 @@ public class BibliotekContext(DbContextOptions<BibliotekContext> options)
         {
             entity.ToTable("users");
             entity.Property(u => u.Id).ValueGeneratedOnAdd();
+
+            entity
+                .HasOne(u => u.Cart)
+                .WithOne(c => c.User)
+                .HasForeignKey<Cart>(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Review>(entity =>
