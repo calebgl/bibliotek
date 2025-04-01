@@ -16,15 +16,21 @@ public class ValidateSession(BibliotekContext dbContext, SignInManager<User> sig
         try
         {
             var contextClaim = context.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            Debug.Assert(contextClaim is not null);
+            if (contextClaim is null)
+            {
+                throw new InvalidOperationException("Identifier claim not found");
+            }
 
             var userId = contextClaim.Value;
-            Debug.Assert(!string.IsNullOrWhiteSpace(userId));
+            if (string.IsNullOrWhiteSpace(contextClaim.Value))
+            {
+                throw new InvalidOperationException("Invalid user id");
+            }
 
             var user = dbContext.Users.Where(u => u.Id == uint.Parse(userId)).FirstOrDefault();
             if (user is null)
             {
-                throw new InvalidOperationException("User not found?");
+                throw new InvalidOperationException("User not found");
             }
 
             Debug.Assert(!string.IsNullOrWhiteSpace(user.Email));
