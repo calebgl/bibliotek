@@ -1,45 +1,23 @@
-import { useSetAtom } from 'jotai'
 import type { ButtonHTMLAttributes } from 'react'
 
+import { useAddCartBook } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 import { cn } from '../lib/utils'
-import { booksAtom } from '../stores/cart'
-import { Book } from '../types'
+import { CartBook } from '../types'
 import { Button } from './button'
 
 type ButtonAddToCartProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-	book?: Pick<Book, 'id' | 'title' | 'price'> &
-		Partial<Pick<Book, 'coverUrl' | 'subtitle' | 'author'>>
+	book?: CartBook
 }
 
 export function ButtonAddToCart(props: ButtonAddToCartProps) {
 	const { book, className, ...rest } = props
 
-	const setBooksAtom = useSetAtom(booksAtom)
+	const { mutate } = useAddCartBook()
 
 	function addToCart() {
-		const bookId = book?.id
-		assert(bookId)
 		assert(book)
-
-		setBooksAtom((prev) => {
-			const cloned = { ...prev }
-			if (!cloned[bookId]) {
-				cloned[bookId] = {
-					id: book.id,
-					title: book.title,
-					author: book.author ?? '',
-					price: book.price,
-					coverUrl: book.coverUrl ?? null,
-					quantity: 0,
-					subtitle: book.subtitle ?? '',
-				}
-			}
-
-			cloned[bookId].quantity++
-
-			return cloned
-		})
+		mutate(book)
 	}
 
 	return (
