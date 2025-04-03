@@ -23,6 +23,7 @@ import {
 } from '../lib/api'
 import { Review } from '../types'
 import { CartBook, CreateBook } from '../types/book'
+import { debounce } from '../lib/utils'
 
 // prettier-ignore
 const queryKeys = {
@@ -224,23 +225,7 @@ export function useAddCartBook() {
 // 	})
 // }
 
-function debounce<F extends (...args: Parameters<F>) => ReturnType<F>>(
-	func: F,
-	waitFor: number = 300,
-) {
-	let timeout: number
-
-	return (...args: Parameters<F>) => {
-		clearTimeout(timeout)
-		return new Promise<ReturnType<F>>((f) => {
-			timeout = setTimeout(() => f(func(...args)), waitFor)
-		})
-	}
-}
-
-const updateDebounced = debounce((book: CartBook) =>
-	updateBookInCart(book.id, { quantity: book.quantity }),
-)
+const updateBookInCartDebounced = debounce(updateBookInCart)
 
 export function useUpdateCartBook() {
 	const queryClient = useQueryClient()
