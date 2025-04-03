@@ -232,31 +232,8 @@ export function useUpdateCartBook() {
 	const cartKey = queryKeys.public.cart()
 	return useMutation({
 		mutationKey: mutationKeys.public.cart.update(),
-		mutationFn: updateDebounced,
-		onMutate: async (newBook) => {
-			await queryClient.cancelQueries({ queryKey: cartKey })
-
-			const previousBooks = queryClient.getQueryData<CartBook[]>(cartKey)
-
-			console.log(previousBooks, newBook, 'hola')
-
-			queryClient.setQueryData(cartKey, (prev: CartBook[]) => {
-				const jiji = prev.map((book) => {
-					console.log(book, newBook)
-					return book.id == newBook.id
-						? { ...book, quantity: newBook.quantity }
-						: book
-				})
-
-				console.log(jiji)
-				return jiji
-			})
-
-			return { previousBooks }
-		},
-		onError: (_err, _newBook, context) => {
-			queryClient.setQueryData(cartKey, context?.previousBooks)
-		},
+		mutationFn: (data: { bookId: string; quantity: number }) =>
+			updateBookInCartDebounced(data.bookId, { quantity: data.quantity }),
 		onSettled: () => {
 			queryClient.invalidateQueries({
 				queryKey: cartKey,
@@ -269,7 +246,8 @@ export function useRemoveCartBook() {
 	const queryClient = useQueryClient()
 	return useMutation({
 		mutationKey: mutationKeys.public.cart.remove(),
-		mutationFn: (book: CartBook) => removeBookFromCart(book.id),
+		mutationFn: (data: { bookId: string }) =>
+			removeBookFromCart(data.bookId),
 		onSettled: () => {
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.public.cart(),
