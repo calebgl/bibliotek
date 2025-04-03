@@ -6,18 +6,23 @@ import {
 } from '@tanstack/react-query'
 
 import {
+	addBookToCart,
+	clearCart,
 	createAdminBook,
 	fetchAdminBook,
 	fetchAdminBooks,
 	fetchBook,
 	fetchBooks,
-	fetchSavedBooks,
+	fetchCartBooks,
 	fetchReviews,
+	fetchSavedBooks,
 	postReview,
 	putAdminBook,
+	removeBookFromCart,
+	updateBookInCart,
 } from '../lib/api'
 import { Review } from '../types'
-import { CreateBook } from '../types/book'
+import { CartBook, CreateBook } from '../types/book'
 
 // prettier-ignore
 const queryKeys = {
@@ -25,13 +30,14 @@ const queryKeys = {
 		books: {
 			all: () => ['public', 'books'],
 			list: () => [...queryKeys.public.books.all(), 'list'],
-            saved: () => [...queryKeys.public.books.all(), 'saved'],
+                        saved: () => [...queryKeys.public.books.all(), 'saved'],
 			detail: (id: string) => [...queryKeys.public.books.all(), 'detail', id],
 			reviews: {
 				all: (bookId: string) => [...queryKeys.public.books.detail(bookId), 'reviews'],
 				list: (bookId: string) => [...queryKeys.public.books.reviews.all(bookId), 'list'],
 			},
 		},
+                cart: () => ['cart']
 	},
 	admin: {
 		books: {
@@ -51,8 +57,15 @@ const mutationKeys = {
 				all: (bookId: string) => [...mutationKeys.public.books.all(), bookId, 'reviews'],
 				create: (bookId:string) => [...mutationKeys.public.books.reviews.all(bookId), 'create'],
 				update: (bookId:string, reviewId: string) => [...mutationKeys.public.books.reviews.all(bookId), 'update', reviewId],
-			}
-		}
+			},
+		},
+                cart: {
+                        all: () => ['public', 'cart'],
+                        add: () => [...mutationKeys.public.cart.all(), 'add'],
+                        update: () => [...mutationKeys.public.cart.all(), 'update'],
+                        remove: () => [...mutationKeys.public.cart.all(), 'remove'],
+                        clear: () => [...mutationKeys.public.cart.all(), 'clear'],
+                }
 	},
 	admin: {
 		books: {
@@ -92,13 +105,8 @@ export function useCreateReview(bookId: string) {
 	const queryClient = useQueryClient()
 	return useMutation({
 		mutationKey: mutationKeys.public.books.reviews.create(bookId),
-		mutationFn: (review: Pick<Review, 'userId' | 'comment' | 'rate'>) =>
-			postReview(
-				review.userId!,
-				parseInt(bookId),
-				review.rate,
-				review.comment,
-			),
+		mutationFn: (review: Pick<Review, 'comment' | 'rate'>) =>
+			postReview(parseInt(bookId), review.rate, review.comment),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.public.books.detail(bookId),
@@ -168,6 +176,131 @@ export function useUpdateAdminBook(id: string) {
 			})
 			queryClient.refetchQueries({
 				queryKey: queryKeys.admin.books.list(),
+			})
+		},
+	})
+}
+
+export function useCartBooks() {
+	return useQuery({
+		queryKey: queryKeys.public.cart(),
+		queryFn: () => fetchCartBooks(),
+	})
+}
+
+export function useAddCartBook() {
+	const queryClient = useQueryClient()
+	return useMutation({
+		mutationKey: mutationKeys.public.cart.add(),
+		mutationFn: (book: CartBook) => addBookToCart({ bookId: book.id }),
+		onSettled: () =>
+			queryClient.invalidateQueries({
+				queryKey: queryKeys.public.cart(),
+			}),
+	})
+}
+
+// export function useAddCartBookState() {
+// 	return useMutationState({
+// 		filters: {
+// 			mutationKey: mutationKeys.public.cart.add(),
+// 			status: 'pending',
+// 		},
+// 		select(mutation) {
+// 			return mutation.state.variables as Book | undefined
+// 		},
+// 	})
+// }
+//
+// export function useRemoveCartBookState() {
+// 	return useMutationState({
+// 		filters: {, variables
+// 			mutationKey: mutationKeys.public.cart.remove(),
+// 			status: 'pending',
+// 		},
+// 		select(mutation) {
+// 			return mutation.state.variables as Book
+// 		},
+// 	})
+// }
+
+function debounce<F extends (...args: Parameters<F>) => ReturnType<F>>(
+	func: F,
+	waitFor: number = 300,
+) {
+	let timeout: number
+
+	return (...args: Parameters<F>) => {
+		clearTimeout(timeout)
+		return new Promise<ReturnType<F>>((f) => {
+			timeout = setTimeout(() => f(func(...args)), waitFor)
+		})
+	}
+}
+
+const updateDebounced = debounce((book: CartBook) =>
+	updateBookInCart(book.id, { quantity: book.quantity }),
+)
+
+export function useUpdateCartBook() {
+	const queryClient = useQueryClient()
+	const cartKey = queryKeys.public.cart()
+	return useMutation({
+		mutationKey: mutationKeys.public.cart.update(),
+		mutationFn: updateDebounced,
+		onMutate: async (newBook) => {
+			await queryClient.cancelQueries({ queryKey: cartKey })
+
+			const previousBooks = queryClient.getQueryData<CartBook[]>(cartKey)
+
+			console.log(previousBooks, newBook, 'hola')
+
+			queryClient.setQueryData(cartKey, (prev: CartBook[]) => {
+				const jiji = prev.map((book) => {
+					console.log(book, newBook)
+					return book.id == newBook.id
+						? { ...book, quantity: newBook.quantity }
+						: book
+				})
+
+				console.log(jiji)
+				return jiji
+			})
+
+			return { previousBooks }
+		},
+		onError: (_err, _newBook, context) => {
+			queryClient.setQueryData(cartKey, context?.previousBooks)
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({
+				queryKey: cartKey,
+			})
+		},
+	})
+}
+
+export function useRemoveCartBook() {
+	const queryClient = useQueryClient()
+	return useMutation({
+		mutationKey: mutationKeys.public.cart.remove(),
+		mutationFn: (book: CartBook) => removeBookFromCart(book.id),
+		onSettled: () => {
+			queryClient.invalidateQueries({
+				queryKey: queryKeys.public.cart(),
+			})
+		},
+	})
+}
+
+export function useClearCart() {
+	const queryClient = useQueryClient()
+	return useMutation({
+		mutationKey: mutationKeys.public.cart.clear(),
+		mutationFn: clearCart,
+		onSettled: () => {
+			queryClient.invalidateQueries({
+				queryKey: queryKeys.public.cart(),
 			})
 		},
 	})

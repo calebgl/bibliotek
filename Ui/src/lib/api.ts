@@ -1,22 +1,49 @@
 import { Book, Credentials, Review, User } from '../types'
-import { AdminBook, CreateBook, SavedBook } from '../types/book'
+import { AdminBook, CartBook, CreateBook, SavedBook } from '../types/book'
 import { MimeType } from '../types/utils'
-import { HttpError, HttpStatus } from './http'
+import { HttpError, HttpStatus, isHttpError } from './http'
 import { sleep } from './utils'
 
 enum Method {
 	GET = 'GET',
 	POST = 'POST',
 	PUT = 'PUT',
+	DELETE = 'DELETE',
 }
+
+type Fetch = <T>(input: RequestInfo | URL, init?: RequestInit) => Promise<T>
+
+function createFetch(defaultConfig?: RequestInit): Fetch {
+	return async function <T>(input: RequestInfo | URL, init?: RequestInit) {
+		const [resp] = await Promise.all([
+			fetch(input, {
+				...defaultConfig,
+				...init,
+			}) as Promise<Response>,
+			sleep(),
+		])
+		if (!resp.ok) {
+			throw new HttpError(
+				resp.status as HttpStatus,
+				'error in ' + input.toString(),
+			)
+		}
+		return resp.json() as T
+	}
+}
+
+const fetchWithCredentials = createFetch({
+	headers: {
+		'Content-Type': MimeType.JSON,
+	},
+	credentials: 'include',
+})
 
 export async function login(provider: 'github'): Promise<void>
 export async function login(credentials: Credentials): Promise<void>
 export async function login(
 	credentials: Credentials | 'github',
 ): Promise<void> {
-	await sleep()
-
 	if (typeof credentials === 'string') {
 		switch (credentials) {
 			case 'github':
@@ -34,214 +61,151 @@ export async function login(
 	searchParams.set('useCookies', 'true')
 	searchParams.set('useSessionCookies', 'true')
 
-	const resp = await fetch('/authz/login?' + searchParams.toString(), {
+	await fetchWithCredentials('/authz/login?' + searchParams.toString(), {
 		method: Method.POST,
-		headers: {
-			'Content-Type': MimeType.JSON,
-		},
-		body: JSON.stringify(
-			Object.assign({}, credentials, {
-				twoFactorCode: null,
-				twoFactorRecoveryCode: null,
-			}),
-		),
+		body: JSON.stringify({
+			...credentials,
+			twoFactorCode: null,
+			twoFactorRecoveryCode: null,
+		}),
 	})
-	if (!resp.ok) {
-		throw new HttpError(resp.status as HttpStatus, 'error login in')
-	}
 }
 
 export async function logout(): Promise<void> {
-	await sleep()
-
-	const resp = await fetch('/authz/logout', {
-		credentials: 'include',
-	})
-	if (!resp.ok) {
-		throw new HttpError(resp.status as HttpStatus, 'error login out')
-	}
+	await fetchWithCredentials('/authz/logout')
 }
 
-export async function validateSession(
-	init?: RequestInit,
-): Promise<User | null> {
-	await sleep()
-	const resp = await fetch(
-		'/api/auth/session',
-		Object.assign({}, init, {
-			credentials: 'include',
-		}),
-	)
-
-	if (!resp.ok) {
-		if (resp.status !== HttpStatus.Unauthorized) {
-			throw new HttpError(
-				resp.status as HttpStatus,
-				'error checking session',
-			)
+export async function validateSession(): Promise<User | null> {
+	try {
+		return await fetchWithCredentials<User | null>('/api/auth/session')
+	} catch (error) {
+		if (isHttpError(error) && error.status === HttpStatus.Unauthorized) {
+			return null
 		}
 
-		return null
+		throw error
 	}
-
-	return resp.json()
 }
 
 export async function fetchAdminBooks(): Promise<AdminBook[]> {
-	const resp = await fetch('/api/admin/books')
-	await sleep()
-	if (!resp.ok) {
-		throw new HttpError(resp.status as HttpStatus, 'error fetching books')
-	}
-
-	return resp.json()
+	return fetchWithCredentials('/api/admin/books')
 }
 
 // TODO: handle image upload
 export async function createAdminBook(book: CreateBook): Promise<AdminBook> {
-	const resp = await fetch('/api/admin/books', {
+	return fetchWithCredentials('/api/admin/books', {
 		method: Method.POST,
-		headers: {
-			'Content-Type': MimeType.JSON,
-		},
 		body: JSON.stringify(book),
 	})
-	await sleep()
-	if (!resp.ok) {
-		throw new HttpError(resp.status as HttpStatus, 'error creating book')
-	}
-
-	return resp.json()
 }
 
 export async function putAdminBook(
 	id: string,
 	book: CreateBook,
 ): Promise<AdminBook> {
-	const resp = await fetch('/api/admin/books/' + id, {
+	return fetchWithCredentials('/api/admin/books/' + id, {
 		method: Method.PUT,
-		headers: {
-			'Content-Type': MimeType.JSON,
-		},
 		body: JSON.stringify(book),
 	})
-	await sleep()
-	if (!resp.ok) {
-		throw new HttpError(
-			resp.status as HttpStatus,
-			'error updating book' + id,
-		)
-	}
-
-	return resp.json()
 }
 
 export async function fetchAdminBook(id: string): Promise<AdminBook> {
-	const resp = await fetch('/api/admin/books/' + id)
-	await sleep()
-	if (!resp.ok) {
-		throw new HttpError(
-			resp.status as HttpStatus,
-			'error fetching book ' + id,
-		)
-	}
-
-	return resp.json()
+	return fetchWithCredentials('/api/admin/books/' + id)
 }
 
 export async function fetchBooks(): Promise<Omit<Book, 'stars'>[]> {
-	const resp = await fetch('/api/books')
-	await sleep()
-	if (!resp.ok) {
-		throw new HttpError(resp.status as HttpStatus, 'error fetching books')
-	}
-
-	return resp.json()
+	return fetchWithCredentials('/api/books')
 }
 
 export async function fetchBook(id: string): Promise<Book> {
-	const resp = await fetch('/api/books/' + id)
-	await sleep()
-	if (!resp.ok) {
-		throw new HttpError(
-			resp.status as HttpStatus,
-			'error fetching book ' + id,
-		)
-	}
-
-	return resp.json()
+	return fetchWithCredentials('/api/books/' + id)
 }
 
 export async function fetchReviews(bookId: string): Promise<Review[]> {
-	const resp = await fetch('/api/reviews/' + bookId)
-	await sleep()
-	if (!resp.ok) {
-		throw new HttpError(
-			resp.status as HttpStatus,
-			'error fetching reviews for book ' + bookId,
-		)
-	}
-
-	return resp.json()
+	return fetchWithCredentials('/api/reviews/' + bookId)
 }
 
 export async function postReview(
-	userId: number,
 	bookId: number,
 	rate: number,
 	comment: string,
 ): Promise<Review> {
-	const resp = await fetch('/api/reviews', {
+	return fetchWithCredentials('/api/reviews', {
 		method: Method.POST,
-		headers: {
-			'Content-Type': MimeType.JSON,
-			'Bibliotek-User-Id': String(userId),
-		},
 		body: JSON.stringify({
 			bookId,
 			rate,
 			comment,
 		}),
 	})
-	await sleep()
-	if (!resp.ok) {
-		throw new HttpError(
-			resp.status as HttpStatus,
-			'error posting review for book ' + bookId,
-		)
-	}
-
-	return resp.json()
 }
 
 export async function fetchSavedBooks(): Promise<SavedBook[]> {
-	const resp = await fetch('/api/saved-books', {
+	return fetchWithCredentials('/api/saved-books', {
 		credentials: 'include',
 	})
-	await sleep()
-	if (!resp.ok) {
-		throw new HttpError(
-			resp.status as HttpStatus,
-			'error fetching saved books',
-		)
-	}
-
-	return resp.json()
 }
 
-// type Fetcher = (input: RequestInfo | URL, init?: RequestInit) => Promise<any>
-//
-// function createFetch(): Fetcher {
-// 	return async function (input: RequestInfo | URL, init?: RequestInit) {
-// 		const [resp] = await Promise.all([fetch(input, init), await sleep()])
-// 		if (!resp.ok) {
-// 			throw new HttpError(
-// 				resp.status as HttpStatus,
-// 				'error in ' + input.toString(),
-// 			)
-// 		}
-// 		return resp.json()
-// 	}
-// }
-//
-// const fetch = createFetch()
+type FetchCartBooksResponse = {
+	total: number
+	books: CartBook[]
+}
+
+export async function fetchCartBooks(): Promise<FetchCartBooksResponse> {
+	return fetchWithCredentials('/api/cart')
+}
+
+type AddCartBookRequest = {
+	bookId: string
+	quantity?: number
+}
+
+type AddCartBookResponse = {
+	bookId: string
+	quantity: number
+	addedAt: string
+}
+
+export async function addBookToCart(
+	request: AddCartBookRequest,
+): Promise<AddCartBookResponse> {
+	return fetchWithCredentials('/api/cart/books', {
+		method: Method.POST,
+		body: JSON.stringify(request),
+	})
+}
+
+type UpdateCartBookRequest = {
+	quantity: number
+}
+
+type UpdateCartBookResponse = {
+	bookId: string
+	quantity: number
+	updatedAt: string
+}
+
+export async function updateBookInCart(
+	bookId: string,
+	request: UpdateCartBookRequest,
+): Promise<UpdateCartBookResponse> {
+	return fetchWithCredentials<UpdateCartBookResponse>(
+		'/api/cart/books/' + bookId,
+		{
+			method: Method.PUT,
+			body: JSON.stringify(request),
+		},
+	)
+}
+
+export async function removeBookFromCart(bookId: string): Promise<void> {
+	return fetchWithCredentials<void>('/api/cart/books/' + bookId, {
+		method: Method.DELETE,
+	})
+}
+
+export async function clearCart() {
+	return fetchWithCredentials<void>('/api/cart/books', {
+		method: Method.DELETE,
+	})
+}
