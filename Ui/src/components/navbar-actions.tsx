@@ -17,6 +17,13 @@ export function NavbarActions(props: { onCloseCart(): void }) {
 	const actions: ReactNode[] = []
 	if (user) {
 		actions.push(
+			<button
+				key={'cart-toggle'}
+				onClick={isLocationCart ? props.onCloseCart : undefined}
+				className="cursor-pointer"
+			>
+				cart{count > 0 && <span>({count})</span>}
+			</button>,
 			<button key="/saved">
 				<Link to={'/saved'}>saved</Link>
 			</button>,
@@ -33,15 +40,5 @@ export function NavbarActions(props: { onCloseCart(): void }) {
 		)
 	}
 
-	return (
-		<>
-			<button
-				onClick={isLocationCart ? props.onCloseCart : undefined}
-				className="cursor-pointer"
-			>
-				cart{count > 0 && <span>({count})</span>}
-			</button>
-			{actions}
-		</>
-	)
+	return actions
 }
