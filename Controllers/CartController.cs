@@ -16,9 +16,9 @@ public class CartController(BibliotekContext context) : ControllerBase
     public IActionResult ListCartBooks()
     {
         var user = HttpContext.GetCurrentUser();
-        var books = context
-            .Carts.Where(c => c.UserId == user.Id)
-            .SelectMany(c => c.CartBooks)
+        var cartBooks = context.Carts.Where(c => c.UserId == user.Id).SelectMany(c => c.CartBooks);
+
+        var books = cartBooks
             .Include(cb => cb.Book)
             .Select(cb => new
             {
@@ -31,9 +31,12 @@ public class CartController(BibliotekContext context) : ControllerBase
                 cb.Quantity,
                 AddedAt = cb.CreatedAt,
             })
+            .OrderByDescending(cb => cb.AddedAt)
             .ToList();
 
-        return Ok(books);
+        var count = cartBooks.Count();
+
+        return Ok(new { books, total = count });
     }
 
     [HttpPost("books")]
@@ -85,21 +88,62 @@ public class CartController(BibliotekContext context) : ControllerBase
     }
 
     [HttpPut("books/{bookId}")]
-    public IActionResult UpdateCartBook([FromRoute] uint bookId)
+    [Authorize]
+    [ValidateSession]
+    public IActionResult UpdateBookInCart(
+        [FromRoute] uint bookId,
+        [FromBody] UpdateCartBookRequest request
+    )
     {
-        return Ok();
-    }
+        var user = HttpContext.GetCurrentUser();
+        var cart = context.Carts.FirstOrDefault(c => c.UserId == user.Id);
+        Debug.Assert(cart is not null);
 
-    [HttpDelete("books")]
-    public IActionResult RemoveBookFromCart([FromRoute] uint bookId)
-    {
-        return Ok();
+        var updatedRows = context
+            .CartBooks.Where(cb => cb.CartId == cart.Id && cb.BookId == bookId)
+            .ExecuteUpdate(setter => setter.SetProperty(cb => cb.Quantity, request.quantity));
+
+        if (updatedRows < 1)
+        {
+            return NotFound();
+        }
+
+        return Ok(
+            new
+            {
+                bookId,
+                request.quantity,
+                UpdatedAt = DateTime.UtcNow,
+            }
+        );
     }
 
     [HttpDelete("books/{bookId}")]
+    [Authorize]
+    [ValidateSession]
+    public IActionResult RemoveBookFromCart([FromRoute] uint bookId)
+    {
+        var user = HttpContext.GetCurrentUser();
+        var cart = context.Carts.FirstOrDefault(c => c.UserId == user.Id);
+        Debug.Assert(cart is not null);
+
+        context.CartBooks.Where(cb => cb.CartId == cart.Id && cb.BookId == bookId).ExecuteDelete();
+
+        return NoContent();
+    }
+
+    [HttpDelete("books")]
+    [Authorize]
+    [ValidateSession]
     public IActionResult ClearCart([FromRoute] uint bookId)
     {
-        return Ok();
+        var user = HttpContext.GetCurrentUser();
+        var cart = context.Carts.FirstOrDefault(c => c.UserId == user.Id);
+        Debug.Assert(cart is not null);
+
+        context.CartBooks.Where(cb => cb.CartId == cart.Id).ExecuteDelete();
+
+        return NoContent();
     }
 
     [HttpPost("checkout")]
@@ -111,4 +155,4 @@ public class CartController(BibliotekContext context) : ControllerBase
 
 public record AddCartBookRequest(uint BookId, uint? quantity);
 
-public record UpdateCartBookRequest();
+public record UpdateCartBookRequest(uint quantity);
