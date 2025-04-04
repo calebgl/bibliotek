@@ -3,7 +3,6 @@ import { useParams } from 'react-router'
 import { useBook } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 import { formatCurrency } from '../lib/utils'
-import { Button } from './button'
 import { ButtonAddToCart, ButtonAddToCartSkeleton } from './button-add-to-cart'
 import { ButtonSaveBook, ButtonSaveBookSkeleton } from './button-save-book'
 
