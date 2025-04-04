@@ -1,5 +1,17 @@
-import { Book, Credentials, Review, User } from '../types'
-import { AdminBook, CartBook, CreateBook, SavedBook } from '../types/book'
+import type {
+	AddCartBookRequest,
+	AddCartBookResponse,
+	AdminBook,
+	Book,
+	CreateBook,
+	Credentials,
+	FetchCartBooksResponse,
+	Review,
+	SavedBook,
+	UpdateCartBookRequest,
+	UpdateCartBookResponse,
+	User,
+} from '../types'
 import { MimeType } from '../types/utils'
 import { HttpError, HttpStatus, isHttpError } from './http'
 import { sleep } from './utils'
@@ -77,7 +89,7 @@ export async function logout(): Promise<void> {
 
 export async function validateSession(): Promise<User | null> {
 	try {
-		return await fetchWithCredentials<User | null>('/api/auth/session')
+		return await fetchWithCredentials('/api/auth/session')
 	} catch (error) {
 		if (isHttpError(error) && error.status === HttpStatus.Unauthorized) {
 			return null
@@ -146,24 +158,8 @@ export async function fetchSavedBooks(): Promise<SavedBook[]> {
 	})
 }
 
-type FetchCartBooksResponse = {
-	total: number
-	books: CartBook[]
-}
-
 export async function fetchCartBooks(): Promise<FetchCartBooksResponse> {
 	return fetchWithCredentials('/api/cart')
-}
-
-type AddCartBookRequest = {
-	bookId: string
-	quantity?: number
-}
-
-type AddCartBookResponse = {
-	bookId: string
-	quantity: number
-	addedAt: string
 }
 
 export async function addBookToCart(
@@ -175,37 +171,24 @@ export async function addBookToCart(
 	})
 }
 
-type UpdateCartBookRequest = {
-	quantity: number
-}
-
-type UpdateCartBookResponse = {
-	bookId: string
-	quantity: number
-	updatedAt: string
-}
-
 export async function updateBookInCart(
 	bookId: string,
 	request: UpdateCartBookRequest,
 ): Promise<UpdateCartBookResponse> {
-	return fetchWithCredentials<UpdateCartBookResponse>(
-		'/api/cart/books/' + bookId,
-		{
-			method: Method.PUT,
-			body: JSON.stringify(request),
-		},
-	)
+	return fetchWithCredentials('/api/cart/books/' + bookId, {
+		method: Method.PUT,
+		body: JSON.stringify(request),
+	})
 }
 
 export async function removeBookFromCart(bookId: string): Promise<void> {
-	return fetchWithCredentials<void>('/api/cart/books/' + bookId, {
+	return fetchWithCredentials('/api/cart/books/' + bookId, {
 		method: Method.DELETE,
 	})
 }
 
-export async function clearCart() {
-	return fetchWithCredentials<void>('/api/cart/books', {
+export async function clearCart(): Promise<void> {
+	return fetchWithCredentials('/api/cart/books', {
 		method: Method.DELETE,
 	})
 }
