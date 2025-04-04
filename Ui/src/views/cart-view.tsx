@@ -29,11 +29,11 @@ function List() {
 
 	assert(data)
 
-	const { books } = data
+	const { books, total } = data
 
 	return (
 		<>
-			{books.length === 0 && 'There are not books in your cart!'}
+			{total === 0 && 'There are not books in your cart!'}
 			{books.map((book) => (
 				<CartItem key={'saved-' + book.id} {...book} />
 			))}
