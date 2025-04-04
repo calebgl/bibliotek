@@ -12,10 +12,14 @@ export function NavbarActions() {
 	if (user) {
 		actions.push(
 			<ButtonToggleCart key="/cart" />,
-			<Link key="/saved" to="/saved" className="px-1 py-2">
+			<Link key="/saved" to="/saved" className="px-1 py-2 leading-none">
 				saved
 			</Link>,
-			<Link key="/profile" to="/profile" className="px-1 py-2">
+			<Link
+				key="/profile"
+				to="/profile"
+				className="px-1 py-2 leading-none"
+			>
 				profile
 			</Link>,
 			<Button
@@ -28,11 +32,19 @@ export function NavbarActions() {
 		)
 	} else {
 		actions.push(
-			<button key="/login">
-				<Link to={'/login'}>login</Link>
-			</button>,
+			<Link key="/login" to="/login" className="px-1 py-2 leading-none">
+				login
+			</Link>,
 		)
 	}
 
 	return actions
+}
+
+export function NavbarActionsSkeleton() {
+	return (
+		<div className="pt-2">
+			<div className="h-5 w-32 animate-pulse bg-gray-200" />
+		</div>
+	)
 }

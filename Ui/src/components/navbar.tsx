@@ -5,7 +5,7 @@ import { NavLink } from 'react-router'
 
 import { openAtom } from '../stores/cart'
 import { CartDrawer } from './cart-drawer'
-import { NavbarActions } from './navbar-actions'
+import { NavbarActions, NavbarActionsSkeleton } from './navbar-actions'
 
 export function Navbar() {
 	const [open, setOpen] = useAtom(openAtom)
@@ -46,17 +46,13 @@ export function Navbar() {
 					document.body,
 				)}
 			<div className="sticky top-0 left-0">
-				<div className="grid grid-cols-3 justify-between p-4">
+				<div className="grid h-16 grid-cols-3 justify-between p-4">
 					<div>
 						<NavLink to="/">logo</NavLink>
 					</div>
 					<div className="justify-self-center">searchbar</div>
 					<div className="flex items-center gap-2 justify-self-end">
-						<Suspense
-							fallback={
-								<div className="h-5 w-32 animate-pulse bg-gray-200" />
-							}
-						>
+						<Suspense fallback={<NavbarActionsSkeleton />}>
 							<NavbarActions />
 						</Suspense>
 					</div>
