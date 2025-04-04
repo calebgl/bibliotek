@@ -55,7 +55,11 @@ function List() {
 		return (
 			<div key={'saved-' + book.id} className="flex gap-8">
 				<Link to={to} className="aspect-2/3 w-40 max-w-40">
-					<img src={coverUrl} alt={book.title} />
+					<img
+						src={coverUrl}
+						alt={book.title}
+						className="aspect-2/3"
+					/>
 				</Link>
 				<div className="flex grow flex-col">
 					<Link to={to} className="text-2xl font-semibold">

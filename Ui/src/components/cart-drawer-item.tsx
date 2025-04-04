@@ -22,13 +22,19 @@ export const CartDrawerItem = memo(
 			setOpen(false)
 		}
 
+		const coverUrl = props.coverUrl ?? undefined
+
 		return (
 			<div className="flex gap-4">
 				<button
 					className="basis-1/3 cursor-pointer"
 					onClick={navigateToBook}
 				>
-					<img src={props.coverUrl ?? undefined} alt={props.title} />
+					<img
+						src={coverUrl}
+						alt={props.title}
+						className="aspect-2/3"
+					/>
 				</button>
 				<div className="flex grow flex-col">
 					<h3 className="text-xl font-semibold">
