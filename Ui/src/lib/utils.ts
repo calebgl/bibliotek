@@ -21,14 +21,15 @@ export function cn(...inputs: ClassValue[]): string {
 	return twMerge(clsx(inputs))
 }
 
-export function debounce<Fn extends (...args: any[]) => Promise<any>>(
-	fn: Fn,
-	waitFor: number = 300,
-) {
+export function debounce<
+	Fn extends (...args: Parameters<Fn>) => Promise<Awaited<ReturnType<Fn>>>,
+	Return = Awaited<ReturnType<Fn>>,
+>(fn: Fn, waitFor: number = 300) {
 	let timeout: ReturnType<typeof setTimeout>
-	return (...args: Parameters<Fn>) => {
+
+	return (...args: Parameters<Fn>): Promise<Return> => {
 		clearTimeout(timeout)
-		return new Promise<Awaited<ReturnType<Fn>>>((resolve, reject) => {
+		return new Promise<Return>((resolve, reject) => {
 			timeout = setTimeout(async () => {
 				try {
 					resolve(await fn(...args))

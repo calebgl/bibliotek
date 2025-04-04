@@ -5,11 +5,6 @@ import { useParams } from 'react-router'
 import { useCreateReview, useCreateReviewState } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 
-const user = {
-	id: 1,
-	username: 'calebgl',
-}
-
 const formInitialState: { rate: number; comment: string } = {
 	rate: 5,
 	comment: '',
@@ -28,7 +23,6 @@ export function BookReviewForm() {
 		event.preventDefault()
 
 		mutate({
-			userId: user.id,
 			rate: form.rate,
 			comment: form.comment,
 		})

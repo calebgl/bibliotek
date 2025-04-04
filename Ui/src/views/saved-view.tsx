@@ -69,7 +69,7 @@ function List() {
 					<div className="text-base">{book.author}</div>
 					<div className="text-xl">{formatCurrency(book.price)}</div>
 					<div className="mt-auto flex gap-4">
-						<ButtonAddToCart book={book} />
+						<ButtonAddToCart book={{ ...book, quantity: 1 }} />
 						<ButtonSaveBook bookId={book.id} />
 					</div>
 				</div>

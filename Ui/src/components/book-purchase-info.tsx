@@ -90,12 +90,13 @@ function Actions() {
 	assert(bookId)
 
 	const { data: book, isLoading, isError } = useBook(bookId)
+	assert(book)
 
 	return (
 		<>
 			<ButtonAddToCart
 				disabled={isLoading || isError}
-				book={book}
+				book={{ ...book, quantity: 1 }}
 				className="grow"
 			/>
 			<ButtonSaveBook />
