@@ -233,15 +233,42 @@ const updateBookInCartDebounced = debounce(updateBookInCart)
 
 export function useUpdateCartBook() {
 	const queryClient = useQueryClient()
-	const cartKey = queryKeys.public.cart()
+	const queryKey = queryKeys.public.cart()
 	return useMutation({
 		mutationKey: mutationKeys.public.cart.update(),
 		mutationFn: (data: { bookId: string; quantity: number }) =>
 			updateBookInCartDebounced(data.bookId, { quantity: data.quantity }),
+		onMutate: async (data) => {
+			await queryClient.cancelQueries({ queryKey })
+
+			const previousCart =
+				queryClient.getQueryData<FetchCartBooksResponse>(queryKey)
+
+			queryClient.setQueryData(
+				queryKey,
+				(prev: FetchCartBooksResponse) => {
+					let quantityStale = 0
+
+					const books = [...prev.books]
+					for (const book of books) {
+						if (book.id === data.bookId) {
+							quantityStale = book.quantity
+							book.quantity = data.quantity
+						}
+					}
+
+					return {
+						...prev,
+						books,
+						total: prev.total - quantityStale + data.quantity,
+					}
+				},
+			)
+
+			return previousCart
+		},
 		onSettled: () => {
-			queryClient.invalidateQueries({
-				queryKey: cartKey,
-			})
+			queryClient.invalidateQueries({ queryKey })
 		},
 	})
 }
