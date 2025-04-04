@@ -11,6 +11,7 @@ type CartItemProps = CartBook
 export const CartItem = memo((props: CartItemProps) => {
 	const book = props
 	const to = '/books/' + book.id
+	const coverUrl = book.coverUrl ?? undefined
 
 	const [quantity, setQuantity] = useState(book.quantity)
 
@@ -33,9 +34,11 @@ export const CartItem = memo((props: CartItemProps) => {
 
 	return (
 		<div className="flex gap-8">
-			{update.isError && 'ERROR'}
-			<Link to={to} className="max-w-40">
-				<img src={book.coverUrl ?? undefined} alt={book.title} />
+			<Link
+				to={to}
+				className="grid aspect-2/3 w-full max-w-40 place-content-center"
+			>
+				<img src={coverUrl} alt={book.title} className="aspect-2/3" />
 			</Link>
 			<div className="flex grow flex-col">
 				<Link to={to} className="text-2xl font-semibold">
