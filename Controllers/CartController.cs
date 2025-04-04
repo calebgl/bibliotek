@@ -34,9 +34,9 @@ public class CartController(BibliotekContext context) : ControllerBase
             .OrderByDescending(cb => cb.AddedAt)
             .ToList();
 
-        var count = cartBooks.Count();
+        var total = cartBooks.Sum(cb => cb.Quantity);
 
-        return Ok(new { books, total = count });
+        return Ok(new { books, total });
     }
 
     [HttpPost("books")]
