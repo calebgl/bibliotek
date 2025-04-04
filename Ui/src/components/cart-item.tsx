@@ -9,28 +9,29 @@ import { Button } from './button'
 type CartItemProps = CartBook
 
 export const CartItem = memo((props: CartItemProps) => {
-	const book = props
-	const to = '/books/' + book.id
-	const coverUrl = book.coverUrl ?? undefined
-
-	const [quantity, setQuantity] = useState(book.quantity)
+	const [quantity, setQuantity] = useState(props.quantity)
 
 	const update = useUpdateCartBook()
 	const remove = useRemoveCartBook()
 
-	const handleIncrement = () => {
-		setQuantity(quantity + 1)
-		update.mutate({ bookId: book.id, quantity: quantity + 1 })
+	function handleIncrement() {
+		const newQuantity = quantity + 1
+		setQuantity(newQuantity)
+		update.mutate({ bookId: props.id, quantity: newQuantity })
 	}
 
-	const handleDecrement = () => {
-		setQuantity(Math.max(1, quantity - 1))
-		update.mutate({ bookId: book.id, quantity: quantity - 1 })
+	function handleDecrement() {
+		const newQuantity = Math.max(1, quantity - 1)
+		setQuantity(newQuantity)
+		update.mutate({ bookId: props.id, quantity: newQuantity })
 	}
 
-	const handleRemove = () => {
-		remove.mutate({ bookId: book.id })
+	function handleRemove() {
+		remove.mutate({ bookId: props.id })
 	}
+
+	const to = '/books/' + props.id
+	const coverUrl = props.coverUrl ?? undefined
 
 	return (
 		<div className="flex gap-8">
@@ -38,14 +39,14 @@ export const CartItem = memo((props: CartItemProps) => {
 				to={to}
 				className="grid aspect-2/3 w-full max-w-40 place-content-center"
 			>
-				<img src={coverUrl} alt={book.title} className="aspect-2/3" />
+				<img src={coverUrl} alt={props.title} className="aspect-2/3" />
 			</Link>
 			<div className="flex grow flex-col">
 				<Link to={to} className="text-2xl font-semibold">
-					{book.title}
+					{props.title}
 				</Link>
-				<div className="text-base">{book.author}</div>
-				<div className="text-xl">{formatCurrency(book.price)}</div>
+				<div className="text-base">{props.author}</div>
+				<div className="text-xl">{formatCurrency(props.price)}</div>
 				<div className="mt-auto flex gap-4">
 					<div className="flex gap-2">
 						{quantity === 1 && (
