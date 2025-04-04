@@ -1,12 +1,27 @@
-import { CartItem } from '../components/cart-item'
+import { CartItem, CartItemSkeleton } from '../components/cart-item'
 import { useCartBooks } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 import { cn } from '../lib/utils'
 
 export function CartList() {
-	const { data, isLoading, isFetching, isStale } = useCartBooks()
+	const { isFetching, isStale } = useCartBooks()
+	return (
+		<div
+			className={cn('space-y-12', {
+				'opacity-50': isFetching && isStale,
+			})}
+		>
+			<List />
+		</div>
+	)
+}
+
+function List() {
+	const { data, isLoading } = useCartBooks()
 	if (isLoading) {
-		return 'loading...'
+		return Array.from({ length: 4 }, (_, index) => (
+			<CartItemSkeleton key={'cart-book-skeleton-' + index} />
+		))
 	}
 
 	assert(data)
@@ -14,15 +29,11 @@ export function CartList() {
 	const { books } = data
 
 	return (
-		<div
-			className={cn('space-y-12', {
-				'opacity-50': isFetching && isStale,
-			})}
-		>
+		<>
 			{books.length === 0 && 'There are not books in your cart!'}
 			{books.map((book) => (
 				<CartItem key={'saved-' + book.id} {...book} />
 			))}
-		</div>
+		</>
 	)
 }

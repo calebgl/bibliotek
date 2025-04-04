@@ -82,3 +82,26 @@ export const CartItem = memo((props: CartItemProps) => {
 		</div>
 	)
 })
+
+export function CartItemSkeleton() {
+	return (
+		<div className="flex gap-8">
+			<div className="aspect-2/3 w-40 animate-pulse bg-gray-200" />
+			<div className="flex grow flex-col gap-1">
+				<div className="h-7 w-64 animate-pulse bg-gray-200" />
+				<div className="h-5 w-48 animate-pulse bg-gray-100" />
+				<div className="h-6 w-24 animate-pulse bg-gray-200" />
+				<div className="mt-auto flex items-center gap-4">
+					<div className="flex gap-2">
+						<Button className="aspect-square size-6 animate-pulse bg-gray-200 p-0" />
+						<div className="aspect-square size-6 animate-pulse bg-gray-100" />
+						<Button className="aspect-square size-6 animate-pulse bg-gray-200 p-0" />
+					</div>
+					<div>
+						<Button className="h-6 w-16 animate-pulse bg-gray-200 p-0" />
+					</div>
+				</div>
+			</div>
+		</div>
+	)
+}
