@@ -1,10 +1,11 @@
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useSetAtom } from 'jotai'
 import { MouseEvent, RefObject } from 'react'
 import { useNavigate } from 'react-router'
 
+import { useCartBooks } from '../hooks/use-api'
 import { assert } from '../lib/assert'
-import { countAtom, openAtom } from '../stores/cart'
-import { CartDrawerList } from './cart-drawer-list'
+import { openAtom } from '../stores/cart'
+import { CartDrawerItem, CartDrawerItemSkeleton } from './cart-drawer-item'
 
 export function CartDrawer(props: {
 	ref: RefObject<HTMLDivElement | null>
@@ -13,8 +14,6 @@ export function CartDrawer(props: {
 	const navigate = useNavigate()
 
 	const setOpen = useSetAtom(openAtom)
-	const count = useAtomValue(countAtom)
-	assert(count >= 0)
 
 	function handleBuy() {
 		navigate('/cart')
@@ -29,11 +28,11 @@ export function CartDrawer(props: {
 		>
 			<div className="fixed top-0 right-0 h-full w-1/3 bg-white">
 				<div className="relative flex h-full flex-col gap-4 p-8">
-					<h2 className="text-3xl font-bold">
-						Cart{count > 0 && <span>({count})</span>}
-					</h2>
+					<Title />
 					<div className="shrink grow overflow-y-auto">
-						<CartDrawerList />
+						<div className="space-y-8">
+							<List />
+						</div>
 					</div>
 					<button
 						onClick={handleBuy}
@@ -44,5 +43,37 @@ export function CartDrawer(props: {
 				</div>
 			</div>
 		</div>
+	)
+}
+
+function Title() {
+	const { data } = useCartBooks()
+	return (
+		<h2 className="text-3xl font-bold">
+			Cart{data?.total ? <span>({data.total})</span> : null}
+		</h2>
+	)
+}
+
+function List() {
+	const { data, isLoading } = useCartBooks()
+	if (isLoading) {
+		return Array.from({ length: 4 }, (_, index) => (
+			<CartDrawerItemSkeleton
+				key={'cart-drawer-book-skeleton-' + index}
+			/>
+		))
+	}
+
+	assert(data)
+
+	const { books, total } = data
+	return (
+		<>
+			{total === 0 && 'There are no books in your cart!'}
+			{books.map((book) => (
+				<CartDrawerItem key={book.id} {...book} />
+			))}
+		</>
 	)
 }

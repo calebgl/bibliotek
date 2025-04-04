@@ -1,78 +1,105 @@
 import { useSetAtom } from 'jotai'
-import { memo } from 'react'
+import { memo, useState } from 'react'
 import { useNavigate } from 'react-router'
 
+import { useRemoveCartBook, useUpdateCartBook } from '../hooks/use-api'
 import { formatCurrency } from '../lib/utils'
 import { openAtom } from '../stores/cart'
 import type { CartBook } from '../types'
+import { Button } from './button'
 
-export const CartDrawerItem = memo(
-	(
-		props: CartBook & {
-			onIncrement(bookId: string): void
-			onDecrement(bookId: string): void
-			onDelete(bookId: string): void
-		},
-	) => {
-		const navigate = useNavigate()
-		const setOpen = useSetAtom(openAtom)
+type CartDrawerItemProps = CartBook
 
-		function navigateToBook() {
-			navigate('/books/' + props.id)
-			setOpen(false)
-		}
+export const CartDrawerItem = memo((props: CartDrawerItemProps) => {
+	const navigate = useNavigate()
+	const setOpen = useSetAtom(openAtom)
 
-		const coverUrl = props.coverUrl ?? undefined
+	const [quantity, setQuantity] = useState(props.quantity)
 
-		return (
-			<div className="flex gap-4">
-				<button
-					className="basis-1/3 cursor-pointer"
-					onClick={navigateToBook}
-				>
-					<img
-						src={coverUrl}
-						alt={props.title}
-						className="aspect-2/3"
-					/>
-				</button>
-				<div className="flex grow flex-col">
-					<h3 className="text-xl font-semibold">
-						<button
-							className="cursor-pointer"
-							onClick={navigateToBook}
+	const update = useUpdateCartBook()
+	const remove = useRemoveCartBook()
+
+	function handleNavigateToBook() {
+		navigate('/books/' + props.id)
+		setOpen(false)
+	}
+
+	function handleIncrement() {
+		const newQuantity = quantity + 1
+		setQuantity(newQuantity)
+		update.mutate({ bookId: props.id, quantity: newQuantity })
+	}
+
+	function handleDecrement() {
+		const newQuantity = Math.max(1, quantity - 1)
+		setQuantity(newQuantity)
+		update.mutate({ bookId: props.id, quantity: newQuantity })
+	}
+
+	function handleDelete() {
+		remove.mutate({ bookId: props.id })
+	}
+
+	const coverUrl = props.coverUrl ?? undefined
+
+	return (
+		<div className="flex gap-4">
+			<button
+				className="aspect-2/3 basis-1/3 bg-transparent outline-none active:bg-transparent"
+				onClick={handleNavigateToBook}
+			>
+				<img src={coverUrl} alt={props.title} className="aspect-2/3" />
+			</button>
+			<div className="flex basis-2/3 flex-col">
+				<h3 className="text-xl font-semibold">
+					<Button
+						className="line-clamp-3 cursor-pointer bg-transparent p-0 text-start active:bg-transparent"
+						onClick={handleNavigateToBook}
+					>
+						{props.title}
+					</Button>
+				</h3>
+				<p>{formatCurrency(props.price)}</p>
+				<div className="mt-auto flex justify-between">
+					<div className="flex gap-2">
+						{quantity === 1 && (
+							<Button
+								onClick={handleDecrement}
+								className="aspect-square px-2 py-1"
+							>
+								d
+							</Button>
+						)}
+						{quantity > 1 && (
+							<Button
+								onClick={handleDecrement}
+								className="aspect-square px-2 py-1"
+							>
+								-
+							</Button>
+						)}
+						<span>{quantity}</span>
+						<Button
+							onClick={handleIncrement}
+							className="aspect-square px-2 py-1"
 						>
-							{props.title}
-						</button>
-					</h3>
-					<p>{formatCurrency(props.price)}</p>
-					<div className="mt-auto flex justify-between">
-						<div className="flex gap-2">
-							<button
-								onClick={() => props.onDecrement(props.id)}
-								className="min-w-7 cursor-pointer bg-gray-300 px-2 py-1 leading-none"
-							>
-								{props.quantity > 1 ? '-' : 'd'}
-							</button>
-							<span>{props.quantity}</span>
-							<button
-								onClick={() => props.onIncrement(props.id)}
-								className="min-w-7 cursor-pointer bg-gray-300 px-2 py-1 leading-none"
-							>
-								+
-							</button>
-						</div>
-						<div>
-							<button
-								onClick={() => props.onDelete(props.id)}
-								className="min-w-7 cursor-pointer px-2 py-1 leading-none underline"
-							>
-								delete
-							</button>
-						</div>
+							+
+						</Button>
+					</div>
+					<div>
+						<Button
+							onClick={handleDelete}
+							className="bg-transparent px-2 py-1 underline active:bg-transparent"
+						>
+							delete
+						</Button>
 					</div>
 				</div>
 			</div>
-		)
-	},
-)
+		</div>
+	)
+})
+
+export function CartDrawerItemSkeleton() {
+	return <div></div>
+}
