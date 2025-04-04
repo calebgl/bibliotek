@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import { useRemoveCartBook, useUpdateCartBook } from '../hooks/use-api'
 import { formatCurrency } from '../lib/utils'
 import type { CartBook } from '../types'
+import { Button } from './button'
 
 type CartItemProps = CartBook
 
@@ -45,37 +46,36 @@ export const CartItem = memo((props: CartItemProps) => {
 				<div className="mt-auto flex gap-4">
 					<div className="flex gap-2">
 						{quantity === 1 && (
-							<button
+							<Button
 								onClick={handleRemove}
-								className="min-w-7 cursor-pointer bg-gray-300 px-2 py-1 leading-none"
-								disabled={remove.isIdle}
+								className="bg-gray-300 px-2 py-1"
 							>
 								d
-							</button>
+							</Button>
 						)}
 						{quantity > 1 && (
-							<button
+							<Button
 								onClick={handleDecrement}
-								className="min-w-7 cursor-pointer bg-gray-300 px-2 py-1 leading-none"
+								className="bg-gray-300 px-2 py-1"
 							>
 								-
-							</button>
+							</Button>
 						)}
 						<span>{quantity}</span>
-						<button
+						<Button
 							onClick={handleIncrement}
-							className="min-w-7 cursor-pointer bg-gray-300 px-2 py-1 leading-none"
+							className="bg-gray-300 px-2 py-1"
 						>
 							+
-						</button>
+						</Button>
 					</div>
 					<div>
-						<button
+						<Button
 							onClick={handleRemove}
-							className="min-w-7 cursor-pointer px-2 py-1 leading-none underline"
+							className="bg-transparent px-2 py-1 underline"
 						>
 							delete
-						</button>
+						</Button>
 					</div>
 				</div>
 			</div>
