@@ -1,36 +1,30 @@
-import { useAtomValue } from 'jotai'
 import { ReactNode } from 'react'
-import { Link, useLocation } from 'react-router'
+import { Link } from 'react-router'
 
 import { useAuth } from '../hooks/use-auth'
-import { assert } from '../lib/assert'
-import { countAtom } from '../stores/cart'
+import { ButtonToggleCart } from './button-toggle-cart'
+import { Button } from './button'
 
-export function NavbarActions(props: { onCloseCart(): void }) {
-	const location = useLocation()
+export function NavbarActions() {
 	const { user, logout } = useAuth()
-	const count = useAtomValue(countAtom)
-	assert(count >= 0)
-
-	const isLocationCart = location.pathname !== '/cart'
 
 	const actions: ReactNode[] = []
 	if (user) {
 		actions.push(
-			<button
-				key={'cart-toggle'}
-				onClick={isLocationCart ? props.onCloseCart : undefined}
-				className="cursor-pointer"
+			<ButtonToggleCart key="/cart" />,
+			<Link key="/saved" to="/saved" className="px-1 py-2">
+				saved
+			</Link>,
+			<Link key="/profile" to="/profile" className="px-1 py-2">
+				profile
+			</Link>,
+			<Button
+				key="/logout"
+				onClick={logout}
+				className="bg-transparent px-1 py-2 active:bg-transparent"
 			>
-				cart{count > 0 && <span>({count})</span>}
-			</button>,
-			<button key="/saved">
-				<Link to={'/saved'}>saved</Link>
-			</button>,
-			<button key="/profile">profile</button>,
-			<button key="/logout" onClick={logout}>
 				logout
-			</button>,
+			</Button>,
 		)
 	} else {
 		actions.push(

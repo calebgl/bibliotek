@@ -57,9 +57,7 @@ export function Navbar() {
 								<div className="h-5 w-32 animate-pulse bg-gray-200" />
 							}
 						>
-							<NavbarActions
-								onCloseCart={() => setOpen((prev) => !prev)}
-							/>
+							<NavbarActions />
 						</Suspense>
 					</div>
 				</div>
