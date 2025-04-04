@@ -24,12 +24,13 @@ export function ButtonAddToCart(props: ButtonAddToCartProps) {
 		<Button
 			{...rest}
 			onClick={addToCart}
-			className={cn(
-				'cursor-pointer bg-gray-300 px-4 py-2 active:bg-amber-500 disabled:animate-pulse disabled:cursor-not-allowed disabled:bg-gray-100',
-				className,
-			)}
+			className={cn('disabled:animate-pulse', className)}
 		>
 			Add to cart
 		</Button>
 	)
+}
+
+export function ButtonAddToCartSkeleton(props: ButtonAddToCartProps) {
+	return <Button className={cn('h-10 w-32 animate-pulse', props.className)} />
 }

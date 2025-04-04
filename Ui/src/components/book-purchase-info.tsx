@@ -3,8 +3,9 @@ import { useParams } from 'react-router'
 import { useBook } from '../hooks/use-api'
 import { assert } from '../lib/assert'
 import { formatCurrency } from '../lib/utils'
-import { ButtonAddToCart } from './button-add-to-cart'
-import { ButtonSaveBook } from './button-save-book'
+import { Button } from './button'
+import { ButtonAddToCart, ButtonAddToCartSkeleton } from './button-add-to-cart'
+import { ButtonSaveBook, ButtonSaveBookSkeleton } from './button-save-book'
 
 export function BookPurchaseInfo() {
 	return (
@@ -90,6 +91,15 @@ function Actions() {
 	assert(bookId)
 
 	const { data: book, isLoading, isError } = useBook(bookId)
+	if (isLoading) {
+		return (
+			<>
+				<ButtonAddToCartSkeleton className="grow" />
+				<ButtonSaveBookSkeleton />
+			</>
+		)
+	}
+
 	assert(book)
 
 	return (

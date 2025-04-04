@@ -8,8 +8,17 @@ type SaveButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 export function ButtonSaveBook(props: SaveButtonProps) {
 	return (
-		<Button {...props}>
-			<span className="size-4">❤</span>
+		<Button
+			{...props}
+			className="grid aspect-square size-10 place-content-center"
+		>
+			❤
 		</Button>
+	)
+}
+
+export function ButtonSaveBookSkeleton() {
+	return (
+		<Button className="grid aspect-square size-10 animate-pulse place-content-center p-0" />
 	)
 }
