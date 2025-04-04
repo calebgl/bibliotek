@@ -84,7 +84,7 @@ export async function login(
 }
 
 export async function logout(): Promise<void> {
-	await fetchWithCredentials('/authz/logout')
+	await fetch('/authz/logout')
 }
 
 export async function validateSession(): Promise<User | null> {
