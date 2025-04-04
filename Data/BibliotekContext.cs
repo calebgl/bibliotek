@@ -153,6 +153,8 @@ public class BibliotekContext(DbContextOptions<BibliotekContext> options)
                 .WithMany(b => b.CartBooks)
                 .HasForeignKey(cb => cb.BookId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(cb => new { cb.CartId, cb.BookId }).IsUnique();
         });
 
         base.OnModelCreating(modelBuilder);
