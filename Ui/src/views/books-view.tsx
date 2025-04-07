@@ -54,8 +54,8 @@ function List() {
 	if (isLoading) {
 		return Array.from({ length: 8 }, (_, index) => (
 			<div key={'skeleton-book-' + index}>
-				<div className="aspect-[8/9] bg-white p-8">
-					<div className="mx-auto aspect-[2/3] max-h-64 animate-pulse bg-gray-200" />
+				<div className="aspect-8/9 bg-white p-8">
+					<div className="mx-auto aspect-2/3 max-h-64 animate-pulse bg-gray-200" />
 				</div>
 				<div className="space-y-1 px-4 py-4">
 					<div
@@ -81,12 +81,12 @@ function List() {
 
 	return books.map((book) => (
 		<div key={book.id} className="">
-			<div className="aspect-[8/9] bg-white p-8">
+			<div className="aspect-8/9 bg-white p-8">
 				<Link to={'/books/' + book.id} className="h-full">
 					<img
 						src={book.coverUrl ?? undefined}
 						alt={book.title}
-						className="mx-auto block h-full max-h-64"
+						className="mx-auto block aspect-2/3 h-full max-h-64"
 					/>
 				</Link>
 			</div>
