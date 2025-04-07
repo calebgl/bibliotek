@@ -1,8 +1,10 @@
 import { FormEvent, useState } from 'react'
-import { useNavigate, useLocation, Navigate } from 'react-router'
+import { Navigate, useLocation, useNavigate } from 'react-router'
 
+import { Button } from '../components/button'
 import { useAuth } from '../hooks/use-auth'
 import { assert } from '../lib/assert'
+import { cn } from '../lib/utils'
 
 export function LoginView() {
 	const navigate = useNavigate()
@@ -43,23 +45,49 @@ export function LoginView() {
 	}
 
 	return (
-		<form onSubmit={handleSubmit}>
-			<input type="text" name="email" />
-			<input type="text" name="password" />
-			<button
-				type="submit"
-				disabled={disabled}
-				className={disabled ? 'bg-red-500' : undefined}
-			>
-				login
-			</button>
-			<button
-				type="button"
-				disabled={disabled}
-				onClick={handleSignInGitHub}
-			>
-				sign in with github
-			</button>
-		</form>
+		<div className="container mx-auto">
+			<div className="max-w-96 space-y-4">
+				<form
+					onSubmit={handleSubmit}
+					className="grid grid-cols-1 gap-2"
+				>
+					<input
+						type="email"
+						name="email"
+						placeholder="Email"
+						className="px-2 py-1"
+					/>
+					<input
+						type="password"
+						name="password"
+						placeholder="Password"
+						className="px-2 py-1"
+					/>
+					<Button
+						type="submit"
+						disabled={disabled}
+						className={cn('mt-4', { 'bg-red-500': disabled })}
+					>
+						login
+					</Button>
+				</form>
+
+				<div className="grid grid-cols-[1fr_auto_1fr] items-center justify-between">
+					<div className="h-0 overflow-hidden border-t border-gray-400" />
+					<span className="w-8 text-center">or</span>
+					<div className="h-0 overflow-hidden border-t border-gray-400" />
+				</div>
+
+				<div className="grid grid-cols-1">
+					<Button
+						type="button"
+						disabled={disabled}
+						onClick={handleSignInGitHub}
+					>
+						sign in with github
+					</Button>
+				</div>
+			</div>
+		</div>
 	)
 }
