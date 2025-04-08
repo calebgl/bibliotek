@@ -32,6 +32,7 @@ import type {
 	CartBook,
 	CreateBook,
 	FetchCartBooksResponse,
+	FetchSavedBooksResponse,
 	Review,
 } from '../types'
 
@@ -246,14 +247,38 @@ export function useSavedBooks() {
 
 export function useAddSavedBook() {
 	const queryClient = useQueryClient()
+	const queryKey = queryKeys.public.saved.list()
 	return useMutation({
 		mutationKey: mutationKeys.public.saved.add(),
 		mutationFn: addBookToSaved,
-		onSuccess: async (_, variables) => {
-			queryClient.invalidateQueries({
-				queryKey: queryKeys.public.saved.list(),
-			})
+		onMutate: async (variables) => {
+			await queryClient.cancelQueries({ queryKey })
 
+			const previousSaved =
+				queryClient.getQueryData<FetchSavedBooksResponse>(queryKey)
+
+			queryClient.setQueryData(
+				queryKey,
+				(prev: FetchSavedBooksResponse) => {
+					// TODO:
+				},
+			)
+
+			const previousBook = queryClient.getQueryData(
+				queryKeys.public.books.detail(variables.bookId.toString()),
+			)
+
+			queryClient.setQueryData(
+				queryKeys.public.books.detail(variables.bookId.toString()),
+				(prev: any) => {
+					return { ...prev, isSaved: true }
+				},
+			)
+
+			return { previousBook, previousSaved }
+		},
+		onSettled: async (_data, _error, variables) => {
+			queryClient.invalidateQueries({ queryKey })
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.public.books.detail(
 					variables.bookId.toString(),
@@ -265,15 +290,45 @@ export function useAddSavedBook() {
 
 export function useRemoveSavedBook() {
 	const queryClient = useQueryClient()
+	const queryKey = queryKeys.public.saved.list()
 	return useMutation({
 		mutationKey: mutationKeys.public.saved.remove(),
 		mutationFn: (variables: { bookId: string }) =>
 			removeBookFromSaved(variables.bookId),
-		onSuccess: (_, variables) => {
-			queryClient.invalidateQueries({
-				queryKey: queryKeys.public.saved.list(),
-			})
+		onMutate: async (variables) => {
+			await queryClient.cancelQueries({ queryKey })
 
+			const previousSaved =
+				queryClient.getQueryData<FetchSavedBooksResponse>(queryKey)
+
+			queryClient.setQueryData(
+				queryKey,
+				(prev: FetchSavedBooksResponse) => {
+					const books = prev.books.filter(
+						(book) => book.id !== variables.bookId,
+					)
+					return {
+						...prev,
+						books,
+					}
+				},
+			)
+
+			const previousBook = queryClient.getQueryData(
+				queryKeys.public.books.detail(variables.bookId.toString()),
+			)
+
+			queryClient.setQueryData(
+				queryKeys.public.books.detail(variables.bookId.toString()),
+				(prev: any) => {
+					return { ...prev, isSaved: false }
+				},
+			)
+
+			return { previousBook, previousSaved }
+		},
+		onSettled: (_data, _error, variables) => {
+			queryClient.invalidateQueries({ queryKey })
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.public.books.detail(
 					variables.bookId.toString(),

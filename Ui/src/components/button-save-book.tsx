@@ -1,9 +1,11 @@
+import { Heart, HeartOff } from 'lucide-react'
 import type { ButtonHTMLAttributes } from 'react'
+import { useState } from 'react'
 
 import { useAddSavedBook, useRemoveSavedBook } from '../hooks/use-api'
-import { SavedBook } from '../types'
-import { Button } from './button'
 import { cn } from '../lib/utils'
+import type { SavedBook } from '../types'
+import { Button } from './button'
 
 type SaveButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 	book: SavedBook
@@ -13,6 +15,8 @@ type SaveButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 export function ButtonSaveBook(props: SaveButtonProps) {
 	const { isSaved, ...rest } = props
 
+	const [Icon, setIcon] = useState<typeof Heart>(Heart)
+
 	const add = useAddSavedBook()
 	const remove = useRemoveSavedBook()
 
@@ -21,19 +25,39 @@ export function ButtonSaveBook(props: SaveButtonProps) {
 			const variables = { bookId: props.book.id }
 			const fn = isSaved ? remove.mutateAsync : add.mutateAsync
 			await fn(variables)
+
+			if (isSaved) {
+				setIcon(Heart)
+			}
 		}
+	}
+
+	function handleMouseEnter() {
+		if (isSaved) {
+			setIcon(HeartOff)
+		}
+	}
+
+	function handleMouseLeave() {
+		setIcon(Heart)
 	}
 
 	return (
 		<Button
-			disabled={add.isPending}
+			disabled={add.isPending || remove.isPending}
 			onClick={handleClick}
+			onMouseEnter={handleMouseEnter}
+			onMouseLeave={handleMouseLeave}
 			{...rest}
-			className={cn('grid aspect-square size-10 place-content-center', {
-				'bg-red-400': isSaved,
-			})}
+			className="group grid aspect-square size-10 place-content-center"
 		>
-			❤
+			<Icon
+				className={cn('stroke-transparent stroke-1 transition-colors', {
+					'fill-red-600': isSaved,
+					'fill-gray-100 group-hover:fill-red-600': !isSaved,
+					'stroke-current': Icon === HeartOff,
+				})}
+			/>
 		</Button>
 	)
 }
