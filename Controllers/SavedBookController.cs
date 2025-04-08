@@ -42,13 +42,19 @@ public class SavedBookController(BibliotekContext context) : ControllerBase
     public IActionResult SaveBook([FromBody] SaveBookRequest request)
     {
         var user = HttpContext.GetCurrentUser();
-        var book = context.Books.FirstOrDefault(b => b.Id == request.BookId);
+        var savedBook = context.SavedBooks.FirstOrDefault(sb => sb.BookId == request.BookId);
+        if (savedBook is not null)
+        {
+            return Ok(new { BookId = request.BookId, CreatedAt = savedBook.CreatedAt });
+        }
+
+        var book = context.Books.Find(request.BookId);
         if (book is null)
         {
             return NotFound();
         }
 
-        var savedBook = new SavedBook
+        savedBook = new SavedBook
         {
             UserId = user.Id,
             BookId = book.Id,
@@ -56,7 +62,7 @@ public class SavedBookController(BibliotekContext context) : ControllerBase
             Book = book,
         };
 
-        context.SavedBooks.Update(savedBook);
+        context.SavedBooks.Add(savedBook);
         context.SaveChanges();
 
         return Ok(new { BookId = request.BookId, CreatedAt = savedBook.CreatedAt });
