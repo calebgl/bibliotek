@@ -3,6 +3,7 @@ import { DevTools } from 'jotai-devtools'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import 'jotai-devtools/styles.css'
 import './assets/main.css'
@@ -81,6 +82,7 @@ createRoot(document.getElementById('root')!).render(
 	<StrictMode>
 		<DevTools />
 		<QueryClientProvider client={queryClient}>
+			<ReactQueryDevtools initialIsOpen={false} />
 			<RouterProvider router={router} />
 		</QueryClientProvider>
 	</StrictMode>,
