@@ -34,10 +34,10 @@ import type {
 } from '../types'
 
 const queryKeys = {
-	auth: {
-		session: () => ['session'],
-	},
 	public: {
+		auth: {
+			session: () => ['session'],
+		},
 		books: {
 			all: () => ['public', 'books'],
 			list: () => [...queryKeys.public.books.all(), 'list'],
@@ -58,7 +58,9 @@ const queryKeys = {
 				],
 			},
 		},
-		cart: () => ['cart'],
+		cart: {
+			list: () => ['cart'],
+		},
 	},
 	admin: {
 		books: {
@@ -74,12 +76,12 @@ const queryKeys = {
 }
 
 const mutationKeys = {
-	auth: {
-		login: () => ['login'],
-		logout: () => ['logout'],
-		signInGithub: () => ['signin', 'github'],
-	},
 	public: {
+		auth: {
+			login: () => ['login'],
+			logout: () => ['logout'],
+			signInGithub: () => ['signin', 'github'],
+		},
 		books: {
 			all: () => ['public', 'books'],
 			reviews: {
@@ -123,11 +125,11 @@ const mutationKeys = {
 export function useLogin() {
 	const queryClient = useQueryClient()
 	return useMutation({
-		mutationKey: mutationKeys.auth.login(),
+		mutationKey: mutationKeys.public.auth.login(),
 		mutationFn: login,
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: queryKeys.auth.session(),
+				queryKey: queryKeys.public.auth.session(),
 			})
 		},
 	})
@@ -136,11 +138,11 @@ export function useLogin() {
 export function useSignInGitHub() {
 	const queryClient = useQueryClient()
 	return useMutation({
-		mutationKey: mutationKeys.auth.signInGithub(),
+		mutationKey: mutationKeys.public.auth.signInGithub(),
 		mutationFn: () => login('github'),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: queryKeys.auth.session(),
+				queryKey: queryKeys.public.auth.session(),
 			})
 		},
 	})
@@ -148,7 +150,7 @@ export function useSignInGitHub() {
 
 export function useSession() {
 	return useSuspenseQuery({
-		queryKey: queryKeys.auth.session(),
+		queryKey: queryKeys.public.auth.session(),
 		queryFn: validateSession,
 		retry: false,
 		retryOnMount: false,
@@ -160,11 +162,11 @@ export function useSession() {
 export function useLogout() {
 	const queryClient = useQueryClient()
 	return useMutation({
-		mutationKey: mutationKeys.auth.logout(),
+		mutationKey: mutationKeys.public.auth.logout(),
 		mutationFn: logout,
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: queryKeys.auth.session(),
+				queryKey: queryKeys.public.auth.session(),
 			})
 		},
 	})
@@ -277,7 +279,7 @@ export function useUpdateAdminBook(id: string) {
 
 export function useCartBooks() {
 	return useQuery({
-		queryKey: queryKeys.public.cart(),
+		queryKey: queryKeys.public.cart.list(),
 		queryFn: () => fetchCartBooks(),
 	})
 }
@@ -289,7 +291,7 @@ export function useAddCartBook() {
 		mutationFn: (book: CartBook) => addBookToCart({ bookId: book.id }),
 		onSettled: () =>
 			queryClient.invalidateQueries({
-				queryKey: queryKeys.public.cart(),
+				queryKey: queryKeys.public.cart.list(),
 			}),
 	})
 }
@@ -322,7 +324,7 @@ const updateBookInCartDebounced = debounce(updateBookInCart)
 
 export function useUpdateCartBook() {
 	const queryClient = useQueryClient()
-	const queryKey = queryKeys.public.cart()
+	const queryKey = queryKeys.public.cart.list()
 	return useMutation({
 		mutationKey: mutationKeys.public.cart.update(),
 		mutationFn: (data: { bookId: string; quantity: number }) =>
@@ -364,7 +366,7 @@ export function useUpdateCartBook() {
 
 export function useRemoveCartBook() {
 	const queryClient = useQueryClient()
-	const queryKey = queryKeys.public.cart()
+	const queryKey = queryKeys.public.cart.list()
 	return useMutation({
 		mutationKey: mutationKeys.public.cart.remove(),
 		mutationFn: (data: { bookId: string }) =>
@@ -412,7 +414,7 @@ export function useClearCart() {
 		mutationFn: clearCart,
 		onSettled: () => {
 			queryClient.invalidateQueries({
-				queryKey: queryKeys.public.cart(),
+				queryKey: queryKeys.public.cart.list(),
 			})
 		},
 	})
