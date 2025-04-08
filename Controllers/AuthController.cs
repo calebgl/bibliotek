@@ -80,7 +80,7 @@ public class AuthController(
                 return Redirect(errorRedirectUrl);
             }
 
-            var userName = info.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userName = info.Principal.FindFirstValue(ClaimTypes.Name);
             if (string.IsNullOrWhiteSpace(userName))
             {
                 byte[] bytes = new byte[8];
