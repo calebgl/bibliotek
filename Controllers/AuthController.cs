@@ -110,7 +110,7 @@ public class AuthController(
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route("~/logout")]
     [Authorize]
     public async Task<IActionResult> Logout()
