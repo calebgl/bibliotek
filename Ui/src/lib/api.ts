@@ -71,22 +71,14 @@ export async function login(
 		return
 	}
 
-	const searchParams = new URLSearchParams()
-	searchParams.set('useCookies', 'true')
-	searchParams.set('useSessionCookies', 'true')
-
-	await fetchWithCredentials('/authz/login?' + searchParams.toString(), {
+	await fetchWithCredentials('/api/auth/login', {
 		method: Method.POST,
-		body: JSON.stringify({
-			...credentials,
-			twoFactorCode: null,
-			twoFactorRecoveryCode: null,
-		}),
+		body: JSON.stringify(credentials),
 	})
 }
 
 export async function logout(): Promise<void> {
-	await fetch('/authz/logout', {
+	await fetch('/api/auth/logout', {
 		method: Method.POST,
 		credentials: 'include',
 	})

@@ -15,10 +15,6 @@ export default defineConfig({
 	server: {
 		proxy: {
 			'/api': 'http://localhost:5191',
-			'/authz': {
-				target: 'http://localhost:5191',
-				rewrite: (path) => path.replace(/^\/authz/, ''),
-			},
 		},
 	},
 })
