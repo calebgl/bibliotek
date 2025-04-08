@@ -15,7 +15,7 @@ public class SavedBookController(BibliotekContext context) : ControllerBase
     public IActionResult ListSavedBooks()
     {
         var user = HttpContext.GetCurrentUser();
-        var savedBooks = context
+        var books = context
             .SavedBooks.Include(sb => sb.Book)
             .Include(sb => sb.Book.BookStats)
             .Where(sb => sb.UserId == user.Id)
@@ -31,16 +31,18 @@ public class SavedBookController(BibliotekContext context) : ControllerBase
                 SavedAt = sb.CreatedAt,
             });
 
-        return Ok(savedBooks);
+        var total = context.SavedBooks.Where(sb => sb.UserId == user.Id).Count();
+
+        return Ok(new { books, total });
     }
 
     [HttpPost]
     [Authorize]
     [ValidateSession]
-    public IActionResult SaveBook(SaveBookDto saveBookDto)
+    public IActionResult SaveBook([FromBody] SaveBookRequest request)
     {
         var user = HttpContext.GetCurrentUser();
-        var book = context.Books.FirstOrDefault(b => b.Id == saveBookDto.BookId);
+        var book = context.Books.FirstOrDefault(b => b.Id == request.BookId);
         if (book is null)
         {
             return NotFound();
@@ -57,7 +59,7 @@ public class SavedBookController(BibliotekContext context) : ControllerBase
         context.SavedBooks.Update(savedBook);
         context.SaveChanges();
 
-        return Ok(new { BookId = saveBookDto.BookId, CreatedAt = savedBook.CreatedAt });
+        return Ok(new { BookId = request.BookId, CreatedAt = savedBook.CreatedAt });
     }
 
     [HttpDelete("{bookId}")]
@@ -81,4 +83,4 @@ public class SavedBookController(BibliotekContext context) : ControllerBase
     }
 }
 
-public record SaveBookDto(uint BookId);
+public record SaveBookRequest(uint BookId);
