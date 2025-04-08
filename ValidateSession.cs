@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.Mvc.Filters;
 public class ValidateSession(
     BibliotekContext dbContext,
     SignInManager<User> signInManager,
-    ILogger<ValidateSession> logger
+    ILogger<ValidateSession> logger,
+    bool throwOnValidationFailure = true
 ) : IAsyncActionFilter
 {
     public async Task OnActionExecutionAsync(
@@ -21,33 +22,29 @@ public class ValidateSession(
             var contextClaim = context.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             if (contextClaim is null)
             {
-                throw new InvalidOperationException(
-                    $"Authentication failed: User identifier claim not found"
-                );
+                HandleFailure($"Authentication failed: User identifier claim not found");
+                return;
             }
 
             var userIdString = contextClaim.Value;
             if (string.IsNullOrWhiteSpace(userIdString))
             {
-                throw new InvalidOperationException(
-                    $"Authentication failed: Empty user identifier"
-                );
+                HandleFailure($"Authentication failed: Empty user identifier");
+                return;
             }
 
             uint userId;
             if (!uint.TryParse(userIdString, out userId))
             {
-                throw new InvalidOperationException(
-                    $"Authentication failed: Invalid user id format '{userIdString}'"
-                );
+                HandleFailure($"Authentication failed: Invalid user id format '{userIdString}'");
+                return;
             }
 
             var user = dbContext.Users.FirstOrDefault(u => u.Id == userId);
             if (user is null)
             {
-                throw new InvalidOperationException(
-                    $"Authentication failed: User with Id {userId} not found"
-                );
+                HandleFailure($"Authentication failed: User with Id {userId} not found");
+                return;
             }
 
             Debug.Assert(
@@ -70,5 +67,15 @@ public class ValidateSession(
 
             context.Result = new UnauthorizedObjectResult("Invalid user session");
         }
+    }
+
+    public bool HandleFailure(string message)
+    {
+        if (throwOnValidationFailure)
+        {
+            throw new InvalidOperationException(message);
+        }
+
+        return false;
     }
 }
