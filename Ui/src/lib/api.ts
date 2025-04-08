@@ -6,9 +6,9 @@ import type {
 	CreateBook,
 	Credentials,
 	FetchCartBooksResponse,
+	FetchSavedBooksResponse,
 	Review,
 	SaveBookRequest,
-	SavedBook,
 	UpdateCartBookRequest,
 	UpdateCartBookResponse,
 	User,
@@ -157,7 +157,7 @@ export async function postReview(
 	})
 }
 
-export async function fetchSavedBooks(): Promise<SavedBook[]> {
+export async function fetchSavedBooks(): Promise<FetchSavedBooksResponse> {
 	return fetchWithCredentials('/api/saved-books')
 }
 

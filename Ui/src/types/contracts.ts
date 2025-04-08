@@ -1,4 +1,4 @@
-import { CartBook } from './book'
+import { CartBook, SavedBook } from './book'
 
 export type FetchCartBooksResponse = {
 	total: number
@@ -24,6 +24,11 @@ export type UpdateCartBookResponse = {
 	bookId: string
 	quantity: number
 	updatedAt: string
+}
+
+export type FetchSavedBooksResponse = {
+	books: SavedBook[]
+	total: number
 }
 
 export type SaveBookRequest = {
