@@ -29,56 +29,86 @@ import type {
 	Review,
 } from '../types'
 
-// prettier-ignore
 const queryKeys = {
-        public: {
-                books: {
-                        all: () => ['public', 'books'],
-                        list: () => [...queryKeys.public.books.all(), 'list'],
-                        saved: () => [...queryKeys.public.books.all(), 'saved'],
-                        detail: (id: string) => [...queryKeys.public.books.all(), 'detail', id],
-                        reviews: {
-                                all: (bookId: string) => [...queryKeys.public.books.detail(bookId), 'reviews'],
-                                list: (bookId: string) => [...queryKeys.public.books.reviews.all(bookId), 'list'],
-                        },
-                },
-                cart: () => ['cart']
-        },
-        admin: {
-                books: {
-                        all: () => ['admin', 'books'],
-                        list: () => [...queryKeys.admin.books.all(), 'list'],
-                        detail: (id: string) => [...queryKeys.admin.books.all(), 'detail', id],
-                },
-        },
+	auth: {
+		session: () => ['session'],
+	},
+	public: {
+		books: {
+			all: () => ['public', 'books'],
+			list: () => [...queryKeys.public.books.all(), 'list'],
+			saved: () => [...queryKeys.public.books.all(), 'saved'],
+			detail: (id: string) => [
+				...queryKeys.public.books.all(),
+				'detail',
+				id,
+			],
+			reviews: {
+				all: (bookId: string) => [
+					...queryKeys.public.books.detail(bookId),
+					'reviews',
+				],
+				list: (bookId: string) => [
+					...queryKeys.public.books.reviews.all(bookId),
+					'list',
+				],
+			},
+		},
+		cart: () => ['cart'],
+	},
+	admin: {
+		books: {
+			all: () => ['admin', 'books'],
+			list: () => [...queryKeys.admin.books.all(), 'list'],
+			detail: (id: string) => [
+				...queryKeys.admin.books.all(),
+				'detail',
+				id,
+			],
+		},
+	},
 }
 
-// prettier-ignore
 const mutationKeys = {
-        public: {
-                books: {
-                        all: () => ['public', 'books'],
-                        reviews: {
-                                all: (bookId: string) => [...mutationKeys.public.books.all(), bookId, 'reviews'],
-                                create: (bookId: string) => [...mutationKeys.public.books.reviews.all(bookId), 'create'],
-                                update: (bookId: string, reviewId: string) => [...mutationKeys.public.books.reviews.all(bookId), 'update', reviewId],
-                        },
-                },
-                cart: {
-                        all: () => ['public', 'cart'],
-                        add: () => [...mutationKeys.public.cart.all(), 'add'],
-                        update: () => [...mutationKeys.public.cart.all(), 'update'],
-                        remove: () => [...mutationKeys.public.cart.all(), 'remove'],
-                        clear: () => [...mutationKeys.public.cart.all(), 'clear'],
-                }
-        },
-        admin: {
-                books: {
-                        all: () => ['admin', 'books'],
-                        create: () => [...mutationKeys.admin.books.all(), 'create'],
-                        update: (id: string) => [...mutationKeys.admin.books.all(), 'update', id],
-                },
-        },
+	public: {
+		books: {
+			all: () => ['public', 'books'],
+			reviews: {
+				all: (bookId: string) => [
+					...mutationKeys.public.books.all(),
+					bookId,
+					'reviews',
+				],
+				create: (bookId: string) => [
+					...mutationKeys.public.books.reviews.all(bookId),
+					'create',
+				],
+				update: (bookId: string, reviewId: string) => [
+					...mutationKeys.public.books.reviews.all(bookId),
+					'update',
+					reviewId,
+				],
+			},
+		},
+		cart: {
+			all: () => ['public', 'cart'],
+			add: () => [...mutationKeys.public.cart.all(), 'add'],
+			update: () => [...mutationKeys.public.cart.all(), 'update'],
+			remove: () => [...mutationKeys.public.cart.all(), 'remove'],
+			clear: () => [...mutationKeys.public.cart.all(), 'clear'],
+		},
+	},
+	admin: {
+		books: {
+			all: () => ['admin', 'books'],
+			create: () => [...mutationKeys.admin.books.all(), 'create'],
+			update: (id: string) => [
+				...mutationKeys.admin.books.all(),
+				'update',
+				id,
+			],
+		},
+	},
 }
 
 export function useBooks() {
