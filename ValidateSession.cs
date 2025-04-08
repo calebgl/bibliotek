@@ -22,21 +22,21 @@ public class ValidateSession(
             var contextClaim = context.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             if (contextClaim is null)
             {
-                HandleFailure(next, $"Authentication failed: User identifier claim not found");
+                await HandleFailure(next, $"Authentication failed: User identifier claim not found");
                 return;
             }
 
             var userIdString = contextClaim.Value;
             if (string.IsNullOrWhiteSpace(userIdString))
             {
-                HandleFailure(next, $"Authentication failed: Empty user identifier");
+                await HandleFailure(next, $"Authentication failed: Empty user identifier");
                 return;
             }
 
             uint userId;
             if (!uint.TryParse(userIdString, out userId))
             {
-                HandleFailure(
+                await HandleFailure(
                     next,
                     $"Authentication failed: Invalid user id format '{userIdString}'"
                 );
@@ -46,7 +46,7 @@ public class ValidateSession(
             var user = dbContext.Users.FirstOrDefault(u => u.Id == userId);
             if (user is null)
             {
-                HandleFailure(next, $"Authentication failed: User with Id {userId} not found");
+                await HandleFailure(next, $"Authentication failed: User with Id {userId} not found");
                 return;
             }
 
