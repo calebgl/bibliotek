@@ -1,46 +1,16 @@
-import { memo, useState } from 'react'
+import { memo } from 'react'
 import { Link } from 'react-router'
 
-import { useRemoveSavedBook } from '../hooks/use-api'
 import { formatCurrency } from '../lib/utils'
 import type { SavedBook } from '../types'
-import { Button } from './button'
-import { ButtonSaveBook, ButtonSaveBookSkeleton } from './button-save-book'
 import { ButtonAddToCart, ButtonAddToCartSkeleton } from './button-add-to-cart'
+import { ButtonSaveBook, ButtonSaveBookSkeleton } from './button-save-book'
 
 type SavedItemProps = SavedBook & { isSaved?: boolean }
 
 export const SavedItem = memo((props: SavedItemProps) => {
-	// const remove = useRemoveSavedBook()
-
-	// function handleRemove() {
-	// 	remove.mutate({ bookId: props.id })
-	// }
-
 	const to = '/books/' + props.id
 	const coverUrl = props.coverUrl ?? undefined
-
-	// return (
-	// 	<div className="flex gap-8">
-	// 		<Link
-	// 			to={to}
-	// 			className="grid aspect-2/3 w-full max-w-40 place-content-center"
-	// 		>
-	// 			<img src={coverUrl} alt={props.title} className="aspect-2/3" />
-	// 		</Link>
-	// 		<div className="flex grow flex-col">
-	// 			<Link to={to} className="text-2xl font-semibold">
-	// 				{props.title}
-	// 			</Link>
-	// 			<div className="text-base">{props.author}</div>
-	// 			<div className="text-xl">{formatCurrency(props.price)}</div>
-	// 			<div className="mt-auto flex gap-4">
-	// 				<ButtonAddToCart book={{ ...props, quantity: 1 }} />
-	// 				<ButtonSaveBook bookId={props.id} />
-	// 			</div>
-	// 		</div>
-	// 	</div>
-	// )
 
 	return (
 		<div className="flex gap-8">
