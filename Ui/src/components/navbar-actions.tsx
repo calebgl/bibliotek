@@ -2,8 +2,8 @@ import { ReactNode } from 'react'
 import { Link } from 'react-router'
 
 import { useAuth } from '../hooks/use-auth'
-import { ButtonToggleCart } from './button-toggle-cart'
 import { Button } from './button'
+import { ButtonToggleCart } from './button-toggle-cart'
 
 export function NavbarActions() {
 	const { user, logout } = useAuth()
