@@ -8,6 +8,7 @@ import {
 
 import {
 	addBookToCart,
+	addBookToSaved,
 	clearCart,
 	createAdminBook,
 	fetchAdminBook,
@@ -22,6 +23,7 @@ import {
 	postReview,
 	putAdminBook,
 	removeBookFromCart,
+	removeBookFromSaved,
 	updateBookInCart,
 	validateSession,
 } from '../lib/api'
@@ -60,6 +62,9 @@ const queryKeys = {
 		},
 		cart: {
 			list: () => ['cart'],
+		},
+		saved: {
+			list: () => ['saved'],
 		},
 	},
 	admin: {
@@ -107,6 +112,11 @@ const mutationKeys = {
 			update: () => [...mutationKeys.public.cart.all(), 'update'],
 			remove: () => [...mutationKeys.public.cart.all(), 'remove'],
 			clear: () => [...mutationKeys.public.cart.all(), 'clear'],
+		},
+		saved: {
+			all: () => ['saved'],
+			add: () => [...mutationKeys.public.saved.all(), 'add'],
+			remove: () => [...mutationKeys.public.saved.all(), 'remove'],
 		},
 	},
 	admin: {
@@ -232,6 +242,33 @@ export function useSavedBooks() {
 	return useQuery({
 		queryKey: queryKeys.public.books.saved(),
 		queryFn: () => fetchSavedBooks(),
+	})
+}
+
+export function useAddSavedBook() {
+	const queryClient = useQueryClient()
+	return useMutation({
+		mutationKey: mutationKeys.public.saved.add(),
+		mutationFn: addBookToSaved,
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: queryKeys.public.saved.list(),
+			})
+		},
+	})
+}
+
+export function useRemoveSavedBook() {
+	const queryClient = useQueryClient()
+	return useMutation({
+		mutationKey: mutationKeys.public.saved.remove(),
+		mutationFn: (variables: { bookId: string }) =>
+			removeBookFromSaved(variables.bookId),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: queryKeys.public.saved.list(),
+			})
+		},
 	})
 }
 

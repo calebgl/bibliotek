@@ -7,6 +7,7 @@ import type {
 	Credentials,
 	FetchCartBooksResponse,
 	Review,
+	SaveBookRequest,
 	SavedBook,
 	UpdateCartBookRequest,
 	UpdateCartBookResponse,
@@ -157,8 +158,19 @@ export async function postReview(
 }
 
 export async function fetchSavedBooks(): Promise<SavedBook[]> {
+	return fetchWithCredentials('/api/saved-books')
+}
+
+export async function addBookToSaved(request: SaveBookRequest) {
 	return fetchWithCredentials('/api/saved-books', {
-		credentials: 'include',
+		method: Method.POST,
+		body: JSON.stringify(request),
+	})
+}
+
+export async function removeBookFromSaved(bookId: string) {
+	return fetchWithCredentials('/api/saved-books/' + bookId, {
+		method: Method.DELETE,
 	})
 }
 

@@ -25,3 +25,7 @@ export type UpdateCartBookResponse = {
 	quantity: number
 	updatedAt: string
 }
+
+export type SaveBookRequest = {
+	bookId: string
+}
