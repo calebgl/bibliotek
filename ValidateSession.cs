@@ -22,28 +22,31 @@ public class ValidateSession(
             var contextClaim = context.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             if (contextClaim is null)
             {
-                HandleFailure($"Authentication failed: User identifier claim not found");
+                HandleFailure(next, $"Authentication failed: User identifier claim not found");
                 return;
             }
 
             var userIdString = contextClaim.Value;
             if (string.IsNullOrWhiteSpace(userIdString))
             {
-                HandleFailure($"Authentication failed: Empty user identifier");
+                HandleFailure(next, $"Authentication failed: Empty user identifier");
                 return;
             }
 
             uint userId;
             if (!uint.TryParse(userIdString, out userId))
             {
-                HandleFailure($"Authentication failed: Invalid user id format '{userIdString}'");
+                HandleFailure(
+                    next,
+                    $"Authentication failed: Invalid user id format '{userIdString}'"
+                );
                 return;
             }
 
             var user = dbContext.Users.FirstOrDefault(u => u.Id == userId);
             if (user is null)
             {
-                HandleFailure($"Authentication failed: User with Id {userId} not found");
+                HandleFailure(next, $"Authentication failed: User with Id {userId} not found");
                 return;
             }
 
@@ -69,13 +72,13 @@ public class ValidateSession(
         }
     }
 
-    public bool HandleFailure(string message)
+    public async Task HandleFailure(ActionExecutionDelegate next, string message)
     {
         if (throwOnValidationFailure)
         {
             throw new InvalidOperationException(message);
         }
 
-        return false;
+        await next();
     }
 }
