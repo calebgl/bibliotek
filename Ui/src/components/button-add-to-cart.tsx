@@ -24,7 +24,7 @@ export function ButtonAddToCart(props: ButtonAddToCartProps) {
 		<Button
 			{...rest}
 			onClick={addToCart}
-			className={cn('disabled:animate-pulse', className)}
+			className={cn('h-10 disabled:animate-pulse', className)}
 		>
 			Add to cart
 		</Button>
