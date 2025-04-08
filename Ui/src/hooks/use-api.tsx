@@ -43,7 +43,6 @@ const queryKeys = {
 		books: {
 			all: () => ['public', 'books'],
 			list: () => [...queryKeys.public.books.all(), 'list'],
-			saved: () => [...queryKeys.public.books.all(), 'saved'],
 			detail: (id: string) => [
 				...queryKeys.public.books.all(),
 				'detail',
@@ -240,7 +239,7 @@ export function useCreateReviewState(bookId: string) {
 
 export function useSavedBooks() {
 	return useQuery({
-		queryKey: queryKeys.public.books.saved(),
+		queryKey: queryKeys.public.saved.list(),
 		queryFn: () => fetchSavedBooks(),
 	})
 }
@@ -250,9 +249,15 @@ export function useAddSavedBook() {
 	return useMutation({
 		mutationKey: mutationKeys.public.saved.add(),
 		mutationFn: addBookToSaved,
-		onSuccess: () => {
+		onSuccess: async (_, variables) => {
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.public.saved.list(),
+			})
+
+			queryClient.invalidateQueries({
+				queryKey: queryKeys.public.books.detail(
+					variables.bookId.toString(),
+				),
 			})
 		},
 	})
@@ -264,9 +269,15 @@ export function useRemoveSavedBook() {
 		mutationKey: mutationKeys.public.saved.remove(),
 		mutationFn: (variables: { bookId: string }) =>
 			removeBookFromSaved(variables.bookId),
-		onSuccess: () => {
+		onSuccess: (_, variables) => {
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.public.saved.list(),
+			})
+
+			queryClient.invalidateQueries({
+				queryKey: queryKeys.public.books.detail(
+					variables.bookId.toString(),
+				),
 			})
 		},
 	})

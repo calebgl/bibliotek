@@ -18,6 +18,7 @@ export type Book = BaseBook & {
 		four: number
 		five: number
 	}
+	isSaved?: boolean
 }
 
 export type CartBook = Omit<BaseBook, 'totalReviews' | 'averageRating'> & {

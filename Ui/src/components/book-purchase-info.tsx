@@ -108,7 +108,7 @@ function Actions() {
 				book={{ ...book, quantity: 1 }}
 				className="grow"
 			/>
-			<ButtonSaveBook />
+			<ButtonSaveBook book={{ ...book }} isSaved={book.isSaved} />
 		</>
 	)
 }

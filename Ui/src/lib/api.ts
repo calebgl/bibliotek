@@ -168,10 +168,15 @@ export async function addBookToSaved(request: SaveBookRequest) {
 	})
 }
 
-export async function removeBookFromSaved(bookId: string) {
-	return fetchWithCredentials('/api/saved-books/' + bookId, {
+export async function removeBookFromSaved(bookId: string): Promise<void> {
+	const resp = await fetch('/api/saved-books/' + bookId, {
 		method: Method.DELETE,
+		credentials: 'include',
 	})
+
+	if (!resp.ok) {
+		throw new HttpError(resp.status as HttpStatus, resp.statusText)
+	}
 }
 
 export async function fetchCartBooks(): Promise<FetchCartBooksResponse> {
