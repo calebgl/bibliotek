@@ -5,6 +5,8 @@ import { assert } from '../lib/assert'
 import { cn } from '../lib/utils'
 import { CartBook } from '../types'
 import { Button } from './button'
+import { useAuth } from '../hooks/use-auth'
+import { useLocation, useNavigate } from 'react-router'
 
 type ButtonAddToCartProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 	book?: CartBook
@@ -13,9 +15,23 @@ type ButtonAddToCartProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 export function ButtonAddToCart(props: ButtonAddToCartProps) {
 	const { book, className, ...rest } = props
 
+	const { user } = useAuth()
+	const navigate = useNavigate()
+	const location = useLocation()
+
 	const { mutate } = useAddCartBook()
 
 	function addToCart() {
+		if (!user) {
+			navigate('/login', {
+				state: {
+					from: location,
+				},
+			})
+
+			return
+		}
+
 		assert(book)
 		mutate(book)
 	}
