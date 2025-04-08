@@ -1,6 +1,7 @@
 import { useParams } from 'react-router'
 
 import { useBook } from '../hooks/use-api'
+import { useAuth } from '../hooks/use-auth'
 import { assert } from '../lib/assert'
 import { formatCurrency } from '../lib/utils'
 import { ButtonAddToCart, ButtonAddToCartSkeleton } from './button-add-to-cart'
@@ -89,12 +90,14 @@ function Actions() {
 	const { bookId } = useParams()
 	assert(bookId)
 
+	const { user } = useAuth()
+
 	const { data: book, isLoading, isError } = useBook(bookId)
 	if (isLoading) {
 		return (
 			<>
 				<ButtonAddToCartSkeleton className="grow" />
-				<ButtonSaveBookSkeleton />
+				{user && <ButtonSaveBookSkeleton />}
 			</>
 		)
 	}
@@ -108,7 +111,9 @@ function Actions() {
 				book={{ ...book, quantity: 1 }}
 				className="grow"
 			/>
-			<ButtonSaveBook book={{ ...book }} isSaved={book.isSaved} />
+			{user && (
+				<ButtonSaveBook book={{ ...book }} isSaved={book.isSaved} />
+			)}
 		</>
 	)
 }
