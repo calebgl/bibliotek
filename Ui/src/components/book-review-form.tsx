@@ -4,6 +4,7 @@ import { useParams } from 'react-router'
 
 import { useCreateReview, useCreateReviewState } from '../hooks/use-api'
 import { assert } from '../lib/assert'
+import { useAuth } from '../hooks/use-auth'
 
 const formInitialState: { rate: number; comment: string } = {
 	rate: 5,
@@ -15,6 +16,9 @@ export function BookReviewForm() {
 	assert(bookId)
 
 	const [form, setForm] = useState<typeof formInitialState>(formInitialState)
+
+	const { user } = useAuth()
+	assert(user)
 
 	const { mutate } = useCreateReview(bookId)
 	const [variables] = useCreateReviewState(bookId)
@@ -44,7 +48,7 @@ export function BookReviewForm() {
 			<div className="size-12 bg-violet-200"></div>
 			<div className="max-w-prose">
 				<div className="flex justify-between">
-					<div>calebgl</div>
+					<div>{user.userName}</div>
 					<div>{dayjs().format('LLL')}</div>
 				</div>
 				<form onSubmit={handleSubmit}>

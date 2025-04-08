@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
 
 import { useCreateReviewState, useReviews } from '../hooks/use-api'
+import { useAuth } from '../hooks/use-auth'
 import { assert } from '../lib/assert'
 import { BookReview } from './book-review'
 
@@ -12,8 +13,7 @@ export function BookReviewList() {
 	const { bookId } = useParams()
 	assert(bookId)
 
-	// TODO: implement useSession
-	const username = 'calebgl' // useSession();
+	const { user } = useAuth()
 
 	const [variables] = useCreateReviewState(bookId)
 
@@ -50,9 +50,9 @@ export function BookReviewList() {
 
 	return (
 		<div ref={ref} className="space-y-12">
-			{variables && (
+			{user && variables && (
 				<BookReview
-					username={username}
+					username={user.username}
 					comment={variables.comment}
 					createdAt={new Date().toISOString()}
 					className="opacity-50"

@@ -7,10 +7,13 @@ import { BookRating } from '../components/book-rating'
 import { BookReviewForm } from '../components/book-review-form'
 import { BookReviewList } from '../components/book-review-list'
 import { assert } from '../lib/assert'
+import { useAuth } from '../hooks/use-auth'
 
 export function BookView() {
 	const { bookId } = useParams()
 	assert(bookId)
+
+	const { user } = useAuth()
 
 	window.scrollTo({ top: 0 })
 
@@ -34,11 +37,15 @@ export function BookView() {
 				</div>
 				<div className="flex gap-16">
 					<div className="basis-2/3 space-y-16">
-						<BookReviewForm key={`book-${bookId}review-form`} />
-						<BookReviewList key={`book-${bookId}review-list`} />
+						{user && (
+							<BookReviewForm
+								key={`book-${bookId}-review-form`}
+							/>
+						)}
+						<BookReviewList key={`book-${bookId}-review-list`} />
 					</div>
 					<div className="basis-1/3">
-						<BookRating key={`book-${bookId}rating`} />
+						<BookRating key={`book-${bookId}-rating`} />
 					</div>
 				</div>
 			</div>
