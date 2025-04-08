@@ -40,7 +40,8 @@ function createFetch(defaultConfig?: RequestInit): Fetch {
 				'error in ' + input.toString(),
 			)
 		}
-		return resp.json() as T
+
+		return resp.json() as Promise<T>
 	}
 }
 
@@ -84,7 +85,10 @@ export async function login(
 }
 
 export async function logout(): Promise<void> {
-	await fetch('/authz/logout')
+	await fetch('/authz/logout', {
+		method: Method.POST,
+		credentials: 'include',
+	})
 }
 
 export async function validateSession(): Promise<User | null> {

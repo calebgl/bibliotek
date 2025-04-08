@@ -3,6 +3,7 @@ import {
 	useMutationState,
 	useQuery,
 	useQueryClient,
+	useSuspenseQuery,
 } from '@tanstack/react-query'
 
 import {
@@ -16,10 +17,13 @@ import {
 	fetchCartBooks,
 	fetchReviews,
 	fetchSavedBooks,
+	login,
+	logout,
 	postReview,
 	putAdminBook,
 	removeBookFromCart,
 	updateBookInCart,
+	validateSession,
 } from '../lib/api'
 import { debounce } from '../lib/utils'
 import type {
@@ -70,6 +74,11 @@ const queryKeys = {
 }
 
 const mutationKeys = {
+	auth: {
+		login: () => ['login'],
+		logout: () => ['logout'],
+		signInGithub: () => ['signin', 'github'],
+	},
 	public: {
 		books: {
 			all: () => ['public', 'books'],
@@ -109,6 +118,56 @@ const mutationKeys = {
 			],
 		},
 	},
+}
+
+export function useLogin() {
+	const queryClient = useQueryClient()
+	return useMutation({
+		mutationKey: mutationKeys.auth.login(),
+		mutationFn: login,
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: queryKeys.auth.session(),
+			})
+		},
+	})
+}
+
+export function useSignInGitHub() {
+	const queryClient = useQueryClient()
+	return useMutation({
+		mutationKey: mutationKeys.auth.signInGithub(),
+		mutationFn: () => login('github'),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: queryKeys.auth.session(),
+			})
+		},
+	})
+}
+
+export function useSession() {
+	return useSuspenseQuery({
+		queryKey: queryKeys.auth.session(),
+		queryFn: validateSession,
+		retry: false,
+		retryOnMount: false,
+		refetchOnMount: false,
+		refetchOnWindowFocus: false,
+	})
+}
+
+export function useLogout() {
+	const queryClient = useQueryClient()
+	return useMutation({
+		mutationKey: mutationKeys.auth.logout(),
+		mutationFn: logout,
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: queryKeys.auth.session(),
+			})
+		},
+	})
 }
 
 export function useBooks() {

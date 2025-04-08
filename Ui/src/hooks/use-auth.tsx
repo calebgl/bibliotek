@@ -1,31 +1,36 @@
-import { useAtom } from 'jotai'
+import { useEffect } from 'react'
 
-import { validateSession, login, logout } from '../lib/api'
-import { assert } from '../lib/assert'
-import { userAtom } from '../stores/auth'
-import type { Credentials } from '../types'
+import { useLogin, useLogout, useSession, useSignInGitHub } from './use-api'
 
 export function useAuth() {
-	const [user, setUser] = useAtom(userAtom)
+	const login = useLogin()
+	const logout = useLogout()
 
-	async function handleLogin(credentials: Credentials) {
-		await login(credentials)
-		const user = await validateSession()
-		assert(user)
-		setUser(user)
-	}
+	const signInGitHub = useSignInGitHub()
 
-	async function handleLogout() {
-		await logout()
-		const user = await validateSession()
-		assert(!user)
-		setUser(null)
-	}
+	const session = useSession()
+
+	// TODO: add toasts
+
+	useEffect(() => {
+		if (session.isSuccess) {
+		}
+	}, [session.isSuccess])
+
+	useEffect(() => {
+		if (session.isError) {
+		}
+	}, [session.isError])
+
+	useEffect(() => {
+		if (session.isSuccess) {
+		}
+	}, [logout.isSuccess])
 
 	return {
-		user,
-		login: handleLogin,
-		logout: handleLogout,
-		signInGitHub: () => login('github'),
+		user: session.data,
+		login: login.mutateAsync,
+		logout: logout.mutateAsync,
+		signInGitHub: signInGitHub.mutateAsync,
 	}
 }
