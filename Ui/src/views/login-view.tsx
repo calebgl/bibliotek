@@ -55,12 +55,14 @@ export function LoginView() {
 						type="email"
 						name="email"
 						placeholder="Email"
+						autoComplete="username"
 						className="px-2 py-1"
 					/>
 					<input
 						type="password"
 						name="password"
 						placeholder="Password"
+						autoComplete="current-password"
 						className="px-2 py-1"
 					/>
 					<Button
