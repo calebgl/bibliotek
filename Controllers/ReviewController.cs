@@ -51,7 +51,7 @@ public class ReviewController(BibliotekContext context) : ControllerBase
         CreateReviewDto createReviewDto
     )
     {
-        if (String.IsNullOrEmpty(userIdString))
+        if (string.IsNullOrWhiteSpace(userIdString))
         {
             return BadRequest();
         }
