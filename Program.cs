@@ -104,7 +104,6 @@ using (var scope = app.Services.CreateScope())
     DbInitializer.Initialize(context);
 }
 
-app.MapIdentityApi<User>();
 app.MapControllers();
 
 app.Run();

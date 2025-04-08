@@ -12,7 +12,8 @@ public class AuthController(
     SignInManager<User> signInManager,
     UserManager<User> userManager,
     IConfiguration configuration,
-    ILogger<AuthController> logger
+    ILogger<AuthController> logger,
+    BibliotekContext context
 ) : ControllerBase
 {
     [HttpGet]
@@ -111,7 +112,48 @@ public class AuthController(
     }
 
     [HttpPost]
-    [Route("~/logout")]
+    [Route("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+    {
+        var user = new User { UserName = request.UserName, Email = request.Email };
+        var result = await userManager.CreateAsync(user, request.Password);
+        if (!result.Succeeded)
+        {
+            return BadRequest();
+        }
+
+        await signInManager.SignInAsync(user, isPersistent: false);
+
+        return NoContent();
+    }
+
+    [HttpPost]
+    [Route("login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    {
+        var user = context.Users.FirstOrDefault(u => u.Email == request.Email);
+        if (user is null)
+        {
+            return Unauthorized();
+        }
+
+        var result = await signInManager.CheckPasswordSignInAsync(
+            user,
+            request.Password,
+            lockoutOnFailure: false
+        );
+        if (!result.Succeeded)
+        {
+            return Unauthorized();
+        }
+
+        await signInManager.SignInAsync(user, isPersistent: false);
+
+        return NoContent();
+    }
+
+    [HttpPost]
+    [Route("logout")]
     [Authorize]
     public async Task<IActionResult> Logout()
     {
@@ -135,3 +177,7 @@ public class AuthController(
         );
     }
 }
+
+public record LoginRequest(string Email, string Password);
+
+public record RegisterRequest(string UserName, string Email, string Password);
