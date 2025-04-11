@@ -257,12 +257,9 @@ export function useAddSavedBook() {
 			const previousSaved =
 				queryClient.getQueryData<FetchSavedBooksResponse>(queryKey)
 
-			queryClient.setQueryData(
-				queryKey,
-				(prev: FetchSavedBooksResponse) => {
-					// TODO:
-				},
-			)
+			queryClient.setQueryData(queryKey, (prev: typeof previousSaved) => {
+				// TODO:
+			})
 
 			const previousBook = queryClient.getQueryData(
 				queryKeys.public.books.detail(variables.bookId.toString()),
@@ -301,29 +298,30 @@ export function useRemoveSavedBook() {
 			const previousSaved =
 				queryClient.getQueryData<FetchSavedBooksResponse>(queryKey)
 
-			queryClient.setQueryData(
-				queryKey,
-				(prev: FetchSavedBooksResponse) => {
-					const books = prev.books.filter(
-						(book) => book.id !== variables.bookId,
-					)
-					return {
-						...prev,
-						books,
-					}
-				},
-			)
+			queryClient.setQueryData(queryKey, (prev: typeof previousSaved) => {
+				if (!prev) {
+					return prev
+				}
 
-			const previousBook = queryClient.getQueryData(
-				queryKeys.public.books.detail(variables.bookId.toString()),
-			)
+				const books = prev.books.filter(
+					(book) => book.id !== variables.bookId,
+				)
+				return {
+					...prev,
+					books,
+				}
+			})
 
-			queryClient.setQueryData(
-				queryKeys.public.books.detail(variables.bookId.toString()),
-				(prev: any) => {
-					return { ...prev, isSaved: false }
-				},
-			)
+			const bookIdString = variables.bookId.toString()
+			const bookDetailKey = queryKeys.public.books.detail(bookIdString)
+
+			await queryClient.cancelQueries({ queryKey: bookDetailKey })
+
+			const previousBook = queryClient.getQueryData(bookDetailKey)
+
+			queryClient.setQueryData(bookDetailKey, (prev: any) => {
+				return { ...prev, isSaved: false }
+			})
 
 			return { previousBook, previousSaved }
 		},
@@ -389,9 +387,41 @@ export function useCartBooks() {
 
 export function useAddCartBook() {
 	const queryClient = useQueryClient()
+	const queryKey = queryKeys.public.cart.list()
 	return useMutation({
 		mutationKey: mutationKeys.public.cart.add(),
 		mutationFn: (book: CartBook) => addBookToCart({ bookId: book.id }),
+		onMutate: async (variables) => {
+			await queryClient.cancelQueries({ queryKey })
+
+			const previousCart =
+				queryClient.getQueryData<FetchCartBooksResponse>(queryKey)
+
+			queryClient.setQueryData(queryKey, (prev: typeof previousCart) => {
+				if (!prev) {
+					return prev
+				}
+
+				let total = prev.total
+				const books = prev.books.map((book) => {
+					let newBook = { ...book }
+					if (book.id === variables.id) {
+						total += 1
+						newBook.quantity += 1
+					}
+
+					return newBook
+				})
+
+				return {
+					...prev,
+					books,
+					total,
+				}
+			})
+
+			return previousCart
+		},
 		onSettled: () =>
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.public.cart.list(),
@@ -432,32 +462,33 @@ export function useUpdateCartBook() {
 		mutationKey: mutationKeys.public.cart.update(),
 		mutationFn: (data: { bookId: string; quantity: number }) =>
 			updateBookInCartDebounced(data.bookId, { quantity: data.quantity }),
-		onMutate: async (data) => {
+		onMutate: async (variables) => {
 			await queryClient.cancelQueries({ queryKey })
 
 			const previousCart =
 				queryClient.getQueryData<FetchCartBooksResponse>(queryKey)
 
-			queryClient.setQueryData(
-				queryKey,
-				(prev: FetchCartBooksResponse) => {
-					let quantityStale = 0
+			queryClient.setQueryData(queryKey, (prev: typeof previousCart) => {
+				if (!prev) {
+					return prev
+				}
 
-					const books = [...prev.books]
-					for (const book of books) {
-						if (book.id === data.bookId) {
-							quantityStale = book.quantity
-							book.quantity = data.quantity
-						}
-					}
+				let quantityStale = 0
 
-					return {
-						...prev,
-						books,
-						total: prev.total - quantityStale + data.quantity,
+				const books = [...prev.books]
+				for (const book of books) {
+					if (book.id === variables.bookId) {
+						quantityStale = book.quantity
+						book.quantity = variables.quantity
 					}
-				},
-			)
+				}
+
+				return {
+					...prev,
+					books,
+					total: prev.total - quantityStale + variables.quantity,
+				}
+			})
 
 			return previousCart
 		},
@@ -474,33 +505,34 @@ export function useRemoveCartBook() {
 		mutationKey: mutationKeys.public.cart.remove(),
 		mutationFn: (data: { bookId: string }) =>
 			removeBookFromCart(data.bookId),
-		onMutate: async (data) => {
+		onMutate: async (variables) => {
 			await queryClient.cancelQueries({ queryKey })
 
 			const previousCart =
 				queryClient.getQueryData<FetchCartBooksResponse>(queryKey)
 
-			queryClient.setQueryData(
-				queryKey,
-				(prev: FetchCartBooksResponse) => {
-					let quantityToRemove = 0
+			queryClient.setQueryData(queryKey, (prev: typeof previousCart) => {
+				if (!prev) {
+					return prev
+				}
 
-					const books = prev.books.filter((book) => {
-						if (book.id === data.bookId) {
-							quantityToRemove = book.quantity
-							return false
-						}
+				let quantityToRemove = 0
 
-						return true
-					})
-
-					return {
-						...prev,
-						books,
-						total: prev.total - quantityToRemove,
+				const books = prev.books.filter((book) => {
+					if (book.id === variables.bookId) {
+						quantityToRemove = book.quantity
+						return false
 					}
-				},
-			)
+
+					return true
+				})
+
+				return {
+					...prev,
+					books,
+					total: prev.total - quantityToRemove,
+				}
+			})
 
 			return previousCart
 		},
