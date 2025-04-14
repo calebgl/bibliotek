@@ -52,10 +52,10 @@ export function ButtonSaveBook(props: SaveButtonProps) {
 			className="group grid aspect-square size-10 place-content-center"
 		>
 			<Icon
-				className={cn('stroke-transparent stroke-1 transition-colors', {
+				className={cn('stroke-red-600 stroke-1 transition-colors', {
 					'fill-red-600': isSaved,
 					'fill-gray-100 group-hover:fill-red-600': !isSaved,
-					'stroke-current': Icon === HeartOff,
+					'stroke-red-600': Icon === HeartOff,
 				})}
 			/>
 		</Button>
